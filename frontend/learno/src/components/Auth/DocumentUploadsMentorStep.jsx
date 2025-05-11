@@ -3,8 +3,7 @@ const DocumentUploadsMentorStep = ({ formData, handleChange }) => {
 
   return (
     <>
-      <h3 className="text-xl text-gray-700 mb-6 font-semibold">Document Uploads</h3>
-      <div className="grid grid-cols-1 gap-8 mb-7">
+      <div className="grid grid-cols-1 gap-8 mb-7 ">
         <div className="flex flex-col gap-4">
           <label className="flex items-center text-gray-700 text-base font-medium">Add your profile</label>
           <div className="flex flex-col items-center gap-4">

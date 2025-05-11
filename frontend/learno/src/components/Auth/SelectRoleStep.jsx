@@ -6,7 +6,7 @@ const SelectRoleStep = ({ formData, handleChange }) => {
       <h3 className="text-xl text-gray-700 mb-6 font-semibold">Select Your Role</h3>
       <div className="grid grid-cols-1 max-w-[300px] mx-auto min-h-[120px] gap-8 mb-7 md:max-w-full md:min-h-[100px]">
         <div className="flex flex-col gap-4">
-          <label htmlFor="role" className="flex items-center text-gray-700 text-base font-medium">Role</label>
+          <label htmlFor="role" className="flex items-center text-gray-700 text-base font-medium">I want to be a:</label>
           <select
             id="role"
             name="role"

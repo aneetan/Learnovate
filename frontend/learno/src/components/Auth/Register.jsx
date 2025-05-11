@@ -164,9 +164,9 @@ const Register = ({ setIsAuthenticated, setCurrentUser, users, setUsers }) => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-[calc(100vh-70px-300px)] p-6 bg-[url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1350&q=80')] bg-no-repeat bg-center bg-cover bg-[#26A69A] bg-blend-overlay font-sans relative">
+    <div className="flex justify-center items-center min-h-[100vh] p-6 bg-[url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1350&q=80')] bg-no-repeat bg-center bg-cover bg-[#26A69A] bg-blend-overlay font-sans relative">
       <div className="before:absolute before:top-0 before:left-0 before:right-0 before:bottom-0 before:bg-[#26A69A] before:opacity-80 before:z-[-1] after:absolute after:top-0 after:left-0 after:right-0 after:bottom-0 after:bg-[url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1350&q=80')] after:bg-no-repeat after:bg-center after:bg-cover after:opacity-20 after:z-[-2]"></div>
-      <div className={`bg-white rounded-lg shadow-md p-10 w-full max-w-[850px] border border-gray-200 transition-all duration-300 relative z-1 flex flex-col justify-center min-h-[70vh] ${step > 2 ? 'max-w-[950px]' : ''}`}>
+      <div className={`bg-white rounded-lg shadow-md p-10 w-full max-w-[850px] border border-gray-200 transition-all duration-300 relative z-1 flex flex-col justify-center ${step > 2 ? 'max-w-[950px]' : ''}`}>
         <h2 className="text-center mb-8 text-gray-900 font-bold text-3xl relative after:content-[''] after:absolute after:bottom-[-0.5rem] after:left-1/2 after:transform after:-translate-x-1/2 after:w-12 after:h-1 after:bg-[#26A69A] after:rounded">Register for Learnovate</h2>
         {step > 2 && <Stepper step={step} role={formData.role} />}
         <form onSubmit={step === (formData.role === "mentor" ? 5 : 4) ? handleSubmit : handleNext}>
