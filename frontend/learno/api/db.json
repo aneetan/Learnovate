@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "id": "bc77",
+      "name": "Anita Neupane",
+      "email": "anita@gmail.com",
+      "password": "anita@118",
+      "confirmPassword": "anita@118",
+      "role": "mentee"
+    },
+    {
+      "id": "8f64",
+      "name": "Bini Neupane",
+      "email": "pratik@gmail.com",
+      "password": "pratik@123",
+      "confirmPassword": "pratik@123",
+      "role": "mentor"
+    }
+  ]
+}
