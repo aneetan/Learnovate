@@ -19,7 +19,6 @@ const RegisterStep = ({ formData, handleChange }) => {
 
   return (
     <>
-      <h3 className="text-xl text-gray-700 mb-6 font-semibold">Register</h3>
       <div className="grid grid-cols-1 gap-8 mb-7">
         <div className="flex flex-col gap-2">
           <label htmlFor="name" className="flex items-center text-gray-700 text-base font-medium">Name</label>

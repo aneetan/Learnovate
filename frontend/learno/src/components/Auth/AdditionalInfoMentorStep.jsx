@@ -15,7 +15,6 @@ const AdditionalInfoMentorStep = ({ formData, handleChange }) => {
 
   return (
     <>
-      <h3 className="text-xl text-gray-700 mb-6 font-semibold">Additional Information</h3>
       <div className="grid grid-cols-2 gap-8 mb-7">
         <div className="flex flex-col gap-2 col-span-2">
           <label htmlFor="bio" className="flex items-center text-gray-700 text-base font-medium">Bio</label>

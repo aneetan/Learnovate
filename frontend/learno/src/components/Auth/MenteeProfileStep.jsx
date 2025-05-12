@@ -24,7 +24,6 @@ const MenteeProfileStep = ({ formData, handleChange }) => {
 
   return (
     <>
-      <h3 className="text-xl text-gray-700 mb-6 font-semibold">Mentee Profile</h3>
       <div className="grid grid-cols-2 gap-8 mb-7">
         <div className="flex flex-col gap-4">
           <label className="flex items-center text-gray-700 text-base font-medium">Add your profile</label>

@@ -72,7 +72,7 @@ const Register = ({ setIsAuthenticated, setCurrentUser, users, setUsers }) => {
 
   const handleSkip = () => {
     if (step === 3 && formData.role === "mentee") {
-      setStep(4) // Skip to final registration for mentee
+      setStep(4)
     }
   }
 
@@ -166,7 +166,7 @@ const Register = ({ setIsAuthenticated, setCurrentUser, users, setUsers }) => {
         {step > 2 && <Stepper step={step} role={formData.role} />}
         <form onSubmit={step === (formData.role === "mentor" ? 5 : 4) ? handleSubmit : handleNext}>
           {renderStepComponent()}
-       <div className="flex flex-row items-center gap-4 mt-8">
+          <div className="flex flex-row items-center gap-4 mt-8">
             {/* Back button */}
             {step > 1 && (
               <button
@@ -182,6 +182,7 @@ const Register = ({ setIsAuthenticated, setCurrentUser, users, setUsers }) => {
             <button
               type="submit"
               className="flex-grow bg-[#26A69A] text-white px-6 py-3 rounded-lg font-medium cursor-pointer hover:bg-[#20897f] hover:-translate-y-px transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              disabled={loading || (step === (formData.role === "mentor" ? 5 : 4) && !formData.agreedToTerms) || (step === 2 && !formData.role)}
             >
               {loading ? "Processing..." : step === (formData.role === "mentor" ? 5 : 4) ? "Register" : "Next"}
             </button>
