@@ -1,26 +1,26 @@
-import React from 'react';
+import { useState, useEffect } from "react"
 
 const MenteeProfileStep = ({ formData, handleChange }) => {
-  const { phoneNumber, currentStatus, interestArea } = formData;
+  const { phoneNumber, currentStatus, interestArea } = formData
+  const [digitCount, setDigitCount] = useState(0)
 
-  const DropdownIcon = () => (
-    <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-      <svg
-        className="w-5 h-5 text-gray-400"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M19 9l-7 7-7-7"
-        ></path>
-      </svg>
-    </div>
-  );
+  const handlePhoneKeyPress = (e) => {
+    const allowedChars = /[0-9\s\-\(\)]/
+    if (!allowedChars.test(e.key) && e.key !== "Backspace" && e.key !== "Delete") {
+      e.preventDefault()
+      return
+    }
+    if (e.key.match(/[0-9]/)) {
+      if (digitCount >= 10) {
+        e.preventDefault()
+        return
+      }
+      setDigitCount(digitCount + 1)
+    } else if (e.key === "Backspace" || e.key === "Delete") {
+      const currentDigits = (phoneNumber.match(/\d/g) || []).length
+      setDigitCount(Math.max(0, currentDigits - 1))
+    }
+  }
 
   return (
     <>
@@ -47,7 +47,7 @@ const MenteeProfileStep = ({ formData, handleChange }) => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           <label htmlFor="phoneNumber" className="flex items-center text-gray-700 text-base font-medium">Phone Number</label>
           <input
             type="text"
@@ -55,50 +55,48 @@ const MenteeProfileStep = ({ formData, handleChange }) => {
             name="phoneNumber"
             value={phoneNumber}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:border-[#26A69A] focus:ring-2 focus:ring-[#26A69A]/10 transition-all duration-300"
+            onKeyPress={handlePhoneKeyPress}
+            maxLength="14" // Accounts for spaces, hyphens, and parentheses (e.g., (123) 456-7890)
+            pattern="^\+?[\d\s\-\(\)]{10,14}$"
+            className="w-full p-3 border rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:border-[#26A69A] focus:ring-2 focus:ring-[#26A69A]/10 transition-all duration-300 border-gray-300"
             placeholder="Enter contact number"
+            title="Please enter a valid phone number with up to 10 digits"
           />
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           <label htmlFor="currentStatus" className="flex items-center text-gray-700 text-base font-medium">Current Status</label>
-          <div className="relative"> {/* Added relative container for the dropdown */}
-            <select
-              id="currentStatus"
-              name="currentStatus"
-              value={currentStatus}
-              onChange={handleChange}
-              className="w-full h-12 p-3 border border-gray-300 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:border-[#26A69A] focus:ring-2 focus:ring-[#26A69A]/10 transition-all duration-300 appearance-none pr-8"
-            >
-              <option value="">Select status</option>
-              <option value="Student">Student</option>
-              <option value="Job Seeker">Job Seeker</option>
-              <option value="Early Professional">Early Professional</option>
-            </select>
-            <DropdownIcon /> {/* Integrated the dropdown icon */}
-          </div>
+          <select
+            id="currentStatus"
+            name="currentStatus"
+            value={currentStatus}
+            onChange={handleChange}
+            className="w-full h-12 p-3 border rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:border-[#26A69A] focus:ring-2 focus:ring-[#26A69A]/10 transition-all duration-300 appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij4KICA8cGF0aCBmaWxsPSIjNkI3MjgwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zLjI5MyA1LjI5M2EuNzEuNzEgMCAwIDEgMS4wMDQtLjAwNEw4IDguOTc2lDMuNzA3LTMuNzA3YS43MS43MSAwIDAgMSAxLjAwNSAwIC43MS43MSAwIDAgMSAwIDEuMDA1TDEwLjAwNSAxMC43MDdhLjcxLjcxIDAgMCAxLTEuMDA0IDBMMy4yOTMgNi4yOTdhLjcxLjcxIDAgMCAxIDAtMS4wMDV6Ii8+Cjwvc3ZnPgo=')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:12px_12px] pr-8 border-gray-300"
+          >
+            <option value="">Select status</option>
+            <option value="Student">Student</option>
+            <option value="Job Seeker">Job Seeker</option>
+            <option value="Early Professional">Early Professional</option>
+          </select>
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           <label htmlFor="interestArea" className="flex items-center text-gray-700 text-base font-medium">Interest Area</label>
-          <div className="relative"> {/* Added relative container for the dropdown */}
-            <select
-              id="interestArea"
-              name="interestArea"
-              value={interestArea}
-              onChange={handleChange}
-              className="w-full h-12 p-3 border border-gray-300 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:border-[#26A69A] focus:ring-2 focus:ring-[#26A69A]/10 transition-all duration-300 appearance-none pr-8"
-            >
-              <option value="">Select interest</option>
-              <option value="Technology">Technology</option>
-              <option value="Business">Business</option>
-              <option value="Design">Design</option>
-              <option value="Marketing">Marketing</option>
-            </select>
-            <DropdownIcon /> {/* Integrated the dropdown icon */}
-          </div>
+          <select
+            id="interestArea"
+            name="interestArea"
+            value={interestArea}
+            onChange={handleChange}
+            className="w-full h-12 p-3 border rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:border-[#26A69A] focus:ring-2 focus:ring-[#26A69A]/10 transition-all duration-300 appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij4KICA8cGF0aCBmaWxsPSIjNkI3MjgwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zLjI5MyA1LjI5M2EuNzEuNzEgMCAwIDEgMS4wMDQtLjAwNEw4IDguOTc2lDMuNzA3LTMuNzA3YS43MS43MSAwIDAgMSAxLjAwNSAwIC43MS43MSAwIDAgMSAwIDEuMDA1TDEwLjAwNSAxMC43MDdhLjcxLjcxIDAgMCAxLTEuMDA0IDBMMy4yOTMgNi4yOTdhLjcxLjcxIDAgMCAxIDAtMS4wMDV6Ii8+Cjwvc3ZnPgo=')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:12px_12px] pr-8 border-gray-300"
+          >
+            <option value="">Select interest</option>
+            <option value="Technology">Technology</option>
+            <option value="Business">Business</option>
+            <option value="Design">Design</option>
+            <option value="Marketing">Marketing</option>
+          </select>
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default MenteeProfileStep;
+export default MenteeProfileStep
