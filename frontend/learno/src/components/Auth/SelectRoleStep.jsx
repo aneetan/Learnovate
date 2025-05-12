@@ -1,5 +1,34 @@
-const SelectRoleStep = ({ formData, handleChange }) => {
+import axios from "axios";
+import { useState } from "react";
+
+const SelectRoleStep = ({ formData, handleChange, onSubmit }) => {
   const { role } = formData;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+
+  const handleFormSubmit = async () => {
+    if (!role) {
+      setSubmitError("Please select a role");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      // Replace with your actual API endpoint
+      const response = await axios.post('http://localhost:3000/users', formData);
+      
+      // Handle successful registration
+      console.log('Registration successful', response.data);
+      onSubmit(response.data); 
+    } catch (error) {
+      console.error('Registration failed', error);
+      setSubmitError(error.response?.data?.message || 'Registration failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <>
@@ -9,7 +38,7 @@ const SelectRoleStep = ({ formData, handleChange }) => {
           <label htmlFor="role" className="flex items-center text-gray-700 text-base font-medium">
             I want to be a:
           </label>
-          <div className="relative w-full"> {/* Added relative wrapper */}
+          <div className="relative w-full">
             <select
               id="role"
               name="role"
@@ -38,10 +67,22 @@ const SelectRoleStep = ({ formData, handleChange }) => {
               </svg>
             </div>
           </div>
+          {submitError && <div className="text-red-600 text-sm font-medium text-left">{submitError}</div>}
         </div>
       </div>
+      <button 
+        onClick={handleFormSubmit} 
+        disabled={!role || isSubmitting}
+        className={`w-full p-3 rounded-lg text-white font-semibold transition-all duration-300 ${
+          role && !isSubmitting 
+            ? "bg-[#26A69A] hover:bg-[#208f84]" 
+            : "bg-gray-400 cursor-not-allowed"
+        }`}
+      >
+        {isSubmitting ? 'Submitting...' : 'Submit Registration'}
+      </button>
     </>
   );
 };
 
-export default SelectRoleStep;
+export default SelectRoleStep

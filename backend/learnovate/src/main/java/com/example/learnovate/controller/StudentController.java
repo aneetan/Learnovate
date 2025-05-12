@@ -1,21 +1,14 @@
 package com.example.learnovate.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
-import com.example.learnovate.repository.StudentRepository;
 
 @RestController
-@RequestMapping("/students")
+@RequestMapping("/")
 public class StudentController {
-
-    private final StudentRepository studentRepository;
-
-    public StudentController(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
-    }
-
-    @RequestMapping("/demo")
-    public String student(){
-        return "this is student";
+    @GetMapping
+    public String greet(HttpServletRequest request){
+        return "welcome to learnovate" + request.getSession().getId();
     }
 
 }
