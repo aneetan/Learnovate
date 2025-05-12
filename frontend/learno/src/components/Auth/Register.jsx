@@ -166,28 +166,30 @@ const Register = ({ setIsAuthenticated, setCurrentUser, users, setUsers }) => {
         {step > 2 && <Stepper step={step} role={formData.role} />}
         <form onSubmit={step === (formData.role === "mentor" ? 5 : 4) ? handleSubmit : handleNext}>
           {renderStepComponent()}
-          <div className="flex justify-end gap-4 mt-8">
+       <div className="flex flex-row items-center gap-4 mt-8">
+            {/* Back button */}
             {step > 1 && (
               <button
                 type="button"
-                className="bg-gray-500 text-white px-6 py-3 rounded-lg font-medium cursor-pointer hover:bg-gray-600 hover:-translate-y-px transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="flex-grow bg-gray-500 text-white px-6 py-3 rounded-lg font-medium cursor-pointer hover:bg-gray-600 hover:-translate-y-px transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
                 onClick={handleBack}
                 disabled={loading}
               >
                 Back
               </button>
             )}
+            {/* Next/Register button */}
             <button
               type="submit"
-              className="bg-[#26A69A] text-white px-6 py-3 rounded-lg font-medium cursor-pointer hover:bg-[#20897f] hover:-translate-y-px transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
-              
+              className="flex-grow bg-[#26A69A] text-white px-6 py-3 rounded-lg font-medium cursor-pointer hover:bg-[#20897f] hover:-translate-y-px transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               {loading ? "Processing..." : step === (formData.role === "mentor" ? 5 : 4) ? "Register" : "Next"}
             </button>
+            {/* Skip button */}
             {step === 3 && formData.role === "mentee" && (
               <button
                 type="button"
-                className="bg-gray-500 text-white px-6 py-3 rounded-lg font-medium cursor-pointer hover:bg-gray-600 hover:-translate-y-px transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="flex-grow bg-gray-500 text-white px-6 py-3 rounded-lg font-medium cursor-pointer hover:bg-gray-600 hover:-translate-y-px transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed"
                 onClick={handleSkip}
                 disabled={loading}
               >
@@ -201,7 +203,7 @@ const Register = ({ setIsAuthenticated, setCurrentUser, users, setUsers }) => {
             <div className="flex flex-col justify-center items-center w-full text-center relative before:content-['or'] before:block before:text-gray-500 before:text-sm before:mb-4 before:w-full before:relative before:[&::before]:content-[''] before:[&::before]:absolute before:[&::before]:top-1/2 before:[&::before]:w-2/5 before:[&::before]:h-px before:[&::before]:bg-gray-300 before:[&::before]:transform before:[&::before]:-translate-y-1/2 before:[&::before]:left-0 before:[&::after]:content-[''] before:[&::after]:absolute before:[&::after]:top-1/2 before:[&::after]:w-2/5 before:[&::after]:h-px before:[&::after]:bg-gray-300 before:[&::after]:transform before:[&::after]:-translate-y-1/2 before:[&::after]:right-0">
               <button
                 type="button"
-                className="bg-transparent text-gray-900 border border-gray-300 flex items-center justify-center gap-3 px-8 py-3 text-base -font-sans tracking-wide rounded-full shadow-md hover:bg-gray-50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 w-fit max-w-[300px] mx-auto relative overflow-hidden disabled:bg-transparent disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-300 before:content-[''] before:w-6 before:h-6 before:bg-[url('https://www.google.com/favicon.ico')] before:bg-no-repeat before:bg-center before:bg-[length:20px] before:rounded before:mr-3 before:disabled:opacity-50 after:content-[''] after:absolute after:top-0 after:left-[-100%] after:w-full after:h-full after:bg-gradient-to-r after:from-transparent after:via-[rgba(255,255,255,0.2)] after:to-transparent after:transition-all after:duration-500 hover:after:left-full"
+                className="bg-transparent text-gray-900 border border-gray-300 flex items-center justify-center gap-3 px-8 py-3 text-base -font-sans tracking-wide rounded-full shadow-md hover:bg-gray-50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 w-full relative overflow-hidden disabled:bg-transparent disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-300 before:content-[''] before:w-6 before:h-6 before:bg-[url('https://www.google.com/favicon.ico')] before:bg-no-repeat before:bg-center before:bg-[length:20px] before:rounded before:mr-3 before:disabled:opacity-50 after:content-[''] after:absolute after:top-0 after:left-[-100%] after:w-full after:h-full after:bg-gradient-to-r after:from-transparent after:via-[rgba(255,255,255,0.2)] after:to-transparent after:transition-all after:duration-500 hover:after:left-full"
                 onClick={handleGoogleSignup}
                 disabled={loading}
               >
