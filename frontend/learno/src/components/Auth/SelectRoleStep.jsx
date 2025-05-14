@@ -17,11 +17,31 @@ const SelectRoleStep = ({ formData, handleChange, onSubmit }) => {
 
     try {
       // Replace with your actual API endpoint
-      const response = await axios.post('http://localhost:3000/users', formData);
+      fetch('http://localhost:8080/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: 'John Doe',
+          email: 'john@example.com',
+          password: 'securePassword123'
+        })
+      })
+      // // const response = await axios.post('http://localhost:8080/api/auth/register', formData,
+        
+      // //     {
+      // //       headers: {
+      // //         'Content-Type': 'application/json',
+      // //         'Accept': 'application/json'
+      // //       }
+      // //     }
+        
+      // // );
       
-      // Handle successful registration
-      console.log('Registration successful', response.data);
-      onSubmit(response.data); 
+      // // Handle successful registration
+      // console.log('Registration successful', response.data);
+      // onSubmit(response.data); 
     } catch (error) {
       console.error('Registration failed', error);
       setSubmitError(error.response?.data?.message || 'Registration failed. Please try again.');
