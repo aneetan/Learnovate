@@ -1,7 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SelectRoleStep = ({ formData, handleChange, onSubmit }) => {
+  const navigate = useNavigate();
   const { role } = formData;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
@@ -12,39 +14,36 @@ const SelectRoleStep = ({ formData, handleChange, onSubmit }) => {
       return;
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true); 
     setSubmitError(null);
 
     try {
-      // Replace with your actual API endpoint
-      fetch('http://localhost:8080/api/auth/register', {
+      const response = await fetch('http://localhost:8080/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: 'John Doe',
-          email: 'john@example.com',
-          password: 'securePassword123'
+          ...formData,
+          role: role
         })
       })
-      // // const response = await axios.post('http://localhost:8080/api/auth/register', formData,
-        
-      // //     {
-      // //       headers: {
-      // //         'Content-Type': 'application/json',
-      // //         'Accept': 'application/json'
-      // //       }
-      // //     }
-        
-      // // );
-      
-      // // Handle successful registration
-      // console.log('Registration successful', response.data);
-      // onSubmit(response.data); 
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 409) {
+          throw new Error(data.error || 'Email already in use');
+        }
+        throw new Error(data.message || 'Registration failed');
+        }
+
+      onSubmit(data); 
+
+      navigate(data.redirectUrl || "/login");
+
     } catch (error) {
-      console.error('Registration failed', error);
-      setSubmitError(error.response?.data?.message || 'Registration failed. Please try again.');
+        setSubmitError(error.message);
     } finally {
       setIsSubmitting(false);
     }
