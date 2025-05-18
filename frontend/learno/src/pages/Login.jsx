@@ -130,17 +130,17 @@ const Login = ({setCurrentUser, users }) => {
           <div className="space-y-4">
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
               <p className="text-gray-700">
-                <strong className="font-medium">Mentor:</strong> john@example.com / password123
+                <strong className="font-medium">Mentor:</strong> demo55@gmail.com / demo@123
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
               <p className="text-gray-700">
-                <strong className="font-medium">Apprentice:</strong> mike@example.com / password123
+                <strong className="font-medium">Mentee:</strong> @mentor@gmail.com / mentor@123
               </p>
             </div>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
               <p className="text-gray-700">
-                <strong className="font-medium">Admin:</strong> admin@example.com / admin123
+                <strong className="font-medium">Admin:</strong> admin@gmail.com / admin@123
               </p>
             </div>
           </div>
