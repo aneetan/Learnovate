@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { jwtDecode } from "jwt-decode";
 
 const Login = ({setCurrentUser, users }) => {
   const [formData, setFormData] = useState({
@@ -45,10 +46,24 @@ const Login = ({setCurrentUser, users }) => {
       setError(data.error || "Invalid email or password");
     }
 
-    if (data.user) {
+    if (data.user && data.token) {
       setIsAuthenticated(true);
-      navigate(data.redirectUrl || "/dashboard");
 
+      const decoded = jwtDecode(data.token);
+      const role = decoded.role?.toUpperCase();
+      localStorage.setItem("token", data.token);
+
+      // Redirect based on role
+      if (role === "ADMIN") {
+        navigate("/admin/dashboard");
+      } else if (role === "MENTOR") {
+        navigate("/mentor/dashboard");
+      } else if (role === "MENTEE") {
+        navigate("/mentee/dashboard");
+      } else {
+        return setError("Invalid role");
+      }
+      
     } else {
       setError(data.error || "Login failed");
       setIsAuthenticated(false);

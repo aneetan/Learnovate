@@ -31,6 +31,9 @@ public class SecurityConfig {
     @Autowired
     private RegisteredUserService rService;
 
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthFilter;
+
     @Bean
     public UserDetailsService userDetailsService(){
         return rService;
@@ -69,6 +72,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         //user don't need to be logged in to access registration page
                         .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/mentor/**").hasRole("MENTOR")
+                        .requestMatchers("/mentee/**").hasRole("MENTEE")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
@@ -76,7 +82,8 @@ public class SecurityConfig {
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS)
-                );
+                )
+                .addFilterBefore(jwtAuthFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

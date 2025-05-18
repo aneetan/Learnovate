@@ -5,6 +5,7 @@ import Register from './components/Auth/Register';
 import Login from './pages/Login';
 import RegistrationForm from './pages/RegistrationForm';
 import Dashboard from './pages/Dashboard';
+import MentorDashboard from './pages/MentorDashboard';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -14,7 +15,10 @@ function App() {
       <Routes>
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/login" element={<Login />} />
-        <Route path='/dashboard' element={<Dashboard/>}/>
+        <Route path='/mentee/dashboard' element={<Dashboard/>}/>
+        <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
+        <Route path="/admin/dashboard" element={<div> This is admin </div>} />
+
       </Routes>
     </Router>
   )

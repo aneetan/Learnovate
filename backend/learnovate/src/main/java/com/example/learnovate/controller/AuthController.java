@@ -1,5 +1,6 @@
 package com.example.learnovate.controller;
 
+import com.example.learnovate.config.JwtUtil;
 import com.example.learnovate.dto.LoginDto;
 import com.example.learnovate.dto.RegistrationDto;
 import com.example.learnovate.model.RegisteredUser;
@@ -31,6 +32,9 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> registerUser(@RequestBody RegistrationDto registrationDto) {
@@ -70,27 +74,45 @@ public class AuthController {
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> login(@RequestBody LoginDto login) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword())
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        Map<String, Object> userInfo = new HashMap<>();
+        String token;
+        String adminPw = passwordEncoder.encode("admin@123");
 
-            RegisteredUser user = rRepo.findByEmail(login.getEmail()).orElseThrow();
-            Map<String, Object> userInfo = new HashMap<>();
-            userInfo.put("id", user.getId());
-            userInfo.put("name", user.getName());
-            userInfo.put("email", user.getEmail());
-            userInfo.put("role", user.getRole());
+        try {
+            // Admin shortcut
+            if ("admin@gmail.com".equalsIgnoreCase(login.getEmail()) && passwordEncoder.matches(login.getPassword(), adminPw)) {
+                userInfo.put("id", 0);
+                userInfo.put("name", "Admin");
+                userInfo.put("email", "admin@gmail.com");
+                userInfo.put("role", "ADMIN");
+
+                token = jwtUtil.generateToken("admin@gmail.com", "ADMIN");
+            } else {
+                // Regular user authentication
+                Authentication authentication = authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword())
+                );
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                RegisteredUser user = rRepo.findByEmail(login.getEmail()).orElseThrow();
+
+                userInfo.put("id", user.getId());
+                userInfo.put("name", user.getName());
+                userInfo.put("email", user.getEmail());
+                userInfo.put("role", user.getRole());
+
+                token = jwtUtil.generateToken(user.getEmail(), user.getRole());
+            }
 
             Map<String, Object> responseBody = new HashMap<>();
             responseBody.put("user", userInfo);
+            responseBody.put("token", token);
             responseBody.put("message", "Login successful");
-            responseBody.put("redirectUrl", "/dashboard");
 
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(responseBody);
+
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Invalid email or password"));
