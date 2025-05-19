@@ -1,5 +1,53 @@
-const SelectRoleStep = ({ formData, handleChange }) => {
+import axios from "axios";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const SelectRoleStep = ({ formData, handleChange, onSubmit }) => {
+  const navigate = useNavigate();
   const { role } = formData;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+
+  const handleFormSubmit = async () => {
+    if (!role) {
+      setSubmitError("Please select a role");
+      return;
+    }
+
+    setIsSubmitting(true); 
+    setSubmitError(null);
+
+    try {
+      const response = await fetch('http://localhost:8080/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          role: role
+        })
+      })
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 409) {
+          throw new Error(data.error || 'Email already in use');
+        }
+        throw new Error(data.message || 'Registration failed');
+        }
+
+      onSubmit(data); 
+
+      navigate(data.redirectUrl || "/login");
+
+    } catch (error) {
+        setSubmitError(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <>
@@ -9,7 +57,7 @@ const SelectRoleStep = ({ formData, handleChange }) => {
           <label htmlFor="role" className="flex items-center text-gray-700 text-base font-medium">
             I want to be a:
           </label>
-          <div className="relative w-full"> {/* Added relative wrapper */}
+          <div className="relative w-full">
             <select
               id="role"
               name="role"
@@ -38,10 +86,22 @@ const SelectRoleStep = ({ formData, handleChange }) => {
               </svg>
             </div>
           </div>
+          {submitError && <div className="text-red-600 text-sm font-medium text-left">{submitError}</div>}
         </div>
       </div>
+      <button 
+        onClick={handleFormSubmit} 
+        disabled={!role || isSubmitting}
+        className={`w-full p-3 rounded-lg text-white font-semibold transition-all duration-300 ${
+          role && !isSubmitting 
+            ? "bg-[#26A69A] hover:bg-[#208f84]" 
+            : "bg-gray-400 cursor-not-allowed"
+        }`}
+      >
+        {isSubmitting ? 'Submitting...' : 'Submit Registration'}
+      </button>
     </>
   );
 };
 
-export default SelectRoleStep;
+export default SelectRoleStep

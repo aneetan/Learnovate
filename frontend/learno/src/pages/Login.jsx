@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { jwtDecode } from "jwt-decode";
 
-const Login = ({ setCurrentUser, users }) => {
+const Login = ({setCurrentUser, users }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -12,6 +12,7 @@ const Login = ({ setCurrentUser, users }) => {
   const [isAuthenticate, setIsAuthenticated] = useState(false)
 
   const navigate = useNavigate()
+
   const { email, password } = formData
 
   const handleChange = (e) => {
@@ -30,42 +31,43 @@ const Login = ({ setCurrentUser, users }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+          body: JSON.stringify(formData),
       })
 
       let data = {};
-      try {
-        data = await response.json();
-      } catch {
-        const text = await response.text();
-        throw new Error(text || "Login failed");
-      }
+    try {
+      data = await response.json();
+    } catch {
+      const text = await response.text();
+      throw new Error(text || "Login failed");
+    }
 
-      if (!response.ok) {
-        setError(data.error || "Invalid email or password");
-      }
+    if (!response.ok) {
+      setError(data.error || "Invalid email or password");
+    }
 
-      if (data.user && data.token) {
-        setIsAuthenticated(true);
+    if (data.user && data.token) {
+      setIsAuthenticated(true);
 
-        const decoded = jwtDecode(data.token);
-        const role = decoded.role?.toUpperCase();
-        localStorage.setItem("token", data.token);
+      const decoded = jwtDecode(data.token);
+      const role = decoded.role?.toUpperCase();
+      localStorage.setItem("token", data.token);
 
-        if (role === "ADMIN") {
-          navigate("/admin/dashboard");
-        } else if (role === "MENTOR") {
-          navigate("/mentor/dashboard");
-        } else if (role === "MENTEE") {
-          navigate("/mentee/dashboard");
-        } else {
-          return setError("Invalid role");
-        }
-        
+      // Redirect based on role
+      if (role === "ADMIN") {
+        navigate("/admin/dashboard");
+      } else if (role === "MENTOR") {
+        navigate("/mentor/dashboard");
+      } else if (role === "MENTEE") {
+        navigate("/mentee/dashboard");
       } else {
-        setError(data.error || "Login failed");
-        setIsAuthenticated(false);
+        return setError("Invalid role");
       }
+      
+    } else {
+      setError(data.error || "Login failed");
+      setIsAuthenticated(false);
+    }
 
     } catch (err) {
       setError(err.message || "Invalid email or password")
@@ -82,8 +84,8 @@ const Login = ({ setCurrentUser, users }) => {
         <h2 className="text-center mb-8 text-gray-900 font-bold text-2xl relative after:content-[''] after:absolute after:bottom-[-8px] after:left-1/2 after:transform after:-translate-x-1/2 after:w-12 after:h-1 after:bg-[#26A69A] after:rounded-lg">Login to Learnovate</h2>
         <form onSubmit={handleSubmit} className="flex flex-col">
           {error && (
-            <div style={{ color: "red", marginTop: "1rem" }}>{error}</div>
-          )}
+          <div style={{ color: "red", marginTop: "1rem" }}>{error}</div>
+        )}
           <div className="grid grid-cols-1 gap-8 mb-7">
             <div className="flex flex-col gap-4">
               <label htmlFor="email" className="flex items-center text-gray-700 text-base font-medium">Email</label>

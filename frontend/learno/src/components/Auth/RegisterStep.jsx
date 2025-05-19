@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 
-const RegisterStep = ({ formData, handleChange }) => {
+const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
   const { name, email, password, confirmPassword } = formData
   const [errors, setErrors] = useState({})
+  const [isValid, setIsValid] = useState(false)
 
   useEffect(() => {
     const newErrors = {}
@@ -14,8 +15,16 @@ const RegisterStep = ({ formData, handleChange }) => {
     else if (password.length < 8) newErrors.password = "Password must be at least 8 characters"
     if (!confirmPassword) newErrors.confirmPassword = "Confirm Password is required"
     else if (confirmPassword !== password) newErrors.confirmPassword = "Passwords do not match"
+    
     setErrors(newErrors)
+    setIsValid(Object.keys(newErrors).length === 0)
   }, [name, email, password, confirmPassword])
+
+  const handleSubmit = () => {
+    if (isValid) {
+      onStepComplete()
+    }
+  }
 
   return (
     <>
@@ -72,6 +81,17 @@ const RegisterStep = ({ formData, handleChange }) => {
           />
           {errors.confirmPassword && <div className="text-red-600 text-sm font-medium text-left">{errors.confirmPassword}</div>}
         </div>
+        <button 
+          onClick={handleSubmit} 
+          disabled={!isValid}
+          className={`w-full p-3 rounded-lg text-white font-semibold transition-all duration-300 ${
+            isValid 
+              ? "bg-[#26A69A] hover:bg-[#208f84]" 
+              : "bg-gray-400 cursor-not-allowed"
+          }`}
+        >
+          Next
+        </button>
       </div>
     </>
   )

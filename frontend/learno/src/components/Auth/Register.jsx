@@ -76,13 +76,15 @@ const Register = ({ setIsAuthenticated, setCurrentUser, users, setUsers }) => {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault()
 
     if (users.some((user) => user.email === formData.email)) {
       alert("Email already registered")
       return
     }
+
+    
 
     setLoading(true)
 
