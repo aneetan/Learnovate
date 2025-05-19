@@ -24,12 +24,14 @@ function App() {
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]}/>}>
           <Route path='/mentee' element={<MenteeLayout/>}>
             <Route path='/mentee/dashboard' element={<Dashboard/>}/>
+
           </Route>
         </Route>
 
         <Route element={<ProtectedRoutes allowedRoles={["ADMIN"]}/>}>
           <Route path='/admin' element={<AdminLayout/>}>
             <Route path='/admin/dashboard' element={<div> This is admin </div>}/>
+            
           </Route>
         </Route>
 
