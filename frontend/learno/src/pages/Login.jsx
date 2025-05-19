@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import logoImage from "../assets/images/learno_logo.png";
 import backgroundImage from "../assets/images/auth_bg.png";
+import { login } from "../features/userSlice";
 
 const Login = ({ setCurrentUser, users }) => {
   const [formData, setFormData] = useState({
@@ -12,6 +14,8 @@ const Login = ({ setCurrentUser, users }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isAuthenticate, setIsAuthenticated] = useState(false);
+
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
   const { email, password } = formData;
@@ -50,6 +54,8 @@ const Login = ({ setCurrentUser, users }) => {
       }
 
       if (data.user && data.token) {
+        // Save userInfo to Redux
+        dispatch(login(data.user));
         setIsAuthenticated(true);
 
         const decoded = jwtDecode(data.token);
@@ -83,7 +89,7 @@ const Login = ({ setCurrentUser, users }) => {
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
     <div className="absolute inset-0 opacity-80" style={{ backgroundColor: 'var(--primary-color)' }}></div>
-      <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-10 w-full max-w-[750px] border border-gray-200 relative z-10 flex flex-col justify-center min-h-[70vh]">
+      <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-10 w-full max-w-[550px] border border-gray-200 relative z-10 flex flex-col justify-center min-h-[70vh]">
         
         {/* Logo */}
         <div className="flex justify-center mb-2 -mt-15">
