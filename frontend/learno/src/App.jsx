@@ -11,7 +11,7 @@ import MenteeLayout from './components/Layout/MenteeLayout';
 import AdminLayout from './components/Layout/AdminLayout';
 
 function App() {
-  const [count, setCount] = useState(0)
+  // const [count, setCount] = useState(0)
 
   return (
     <Router>
