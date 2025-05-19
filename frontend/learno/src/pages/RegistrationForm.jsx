@@ -31,7 +31,7 @@ const RegistrationForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="mx-auto p-0 bg-white rounded-lg shadow-md">
       {currentStep === 1 && (
         <RegisterStep 
           formData={formData} 

@@ -10,6 +10,7 @@ import ProtectedRoutes from './security/ProtectedRoutes';
 import MenteeLayout from './components/Layout/MenteeLayout';
 import AdminLayout from './components/Layout/AdminLayout';
 
+
 function App() {
   const [count, setCount] = useState(0)
 
@@ -24,12 +25,14 @@ function App() {
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]}/>}>
           <Route path='/mentee' element={<MenteeLayout/>}>
             <Route path='/mentee/dashboard' element={<Dashboard/>}/>
+
           </Route>
         </Route>
 
         <Route element={<ProtectedRoutes allowedRoles={["ADMIN"]}/>}>
           <Route path='/admin' element={<AdminLayout/>}>
             <Route path='/admin/dashboard' element={<div> This is admin </div>}/>
+            
           </Route>
         </Route>
 
