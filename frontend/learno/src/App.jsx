@@ -10,7 +10,6 @@ import ProtectedRoutes from './security/ProtectedRoutes';
 import MenteeLayout from './components/Layout/MenteeLayout';
 import AdminLayout from './components/Layout/AdminLayout';
 
-
 function App() {
   const [count, setCount] = useState(0)
 
