@@ -9,6 +9,7 @@ import MentorDashboard from './pages/MentorDashboard';
 import ProtectedRoutes from './security/ProtectedRoutes';
 import MenteeLayout from './components/Layout/MenteeLayout';
 import AdminLayout from './components/Layout/AdminLayout';
+import MentorStepperForm from './pages/MentorStepperForm';
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -38,9 +39,9 @@ function App() {
         <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]}/>}>
           <Route path='/mentor' element={<MenteeLayout/>}>
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
+            <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
           </Route>
         </Route>
-
       </Routes>
     </Router>
   )
