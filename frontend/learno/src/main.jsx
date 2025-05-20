@@ -13,6 +13,5 @@ createRoot(document.getElementById('root')).render(
       <App />
     </StrictMode>
     </PersistGate>
-
   </Provider>,
 )
