@@ -1,20 +1,18 @@
-import React, { useState } from 'react'
-import { Button, Form, Input } from 'antd'
+import React, { useState } from 'react';
+import { Button, Form } from 'antd';
+import { UploadOutlined, FileTextOutlined, PictureOutlined } from '@ant-design/icons';
 
-const DocumentUpload = ({onFinish, initialValues}) => {
-    const [profile, setProfile] = useState(null);
-    const [profilePreview, setProfilePreview] = useState(null);
-    const [documents, setDocuments] = useState([]);
+const DocumentUpload = ({ onFinish, initialValues }) => {
+  const [profile, setProfile] = useState(null);
+  const [profilePreview, setProfilePreview] = useState(null);
+  const [documents, setDocuments] = useState([]);
 
   const handleProfileChange = (e) => {
-     const file = e.target.files[0];
+    const file = e.target.files[0];
     setProfile(file);
-
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePreview(reader.result);
-      };
+      reader.onloadend = () => setProfilePreview(reader.result);
       reader.readAsDataURL(file);
     }
   };
@@ -23,86 +21,87 @@ const DocumentUpload = ({onFinish, initialValues}) => {
     setDocuments(Array.from(e.target.files));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-    if (profile) formData.append("profile", profile);
-    documents.forEach((doc, index) => {
-      formData.append(`documents[${index}]`, doc);
-    });
-  };
-
   return (
-    <>
     <Form onFinish={onFinish} initialValues={initialValues}>
-            <div className='container flex  justify-between'>
-                <div className='w-full px-4 md:px-8'>
-                    <label className="block text-lg font-medium text-gray-700 mb-1">
-                            Upload your Profile Picture
-                  <p className='text-xs font-light'> (This accepts only JPG, JPEG and PNG files) </p>
-                      </label>
-                 <div className="flex flex-col items-center">
-                     <div className="w-24 h-24 rounded-full overflow-hidden border border-gray-300">
-                   <img
-                       src={
-                       profilePreview ||
-                       "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
-                       }
-                       alt="Profile Preview"
-                       className="object-cover w-full h-full"
-                />
-                     </div>
-               <input
-               type="file"
-               accept="image/*"
-               onChange={handleProfileChange}
-               className="block w-full text-sm text-gray-900 border border-gray-300 rounded cursor-pointer bg-gray-50"
-               />
-               </div>
-                </div>
+      {/* Profile Upload Section */}
+      <div className="bg-white border border-gray-200 rounded-xl shadow-md p-6 mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <PictureOutlined className="text-2xl text-blue-500" />
+          <h3 className="text-lg font-semibold text-gray-800">Upload Profile Picture</h3>
+        </div>
+        <p className="text-sm text-gray-500 mb-4">Only JPG, JPEG and PNG formats are allowed.</p>
+
+        <div className="flex flex-col md:flex-row md:items-center gap-6">
+          <div className="w-28 h-28 rounded-full border-2 border-dashed border-gray-300 shadow-inner overflow-hidden">
+            <img
+              src={
+                profilePreview ||
+                "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
+              }
+              alt="Profile Preview"
+              className="object-cover w-full h-full"
+            />
+          </div>
+
+          <label className="cursor-pointer w-full md:w-auto">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleProfileChange}
+              className="hidden"
+            />
+            <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium border border-blue-300 hover:bg-blue-200 transition duration-200">
+              <UploadOutlined /> Choose Profile Image
             </div>
+          </label>
+        </div>
+      </div>
 
-            <div className='container flex  justify-between'>
-                <div className='w-full px-4 mt-7 md:px-8'>
-                     <label className="block text-lg font-medium text-gray-700 mb-1">
-                        Add Relevant Document (for Verification)
-                        <p className='text-xs font-light'> (This accepts only PDF and Word documents) </p>  
-                    </label>
+      {/* Document Upload Section */}
+      <div className="bg-white border border-gray-200 rounded-xl shadow-md p-6 mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <FileTextOutlined className="text-2xl text-green-500" />
+          <h3 className="text-lg font-semibold text-gray-800">Upload Verification Documents</h3>
+        </div>
+        <p className="text-sm text-gray-500 mb-4">Only PDF and Word documents are accepted.</p>
 
-                        <input
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        multiple
-                        onChange={handleDocumentsChange}
-                        className="block w-full text-sm text-gray-900 border border-gray-300 rounded cursor-pointer bg-gray-50"
-                        />
-                        {documents.length > 0 && (
-                        <ul className="mt-2 list-disc list-inside text-sm text-green-600">
-                            {documents.map((doc, idx) => (
-                            <li key={idx}>{doc.name}</li>
-                            ))}
-                        </ul>
-                        )}
-                </div>
-            </div>
-        
+        <label className="cursor-pointer block w-full">
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx"
+            multiple
+            onChange={handleDocumentsChange}
+            className="hidden"
+          />
+          <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-lg text-sm font-medium border border-green-300 hover:bg-green-200 transition duration-200">
+            <UploadOutlined /> Choose Documents
+          </div>
+        </label>
 
-            
+        {documents.length > 0 && (
+          <div className="mt-4 bg-green-50 border border-green-200 rounded-md p-4">
+            <p className="text-sm font-medium text-green-700 mb-2">Selected Files:</p>
+            <ul className="list-disc list-inside text-sm text-green-800">
+              {documents.map((doc, idx) => (
+                <li key={idx}>{doc.name}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
 
-            <div className="w-full mt-6 md:w-[14%] float-right">
-                <Button type="primary"
-                htmlType="submit"
-                className="w-full md:w-auto mr-12 hover:drop-shadow-md hover:scale-102 transition
-                cursor-pointer duration-300 ease-in-out font-bold"
-                >
-                Submit
-                </Button>
-            </div>
-        </Form>
-    </>
-     
-  )
-}
+      {/* Submit Button */}
+      <div className="w-full text-right px-4">
+        <Button
+          type="primary"
+          htmlType="submit"
+          className="px-6 py-2 font-semibold rounded-md shadow hover:scale-105 hover:shadow-lg transition-all duration-200"
+        >
+          Submit
+        </Button>
+      </div>
+    </Form>
+  );
+};
 
-export default DocumentUpload
+export default DocumentUpload;
