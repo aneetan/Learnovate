@@ -25,16 +25,19 @@ const MentorStepperForm = () => {
 
   const data = {
     additonalInfo,
-    professionalInfo
+    professionalInfo,
   };
 
-  const submitDocuments = () => {
+  const submitDocuments = (values) => {
+  setDocumentUpload(values); 
     const formValue = {
       ...data,
+      documentUpload: values,
       status: "pending"
     };
     console.log(formValue);
   };
+
 
   const forms = [
     <AdditionalInfo onFinish={submitAdditionalInfo} initialValues={additonalInfo} />,
