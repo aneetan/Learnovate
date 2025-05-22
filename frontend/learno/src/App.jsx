@@ -39,7 +39,7 @@ function App() {
         <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]}/>}>
           <Route path='/mentor' element={<MenteeLayout/>}>
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
-            <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
+        <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
 
           </Route>
         </Route>

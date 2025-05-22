@@ -36,6 +36,13 @@ const ProfessionalInfo = ({onFinish, initialValues} ) => {
             "Exam Preparation",
             "Scholarship Guidance",
         ],
+        "Design & UX": [
+            "UI Design", 
+            "UX Research", 
+            "Figma", 
+            "Adobe XD", 
+            "Product Design",
+        ],
         };
 
         const [selectedArea, setSelectedArea] = useState("");

@@ -83,11 +83,11 @@ const AdditionalInfo = ({onFinish, initialValues} ) => {
                 </div>
             </div>
 
-            <div className="w-full mt-6 md:w-[14%] float-right">
+            <div className="w-full mt-6 md:w-[14%] float-right ">
                 <Button type="primary"
                 htmlType="submit"
                 className="w-full md:w-auto mr-12 hover:drop-shadow-md hover:scale-102 transition
-                cursor-pointer duration-300 ease-in-out font-bold"
+                cursor-pointer duration-300 ease-in-out font-bold "
                 >
                 Next <ArrowRightOutlined/>
                 </Button>
