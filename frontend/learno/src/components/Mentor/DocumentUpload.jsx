@@ -26,9 +26,10 @@ const DocumentUpload = ({ onFinish, initialValues }) => {
     setLoading(true);
     const data = new FormData();
     data.append("file", file);
-    data.append("upload_preset", "Learnovate");
+    data.append("upload_preset", import.meta.env.VITE_CLOUDINARY_PRESET);
+    const cloudname = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 
-    const url = `https://api.cloudinary.com/v1_1/dedwhvg7h/${type}/upload`;
+    const url = `https://api.cloudinary.com/v1_1/${cloudname}/${type}/upload`;
 
     const response = await fetch(url, {
       method: "POST",
