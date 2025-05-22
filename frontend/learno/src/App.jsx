@@ -12,7 +12,6 @@ import AdminLayout from './components/Layout/AdminLayout';
 import MentorStepperForm from './pages/MentorStepperForm';
 
 function App() {
-  // const [count, setCount] = useState(0)
 
   return (
     <Router>
@@ -20,6 +19,7 @@ function App() {
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/login" element={<Login />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
+
 
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]}/>}>
@@ -40,6 +40,7 @@ function App() {
           <Route path='/mentor' element={<MenteeLayout/>}>
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
             <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
+
           </Route>
         </Route>
       </Routes>
