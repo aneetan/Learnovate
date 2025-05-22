@@ -12,6 +12,7 @@ const MentorStepperForm = () => {
   const [additonalInfo, setAdditionalInfo] = useState(null);
   const [professionalInfo, setProfessionalInfo] = useState(null);
   const [documentUpload, setDocumentUpload] = useState(null);
+  const token = localStorage.getItem("token");
 
   const submitAdditionalInfo = (values) => {
     setAdditionalInfo(values);
@@ -35,6 +36,17 @@ const MentorStepperForm = () => {
       documentUpload: values,
       status: "pending"
     };
+
+    fetch('http://localhost:8080/api/mentor/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // 'Authorization': `Bearer ${token}` // <-- ADD THIS LINE
+      },
+      body: JSON.stringify(formValue)
+    })
+    .then(res => res.json())
+    .then(result => {/* handle result */});
     console.log(formValue);
   };
 
