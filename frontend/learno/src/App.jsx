@@ -10,6 +10,8 @@ import ProtectedRoutes from './security/ProtectedRoutes';
 import MenteeLayout from './components/Layout/MenteeLayout';
 import AdminLayout from './components/Layout/AdminLayout';
 import MentorStepperForm from './pages/MentorStepperForm';
+import Home from './pages/Home';
+import MentorDirectory from './pages/MentorDirectory';
 
 function App() {
 
@@ -18,6 +20,8 @@ function App() {
       <Routes>
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
             <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
 
