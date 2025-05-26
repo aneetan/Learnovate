@@ -74,13 +74,14 @@ const CategoriesSection = forwardRef(
                   <div className="flex justify-between items-center">
                     <Link
                       to="/mentors"
-                      className="bg-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-primary-dark transition"
+                      className="btn btn-primary"
+                      role="button"
                     >
                       Browse Mentors
                     </Link>
                     <button
                       onClick={() => toggleCategory(category.id)}
-                      className="text-primary text-sm font-medium flex items-center space-x-1 focus:outline-none"
+                      className="btn-minimal flex items-center gap-2 focus:outline-none"
                       aria-expanded={activeCategory === category.id}
                       aria-controls={`category-details-${category.id}`}
                     >
@@ -115,7 +116,8 @@ const CategoriesSection = forwardRef(
                       </div>
                       <Link
                         to="/mentors"
-                        className="inline-block bg-primary text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-primary-dark transition"
+                        className="btn btn-primary"
+                        role="button"
                       >
                         Find {category.name} Mentors
                       </Link>
@@ -129,7 +131,8 @@ const CategoriesSection = forwardRef(
           <div className="text-center">
             <Link
               to="/mentors"
-              className="inline-block bg-primary text-white px-8 py-3 rounded-lg text-base font-medium hover:bg-primary-dark transition"
+              className="btn btn-primary btn-lg"
+              role="button"
             >
               Explore All Categories
             </Link>
