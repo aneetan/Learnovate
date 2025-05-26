@@ -1,66 +1,42 @@
 package com.example.learnovate.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.List;
 import java.util.Map;
 
 @Entity
+@Data
+@Getter
+@Setter
 public class Mentor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int mentorId;
 
-    @ElementCollection
-    private Map<String, String> additonalInfo;
-
-    @ElementCollection
-    private Map<String, String> professionalInfo;
-
-    @ElementCollection
-    private Map<String, String> documentUpload;
-
+    private String bio;
+    private String phoneNumber;
+    private String price;
+    private String area;
+    private String title;
+    private String experience;
+    private String documentUrl;
+    private String profileUrl;
     private String status;
 
+    // Foreign key to RegisteredUser
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", nullable = false)
+    private RegisteredUser user;
+
+    @ElementCollection
+    @CollectionTable(name = "mentor_skills", joinColumns = @JoinColumn(name = "mentor_id"))
+    @Column(name = "skill")
+    private List<String> skills;
     public Mentor() {
     }
 
-    public int getMentorId() {
-        return mentorId;
-    }
-
-    public void setMentorId(int mentorId) {
-        this.mentorId = mentorId;
-    }
-
-    public Map<String, String> getAdditonalInfo() {
-        return additonalInfo;
-    }
-
-    public void setAdditonalInfo(Map<String, String> additonalInfo) {
-        this.additonalInfo = additonalInfo;
-    }
-
-    public Map<String, String> getProfessionalInfo() {
-        return professionalInfo;
-    }
-
-    public void setProfessionalInfo(Map<String, String> professionalInfo) {
-        this.professionalInfo = professionalInfo;
-    }
-
-    public Map<String, String> getDocumentUpload() {
-        return documentUpload;
-    }
-
-    public void setDocumentUpload(Map<String, String> documentUpload) {
-        this.documentUpload = documentUpload;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }
