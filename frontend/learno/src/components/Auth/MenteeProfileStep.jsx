@@ -1,101 +1,138 @@
-import { useState, useEffect } from "react"
+import React, { useState } from 'react';
+import { Button, Form, Input, Select } from 'antd';
+import { UploadOutlined, PictureOutlined, PhoneOutlined, UserOutlined, AppstoreOutlined } from '@ant-design/icons';
+import logoImage from '../../assets/images/learno_logo.png';
+import backgroundImage from '../../assets/images/auth_bg.png';
 
-const MenteeProfileStep = ({ formData, handleChange }) => {
-  const { phoneNumber, currentStatus, interestArea } = formData
-  const [digitCount, setDigitCount] = useState(0)
+const { Option } = Select;
 
-  const handlePhoneKeyPress = (e) => {
-    const allowedChars = /[0-9\s\-\(\)]/
-    if (!allowedChars.test(e.key) && e.key !== "Backspace" && e.key !== "Delete") {
-      e.preventDefault()
-      return
+const MenteeProfileSetup = ({ onFinish, initialValues }) => {
+  const [profile, setProfile] = useState(null);
+  const [profilePreview, setProfilePreview] = useState(null);
+
+  const handleProfileChange = (e) => {
+    const file = e.target.files[0];
+    setProfile(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setProfilePreview(reader.result);
+      reader.readAsDataURL(file);
     }
-    if (e.key.match(/[0-9]/)) {
-      if (digitCount >= 10) {
-        e.preventDefault()
-        return
-      }
-      setDigitCount(digitCount + 1)
-    } else if (e.key === "Backspace" || e.key === "Delete") {
-      const currentDigits = (phoneNumber.match(/\d/g) || []).length
-      setDigitCount(Math.max(0, currentDigits - 1))
-    }
-  }
+  };
+
+  const handleFinish = (values) => {
+    const formData = { ...values, profile };
+    if (onFinish) onFinish(formData);
+  };
 
   return (
-    <>
-      <div className="grid grid-cols-2 gap-8 mb-7">
-        <div className="flex flex-col gap-4">
-          <label className="flex items-center text-gray-700 text-base font-medium">Add your profile</label>
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-[120px] h-[120px] rounded-full bg-gray-200 flex items-center justify-center text-6xl text-gray-500">👤</div>
-            <button
-              type="button"
-              className="bg-[#26A69A] text-white px-5 py-2 rounded-lg text-sm font-medium cursor-pointer hover:bg-[#20897f] transition-all duration-300"
-              onClick={() => document.getElementById("profilePicture").click()}
-            >
-              Upload photo
-            </button>
-            <input
-              type="file"
-              id="profilePicture"
-              name="profilePicture"
-              onChange={handleChange}
-              className="hidden"
-              accept="image/*"
-            />
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="phoneNumber" className="flex items-center text-gray-700 text-base font-medium">Phone Number</label>
-          <input
-            type="text"
-            id="phoneNumber"
-            name="phoneNumber"
-            value={phoneNumber}
-            onChange={handleChange}
-            onKeyPress={handlePhoneKeyPress}
-            maxLength="14" // Accounts for spaces, hyphens, and parentheses (e.g., (123) 456-7890)
-            pattern="^\+?[\d\s\-\(\)]{10,14}$"
-            className="w-full p-3 border rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:border-[#26A69A] focus:ring-2 focus:ring-[#26A69A]/10 transition-all duration-300 border-gray-300"
-            placeholder="Enter contact number"
-            title="Please enter a valid phone number with up to 10 digits"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="currentStatus" className="flex items-center text-gray-700 text-base font-medium">Current Status</label>
-          <select
-            id="currentStatus"
-            name="currentStatus"
-            value={currentStatus}
-            onChange={handleChange}
-            className="w-full h-12 p-3 border rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:border-[#26A69A] focus:ring-2 focus:ring-[#26A69A]/10 transition-all duration-300 appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij4KICA8cGF0aCBmaWxsPSIjNkI3MjgwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zLjI5MyA1LjI5M2EuNzEuNzEgMCAwIDEgMS4wMDQtLjAwNEw4IDguOTc2lDMuNzA3LTMuNzA3YS43MS43MSAwIDAgMSAxLjAwNSAwIC43MS43MSAwIDAgMSAwIDEuMDA1TDEwLjAwNSAxMC43MDdhLjcxLjcxIDAgMCAxLTEuMDA0IDBMMy4yOTMgNi4yOTdhLjcxLjcxIDAgMCAxIDAtMS4wMDV6Ii8+Cjwvc3ZnPgo=')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:12px_12px] pr-8 border-gray-300"
-          >
-            <option value="">Select status</option>
-            <option value="Student">Student</option>
-            <option value="Job Seeker">Job Seeker</option>
-            <option value="Early Professional">Early Professional</option>
-          </select>
-        </div>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="interestArea" className="flex items-center text-gray-700 text-base font-medium">Interest Area</label>
-          <select
-            id="interestArea"
-            name="interestArea"
-            value={interestArea}
-            onChange={handleChange}
-            className="w-full h-12 p-3 border rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:border-[#26A69A] focus:ring-2 focus:ring-[#26A69A]/10 transition-all duration-300 appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij4KICA8cGF0aCBmaWxsPSIjNkI3MjgwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zLjI5MyA1LjI5M2EuNzEuNzEgMCAwIDEgMS4wMDQtLjAwNEw4IDguOTc2lDMuNzA3LTMuNzA3YS43MS43MSAwIDAgMSAxLjAwNSAwIC43MS43MSAwIDAgMSAwIDEuMDA1TDEwLjAwNSAxMC43MDdhLjcxLjcxIDAgMCAxLTEuMDA0IDBMMy4yOTMgNi4yOTdhLjcxLjcxIDAgMCAxIDAtMS4wMDV6Ii8+Cjwvc3ZnPgo=')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:12px_12px] pr-8 border-gray-300"
-          >
-            <option value="">Select interest</option>
-            <option value="Technology">Technology</option>
-            <option value="Business">Business</option>
-            <option value="Design">Design</option>
-            <option value="Marketing">Marketing</option>
-          </select>
-        </div>
-      </div>
-    </>
-  )
-}
+    <div
+      className="min-h-screen bg-cover bg-center relative flex items-center justify-center px-6"
+      style={{ backgroundImage: `url(${backgroundImage})` }}
+    >
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-[#148FA8]/90 z-0"></div>
 
-export default MenteeProfileStep
+      {/* Main Card */}
+      <div className="relative z-10 w-full max-w-5xl bg-white rounded-xl shadow-lg p-10">
+        {/* Logo */}
+        <div className="flex justify-center mb-0">
+          <img src={logoImage} alt="Logo" className="h-44 object-contain" />
+        </div>
+
+        <Form
+          onFinish={handleFinish}
+          initialValues={initialValues}
+          layout="vertical"
+          className="space-y-10"
+        >
+          {/* Profile Upload Section */}
+          <div className="bg-white border border-gray-200 rounded-xl shadow-inner p-8">
+            <div className="flex items-center gap-4 mb-6">
+              <PictureOutlined className="text-3xl text-blue-600" />
+              <h3 className="text-xl font-semibold text-gray-900">Upload Profile Picture</h3>
+            </div>
+            <p className="text-base text-gray-600 mb-6">Only JPG, JPEG, and PNG formats are allowed.</p>
+
+            <div className="flex flex-col md:flex-row md:items-center gap-8">
+              <div className="w-32 h-32 rounded-full border-2 border-dashed border-gray-300 shadow-inner overflow-hidden">
+                <img
+                  src={
+                    profilePreview ||
+                    'https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png'
+                  }
+                  alt="Profile Preview"
+                  className="object-cover w-full h-full"
+                />
+              </div>
+
+              <label className="cursor-pointer w-full md:w-auto">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleProfileChange}
+                  className="hidden"
+                />
+                <div className="inline-flex items-center gap-3 bg-blue-100 text-blue-700 px-5 py-3 rounded-lg text-base font-semibold border border-blue-300 hover:bg-blue-200 transition duration-200">
+                  <UploadOutlined className="text-lg" /> Choose Profile Image
+                </div>
+              </label>
+            </div>
+          </div>
+
+          {/* Other Form Fields */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <Form.Item
+              label={<span className="font-semibold text-lg"><PhoneOutlined className="mr-1" /> Phone Number</span>}
+              name="phoneNumber"
+              rules={[
+                { required: true, message: 'Please input your phone number!' },
+                { pattern: /^\d{10}$/, message: 'Phone number must be 10 digits' },
+              ]}
+            >
+              <Input placeholder="Enter contact number" maxLength={10} size="large" />
+            </Form.Item>
+
+            <Form.Item
+              label={<span className="font-semibold text-lg"><UserOutlined className="mr-1" /> Current Status</span>}
+              name="currentStatus"
+              rules={[{ required: true, message: 'Please select your status!' }]}
+            >
+              <Select placeholder="Select your status" size="large">
+                <Option value="Student">Student</Option>
+                <Option value="Job Seeker">Job Seeker</Option>
+                <Option value="Early Professional">Early Professional</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              label={<span className="font-semibold text-lg"><AppstoreOutlined className="mr-1" /> Interest Area</span>}
+              name="interestArea"
+              rules={[{ required: true, message: 'Please select your interest area!' }]}
+            >
+              <Select placeholder="Select your interest area" size="large">
+                <Option value="Technology">Technology</Option>
+                <Option value="Business">Business</Option>
+                <Option value="Design">Design</Option>
+                <Option value="Marketing">Marketing</Option>
+              </Select>
+            </Form.Item>
+          </div>
+
+          {/* Submit Button */}
+          <div className="w-full text-right">
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="px-10 py-4 text-lg font-semibold rounded-md shadow hover:scale-105 hover:shadow-lg transition-all duration-200"
+            >
+              Submit
+            </Button>
+          </div>
+        </Form>
+      </div>
+    </div>
+  );
+};
+
+export default MenteeProfileStep;

@@ -32,8 +32,7 @@ const MentorStepperForm = () => {
     professionalInfo,
   };
 
-  const submitDocuments = (values) => {
-  setDocumentUpload(values); 
+  const submitDocuments = () => {
     const formValue = {
       ...data,
       documentUpload: values,
@@ -58,7 +57,6 @@ const MentorStepperForm = () => {
       });
     console.log(formValue);
   };
-
 
   const forms = [
     <AdditionalInfo onFinish={submitAdditionalInfo} initialValues={additionalInfo} />,
