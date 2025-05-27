@@ -86,7 +86,7 @@ public class AuthController {
                 userInfo.put("email", "admin@gmail.com");
                 userInfo.put("role", "ADMIN");
 
-                token = jwtUtil.generateToken("admin@gmail.com", "ADMIN");
+                token = jwtUtil.generateToken("admin@gmail.com", "ADMIN", "Admin", 0);
             } else {
                 // Regular user authentication
                 Authentication authentication = authenticationManager.authenticate(
@@ -101,7 +101,7 @@ public class AuthController {
                 userInfo.put("email", user.getEmail());
                 userInfo.put("role", user.getRole());
 
-                token = jwtUtil.generateToken(user.getEmail(), user.getRole());
+                token = jwtUtil.generateToken(user.getEmail(), user.getRole(), user.getName(), user.getId());
             }
 
             Map<String, Object> responseBody = new HashMap<>();
