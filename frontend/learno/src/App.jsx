@@ -12,6 +12,8 @@ import AdminLayout from './components/Layout/AdminLayout';
 import MentorStepperForm from './pages/MentorStepperForm';
 import Home from './pages/Home';
 import MentorDirectory from './pages/MentorDirectory';
+import Test from './components/layout/TestLayout';
+import MenteeProfileStep from './components/Auth/MenteeProfileStep';
 
 function App() {
 
@@ -21,6 +23,8 @@ function App() {
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
+        <Route path="/test" element={<Test />} />
+
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
             <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
@@ -29,6 +33,7 @@ function App() {
 
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]}/>}>
+        <Route path="/mentee/registerDetails" element={<MenteeProfileStep />} />
           <Route path='/mentee' element={<MenteeLayout/>}>
             <Route path='/mentee/dashboard' element={<Dashboard/>}/>
           </Route>
