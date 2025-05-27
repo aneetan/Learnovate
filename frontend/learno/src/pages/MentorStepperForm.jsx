@@ -1,18 +1,21 @@
 import { FileOutlined, GroupOutlined, ProfileOutlined } from '@ant-design/icons';
 import { Steps } from 'antd';
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import AdditionalInfo from '../components/Mentor/AdditionalInfo';
 import ProfessionalInfo from '../components/Mentor/ProfessionalInfo';
 import DocumentUpload from '../components/Mentor/DocumentUpload';
 import logoImage from "../assets/images/learno_logo.png";
 import backgroundImage from "../assets/images/auth_bg.png";
+import { useSelector } from 'react-redux';
 
 const MentorStepperForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [additonalInfo, setAdditionalInfo] = useState(null);
+  const [additionalInfo, setAdditionalInfo] = useState(null);
   const [professionalInfo, setProfessionalInfo] = useState(null);
   const [documentUpload, setDocumentUpload] = useState(null);
-  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+   const user =  useSelector((state) => state.user.user)
 
   const submitAdditionalInfo = (values) => {
     setAdditionalInfo(values);
@@ -25,7 +28,7 @@ const MentorStepperForm = () => {
   };
 
   const data = {
-    additonalInfo,
+    additionalInfo,
     professionalInfo,
   };
 
@@ -34,6 +37,7 @@ const MentorStepperForm = () => {
     const formValue = {
       ...data,
       documentUpload: values,
+      user: user,
       status: "pending"
     };
 
@@ -41,25 +45,30 @@ const MentorStepperForm = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // 'Authorization': `Bearer ${token}` // <-- ADD THIS LINE
+        'Authorization': `Bearer ${localStorage.getItem("token")}` 
       },
       body: JSON.stringify(formValue)
     })
     .then(res => res.json())
-    .then(result => {/* handle result */});
+    .then(() => {
+      navigate("/mentor/dashboard");
+    })
+    .catch(error => {
+      console.log(error);
+      });
     console.log(formValue);
   };
 
 
   const forms = [
-    <AdditionalInfo onFinish={submitAdditionalInfo} initialValues={additonalInfo} />,
+    <AdditionalInfo onFinish={submitAdditionalInfo} initialValues={additionalInfo} />,
     <ProfessionalInfo onFinish={submitProfessionalInfo} initialValues={professionalInfo} />,
     <DocumentUpload onFinish={submitDocuments} initialValues={documentUpload} />
   ];
 
   const isStepDisabled = (step) => {
-    if (step === 1) return additonalInfo === null;
-    if (step === 2) return additonalInfo === null || professionalInfo === null;
+    if (step === 1) return additionalInfo === null;
+    if (step === 2) return additionalInfo === null || professionalInfo === null;
     return false;
   };
 

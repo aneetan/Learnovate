@@ -23,7 +23,6 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
-            <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
 
 
 
@@ -44,6 +43,7 @@ function App() {
         <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]}/>}>
           <Route path='/mentor' element={<MenteeLayout/>}>
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
+            <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
           </Route>
         </Route>
       </Routes>

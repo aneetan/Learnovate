@@ -26,10 +26,12 @@ public class JwtUtil {
     }
 
     // Generate token with a SINGLE role
-    public String generateToken(String email, String role) {
+    public String generateToken(String email, String role, String name, int id) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role.toUpperCase());
         claims.put("email", email);
+        claims.put("name", name);
+        claims.put("id", id);
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(email)
