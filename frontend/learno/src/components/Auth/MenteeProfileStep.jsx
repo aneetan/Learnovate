@@ -135,4 +135,4 @@ const MenteeProfileSetup = ({ onFinish, initialValues }) => {
   );
 };
 
-export default MenteeProfileSetup;
+export default MenteeProfileStep;

@@ -13,7 +13,7 @@ import MentorStepperForm from './pages/MentorStepperForm';
 import Home from './pages/Home';
 import MentorDirectory from './pages/MentorDirectory';
 import Test from './components/layout/TestLayout';
-import MenteeProfileStep from './components/Auth/MenteeProfileStep'
+import MenteeProfileStep from './components/Auth/MenteeProfileStep';
 
 function App() {
   // const [count, setCount] = useState(0)
