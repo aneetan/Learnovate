@@ -6,7 +6,7 @@ import backgroundImage from '../../assets/images/auth_bg.png';
 
 const { Option } = Select;
 
-const MenteeProfileSetup = ({ onFinish, initialValues }) => {
+const MenteeProfileStep = ({ onFinish, initialValues }) => {
   const [profile, setProfile] = useState(null);
   const [profilePreview, setProfilePreview] = useState(null);
 
