@@ -1,82 +1,105 @@
-import { FileOutlined, GroupOutlined, ProfileOutlined } from '@ant-design/icons';
-import { Steps } from 'antd';
 import React, { useState } from 'react';
-import AdditionalInfo from '../components/Mentor/AdditionalInfo';
-import ProfessionalInfo from '../components/Mentor/ProfessionalInfo';
-import DocumentUpload from '../components/Mentor/DocumentUpload';
-import logoImage from "../assets/images/learno_logo.png";
-import backgroundImage from "../assets/images/auth_bg.png";
+import { Button, Form, Input, Select, Upload, message } from 'antd';
+import { UploadOutlined, PictureOutlined, PhoneOutlined, UserOutlined, AppstoreOutlined } from '@ant-design/icons';
 
-const MentorStepperForm = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [additonalInfo, setAdditionalInfo] = useState(null);
-  const [professionalInfo, setProfessionalInfo] = useState(null);
-  const [documentUpload, setDocumentUpload] = useState(null);
+const { Option } = Select;
 
-  const submitAdditionalInfo = (values) => {
-    setAdditionalInfo(values);
-    setCurrentStep(1);
+const MenteeProfileStep = ({ onFinish, initialValues }) => {
+  const [profile, setProfile] = useState(null);
+  const [profilePreview, setProfilePreview] = useState(initialValues?.profilePreview || null);
+
+  const handleProfileChange = (info) => {
+    const file = info.file.originFileObj;
+    setProfile(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setProfilePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
   };
 
-  const submitProfessionalInfo = (values) => {
-    setProfessionalInfo(values);
-    setCurrentStep(2);
-  };
-
-  const data = {
-    additonalInfo,
-    professionalInfo
-  };
-
-  const submitDocuments = () => {
-    const formValue = {
-      ...data,
-      status: "pending"
-    };
-    console.log(formValue);
-  };
-
-  const forms = [
-    <AdditionalInfo onFinish={submitAdditionalInfo} initialValues={additonalInfo} />,
-    <ProfessionalInfo onFinish={submitProfessionalInfo} initialValues={professionalInfo} />,
-    <DocumentUpload onFinish={submitDocuments} initialValues={documentUpload} />
-  ];
-
-  const isStepDisabled = (step) => {
-    if (step === 1) return additonalInfo === null;
-    if (step === 2) return additonalInfo === null || professionalInfo === null;
-    return false;
+  const beforeUpload = (file) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('You can only upload JPG/PNG files!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('Image must be smaller than 2MB!');
+    }
+    return isJpgOrPng && isLt2M;
   };
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center relative flex items-center justify-center px-4"
-      style={{ backgroundImage: `url(${backgroundImage})` }}
-    >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-[#148FA8]/90 z-0" ></div>
-
-      {/* Main content */}
-      <div className="relative z-10 w-full max-w-4xl bg-white rounded-xl shadow-xl p-6">
-        {/* Logo */}
-        <div className="flex justify-center mb-4 -mt-6">
-          <img src={logoImage} alt="Logo" className="h-32 object-contain" />
+    <div className="bg-white rounded-xl shadow-md p-6">
+      <Form onFinish={onFinish} initialValues={initialValues} layout="vertical">
+        {/* Profile Upload Section */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-28 h-28 rounded-full border-2 border-dashed border-gray-300 shadow-inner overflow-hidden">
+            <img
+              src={profilePreview || "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"}
+              alt="Profile Preview"
+              className="object-cover w-full h-full"
+            />
+          </div>
+          <Upload
+            showUploadList={false}
+            beforeUpload={beforeUpload}
+            onChange={handleProfileChange}
+            accept="image/jpeg,image/png"
+          >
+            <Button icon={<UploadOutlined />} className="bg-blue-100 text-blue-700 border-blue-300 hover:bg-blue-200">
+              Upload Profile Image
+            </Button>
+          </Upload>
         </div>
 
-        {/* Steps */}
-        <div className="mb-6 px-4">
-          <Steps current={currentStep} onChange={setCurrentStep} responsive>
-            <Steps.Step title="Personal Details" icon={<ProfileOutlined />} disabled={isStepDisabled(0)} />
-            <Steps.Step title="Professional Info" icon={<GroupOutlined />} disabled={isStepDisabled(1)} />
-            <Steps.Step title="Documents" icon={<FileOutlined />} disabled={isStepDisabled(2)} />
-          </Steps>
-        </div>
+        {/* Form Fields */}
+        <Form.Item
+          label={<span className="font-medium"><PhoneOutlined /> Phone Number</span>}
+          name="phoneNumber"
+          rules={[
+            { required: true, message: 'Please input your phone number!' },
+            { pattern: /^\d{10}$/, message: 'Phone number must be 10 digits' },
+          ]}
+        >
+          <Input placeholder="Enter contact number" maxLength={10} />
+        </Form.Item>
 
-        {/* Form content */}
-        <div className="px-2">{forms[currentStep]}</div>
-      </div>
+        <Form.Item
+          label={<span className="font-medium"><UserOutlined /> Current Status</span>}
+          name="currentStatus"
+          rules={[{ required: true, message: 'Please select your status!' }]}
+        >
+          <Select placeholder="Select your status">
+            <Option value="Student">Student</Option>
+            <Option value="Job Seeker">Job Seeker</Option>
+            <Option value="Early Professional">Early Professional</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item
+          label={<span className="font-medium"><AppstoreOutlined /> Interest Area</span>}
+          name="interestArea"
+          rules={[{ required: true, message: 'Please select your interest area!' }]}
+        >
+          <Select placeholder="Select your interest area">
+            <Option value="Technology">Technology</Option>
+            <Option value="Business">Business</Option>
+            <Option value="Design">Design</Option>
+            <Option value="Marketing">Marketing</Option>
+          </Select>
+        </Form.Item>
+
+        {/* Submit Button */}
+        <div className="w-full text-right mt-6">
+          <Button type="primary" htmlType="submit" className="px-6 py-2 font-semibold rounded-md shadow hover:scale-105 hover:shadow-lg transition-all duration-200">
+            Submit
+          </Button>
+        </div>
+      </Form>
     </div>
   );
 };
 
-export default MentorStepperForm;
+export default MenteeProfileStep;
