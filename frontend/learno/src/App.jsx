@@ -32,9 +32,10 @@ function App() {
 
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]}/>}>
-        <Route path="/mentee/registerDetails" element={<MenteeProfileStep />} />
           <Route path='/mentee' element={<MenteeLayout/>}>
             <Route path='/mentee/dashboard' element={<Dashboard/>}/>
+            <Route path="/mentee/registerDetails" element={<MenteeProfileStep />} />
+
           </Route>
         </Route>
 
