@@ -16,7 +16,6 @@ import Test from './components/layout/TestLayout';
 import MenteeProfileStep from './components/Auth/MenteeProfileStep';
 
 function App() {
-  // const [count, setCount] = useState(0)
 
   return (
     <Router>
@@ -28,13 +27,15 @@ function App() {
 
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
+            <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
+
+
 
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]}/>}>
         <Route path="/mentee/registerDetails" element={<MenteeProfileStep />} />
           <Route path='/mentee' element={<MenteeLayout/>}>
             <Route path='/mentee/dashboard' element={<Dashboard/>}/>
-
           </Route>
         </Route>
 
@@ -48,7 +49,6 @@ function App() {
         <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]}/>}>
           <Route path='/mentor' element={<MenteeLayout/>}>
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
-        <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
           </Route>
         </Route>
       </Routes>

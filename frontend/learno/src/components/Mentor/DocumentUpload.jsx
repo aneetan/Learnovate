@@ -5,7 +5,8 @@ import { UploadOutlined, FileTextOutlined, PictureOutlined } from '@ant-design/i
 const DocumentUpload = ({ onFinish, initialValues }) => {
   const [profile, setProfile] = useState(null);
   const [profilePreview, setProfilePreview] = useState(null);
-  const [documents, setDocuments] = useState([]);
+  const [document, setDocument] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleProfileChange = (e) => {
     const file = e.target.files[0];
@@ -17,12 +18,62 @@ const DocumentUpload = ({ onFinish, initialValues }) => {
     }
   };
 
-  const handleDocumentsChange = (e) => {
-    setDocuments(Array.from(e.target.files));
+  const handleDocumentChange = (e) => {
+    setDocument(e.target.files[0]);
   };
 
+  const uploadToCloudinary = async (file, type = "image") => {
+    setLoading(true);
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", import.meta.env.VITE_CLOUDINARY_PRESET);
+    const cloudname = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+
+    const url = `https://api.cloudinary.com/v1_1/${cloudname}/${type}/upload`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      body: data
+    });
+
+    const result = await response.json();
+    setLoading(false);
+    return result.secure_url;
+
+  };
+
+  const handleSubmit = async() => {
+
+    try {
+      let uploadedProfileUrl = null;
+      let uploadedDocUrl = null;
+
+      // Upload profile picture
+      if (profile) {
+        uploadedProfileUrl = await uploadToCloudinary(profile, "image");
+      }
+
+      // Upload document
+        if (document) {
+          uploadedDocUrl = await uploadToCloudinary(document, "raw");
+        }
+
+      // Call the onFinish handler with the uploaded URLs
+      onFinish({
+        profileUrl: uploadedProfileUrl,
+        documentUrl: uploadedDocUrl
+      });
+
+    } catch (error) {
+      console.error("Upload failed", error);
+    }
+};
+
   return (
-    <Form onFinish={onFinish} initialValues={initialValues}>
+    <Form onFinish={handleSubmit} initialValues={initialValues}>
+      {
+        loading? "Uploading files...." : <></>
+      }
       {/* Profile Upload Section */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-md p-6 mb-8">
         <div className="flex items-center gap-3 mb-4">
@@ -47,6 +98,7 @@ const DocumentUpload = ({ onFinish, initialValues }) => {
             <input
               type="file"
               accept="image/*"
+              name = "profile"
               onChange={handleProfileChange}
               className="hidden"
             />
@@ -69,8 +121,8 @@ const DocumentUpload = ({ onFinish, initialValues }) => {
           <input
             type="file"
             accept=".pdf,.doc,.docx"
-            multiple
-            onChange={handleDocumentsChange}
+            name = "document"
+            onChange={handleDocumentChange}
             className="hidden"
           />
           <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-lg text-sm font-medium border border-green-300 hover:bg-green-200 transition duration-200">
@@ -78,14 +130,10 @@ const DocumentUpload = ({ onFinish, initialValues }) => {
           </div>
         </label>
 
-        {documents.length > 0 && (
+        {document && (
           <div className="mt-4 bg-green-50 border border-green-200 rounded-md p-4">
             <p className="text-sm font-medium text-green-700 mb-2">Selected Files:</p>
-            <ul className="list-disc list-inside text-sm text-green-800">
-              {documents.map((doc, idx) => (
-                <li key={idx}>{doc.name}</li>
-              ))}
-            </ul>
+            <p className="text-sm text-green-800">{document.name}</p>
           </div>
         )}
       </div>
