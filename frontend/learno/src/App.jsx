@@ -15,6 +15,7 @@ import Home from './pages/Home';
 import MentorDirectory from './pages/MentorDirectory';
 import MentorLayout from './components/layout/MentorLayout';
 import MenteeProfileStep from './components/Auth/MenteeProfileStep';
+import Test from "./pages/mentor/Dashboard";
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
+        <Route path="/tes" element={<Test />} />
         <Route path="/test" element={<MentorLayout />} />
 
         <Route path="/findMentor" element={<MentorDirectory />} />

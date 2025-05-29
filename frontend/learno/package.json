@@ -15,6 +15,7 @@
     "@tailwindcss/vite": "^4.1.6",
     "antd": "^5.25.2",
     "axios": "^1.9.0",
+    "date-fns": "^4.1.0",
     "flowbite": "^3.1.2",
     "framer-motion": "^12.12.2",
     "json-server": "^1.0.0-beta.3",
@@ -27,6 +28,7 @@
     "react-redux": "^9.2.0",
     "react-router": "^7.6.0",
     "react-router-dom": "^6.30.0",
+    "recharts": "^2.15.3",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
     "tailwindcss": "^4.1.6"
