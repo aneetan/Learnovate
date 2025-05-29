@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import 'flowbite';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Register from './components/Auth/Register';
 import Login from './pages/Login';
@@ -12,7 +13,7 @@ import AdminLayout from './components/Layout/AdminLayout';
 import MentorStepperForm from './pages/MentorStepperForm';
 import Home from './pages/Home';
 import MentorDirectory from './pages/MentorDirectory';
-import Test from './components/layout/TestLayout';
+import MentorLayout from './components/layout/MentorLayout';
 import MenteeProfileStep from './components/Auth/MenteeProfileStep';
 
 function App() {
@@ -23,11 +24,10 @@ function App() {
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
-        <Route path="/test" element={<Test />} />
+        <Route path="/test" element={<MentorLayout />} />
 
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
-            <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
 
 
 
@@ -47,7 +47,9 @@ function App() {
         </Route>
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]}/>}>
+        
           <Route path='/mentor' element={<MenteeLayout/>}>
+            <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
           </Route>
         </Route>

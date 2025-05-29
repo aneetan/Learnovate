@@ -4,13 +4,10 @@
 }
 
 .ant-btn-primary{
-  background-color: #26A69A;
+  background-color: #148FA8;
 }
 
 .ant-btn-primary:hover{
-  background-color: #26A69A !important;
+  background-color: #148FA8 !important;
 }
 
-.anticon{
-  color: #26A69A;
-}
