@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts"
 import { format } from "date-fns"
+import { MdDashboard } from "react-icons/md"  // <-- Import the icon here
 import PageTransition from "../../components/common/PageTransition"
 import AnimatedCounter from "../../components/common/AnimatedCounter"
 
@@ -85,26 +86,36 @@ const MentorDashboard = () => {
             className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6 sm:mb-8"
           >
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Welcome, {currentUser.name}!</h1>
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 mt-2">
-                Mentor
-              </span>
+              {/* New Dashboard heading with icon */}
+              <div className="mb-4">
+                <h2
+  className="flex items-center text-xl sm:text-2xl font-semibold text-gray-700 mb-2"
+  style={{ color: "var(--primary-color)" }}
+>
+  <MdDashboard className="mr-2 w-6 h-6" style={{ color: "var(--primary-color)" }} />
+  Dashboard
+</h2>
+
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Welcome, {currentUser.name}!</h1>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 mt-2">
+                  Mentor
+                </span>
+              </div>
             </div>
             <div className="text-sm text-gray-500">
               <p>{format(new Date(), "EEEE, MMMM do, yyyy")}</p>
             </div>
           </motion.div>
 
+          {/* ... rest of your component remains unchanged */}
           <motion.div 
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
-            <motion.div 
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 relative overflow-hidden hover:shadow-md transition-shadow"
-              variants={itemVariants}
-            >
+            {/* Completed */}
+            <motion.div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 relative overflow-hidden hover:shadow-md transition-shadow" variants={itemVariants}>
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-500"></div>
               <h3 className="text-sm font-medium text-gray-600 mb-4">Completed Sessions</h3>
               <p className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">
@@ -112,10 +123,8 @@ const MentorDashboard = () => {
               </p>
             </motion.div>
 
-            <motion.div 
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 relative overflow-hidden hover:shadow-md transition-shadow"
-              variants={itemVariants}
-            >
+            {/* Pending */}
+            <motion.div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 relative overflow-hidden hover:shadow-md transition-shadow" variants={itemVariants}>
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-orange-500"></div>
               <h3 className="text-sm font-medium text-gray-600 mb-4">Pending Sessions</h3>
               <p className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
@@ -123,10 +132,8 @@ const MentorDashboard = () => {
               </p>
             </motion.div>
 
-            <motion.div 
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 relative overflow-hidden hover:shadow-md transition-shadow"
-              variants={itemVariants}
-            >
+            {/* Upcoming */}
+            <motion.div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 relative overflow-hidden hover:shadow-md transition-shadow" variants={itemVariants}>
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
               <h3 className="text-sm font-medium text-gray-600 mb-4">Upcoming Sessions</h3>
               <p className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">
@@ -135,6 +142,7 @@ const MentorDashboard = () => {
             </motion.div>
           </motion.div>
 
+          {/* Session Overview and Quick Actions */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <motion.div
               className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow"
@@ -167,6 +175,7 @@ const MentorDashboard = () => {
               </div>
             </motion.div>
 
+            {/* Quick Actions */}
             <motion.div
               className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow"
               initial={{ opacity: 0, y: 20 }}
@@ -176,14 +185,15 @@ const MentorDashboard = () => {
               <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6 pb-4 border-b border-gray-200">Quick Actions</h2>
               <div className="flex flex-col space-y-4">
                 <Link 
-                  to="/upcoming-sessions" 
-                  className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                  to="/upcoming-sessions"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium text-sm shadow focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all btn-primary"
                 >
                   View Upcoming Sessions
                 </Link>
+
                 <Link 
-                  to="/profile" 
-                  className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                  to="/profile"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium text-sm shadow focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all btn-secondary"
                 >
                   Update Availability
                 </Link>
@@ -213,9 +223,7 @@ const MentorDashboard = () => {
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                         <div>
                           <h3 className="text-base sm:text-lg font-medium text-gray-900">{session.topic}</h3>
-                          <p className="mt-1 text-sm text-gray-600">
-                            with <span className="font-medium">{apprentice?.name}</span>
-                          </p>
+                          <p className="mt-1 text-sm text-gray-600">with <span className="font-medium">{apprentice?.name}</span></p>
                           <p className="mt-1 text-sm text-gray-500">
                             <span className="font-medium">{session.date}</span> at{" "}
                             <span className="text-primary font-medium">{session.time}</span>
@@ -224,7 +232,7 @@ const MentorDashboard = () => {
                         <div>
                           <Link 
                             to={`/messages/${apprentice?.id}`}
-                            className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium text-sm shadow focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all btn-primary"
                           >
                             Message
                           </Link>
