@@ -22,8 +22,7 @@ public class RegisteredUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<RegisteredUser> user = rRepo.findByEmail(email);
-        if(user.isPresent()){
-            var userObj = user.get();
+        if(user.isPresent()){            var userObj = user.get();
             return User.builder()
                     .username(userObj.getEmail())
                     .password(userObj.getPassword())
