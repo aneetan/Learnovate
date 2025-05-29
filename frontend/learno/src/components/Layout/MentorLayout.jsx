@@ -39,20 +39,23 @@ const MentorLayout = () => {
       {/* Main Content */}
       <div className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'}`}>
         {/* Header */}
-        <header className="fixed top-0 left-0 right-0 h-20 bg-white shadow z-30 flex items-center justify-between px-4 transition-all duration-300" style={{ paddingLeft: sidebarOpen ? '16rem' : '5rem', borderBottom: '1px solid var(--primary-lightest)' }}>
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="focus:outline-none rounded-md border p-1 mr-4" style={{ borderColor: 'var(--primary-color)', color: 'var(--primary-color)' }}>
-            <FaBars size={24} />
-          </button>
-          {/* Search Bar */}
-          <div className="relative w-full max-w-lg">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full p-3 border border-gray-300 rounded-[10px] pl-10 text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)] focus:border-transparent"
-            />
-            <FaSearch className="absolute left-3 top-3.5 text-gray-400" />
+        <header className="fixed top-0 left-0 right-0 h-20 bg-white shadow z-30 flex items-center px-4 transition-all duration-300" style={{ paddingLeft: sidebarOpen ? '16rem' : '5rem', borderBottom: '1px solid var(--primary-lightest)' }}>
+          {/* Left section: Hamburger + Search */}
+          <div className="flex items-center space-x-4 flex-1">
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="focus:outline-none rounded-md border p-1" style={{ borderColor: 'var(--primary-color)', color: 'var(--primary-color)' }}>
+              <FaBars size={24} />
+            </button>
+            {/* Search Bar */}
+            <div className="relative w-full max-w-sm">
+              <input
+                type="text"
+                placeholder="Search..."
+                className="w-full p-3 border border-gray-300 rounded-[10px] pl-10 text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)] focus:border-transparent"
+              />
+              <FaSearch className="absolute left-3 top-3.5 text-gray-400" />
+            </div>
           </div>
-          {/* User Dropdown */}
+          {/* Right section: User Dropdown */}
           <div className="relative ml-4">
             <button onClick={() => setDropdownOpen(!dropdownOpen)} className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition">
               <FaUserCircle className="text-2xl text-gray-600" />
