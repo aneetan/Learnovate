@@ -25,13 +25,14 @@ function App() {
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
-        <Route path="/tes" element={<Test />} />
-        <Route path="/test" element={<MentorLayout />} />
 
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
 
-
+<Route path="/ment" element={<MentorLayout />}>
+          <Route path="dashboard" element={<Test />} />
+          {/* Other routes */}
+        </Route>
 
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]}/>}>

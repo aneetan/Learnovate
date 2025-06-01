@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts"
 import { format } from "date-fns"
-import { MdDashboard } from "react-icons/md"  // <-- Import the icon here
+import { MdDashboard } from "react-icons/md"  
 import PageTransition from "../../components/common/PageTransition"
 import AnimatedCounter from "../../components/common/AnimatedCounter"
 
