@@ -14,6 +14,7 @@ import Home from './pages/Home';
 import MentorDirectory from './pages/MentorDirectory';
 import Test from './components/layout/TestLayout';
 import MenteeProfileStep from './components/Auth/MenteeProfileStep';
+import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
 
 function App() {
 
@@ -24,6 +25,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/test" element={<Test />} />
+
+        <Route path='/availability' element={<AvailabilitySchedule/>}/>
 
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
