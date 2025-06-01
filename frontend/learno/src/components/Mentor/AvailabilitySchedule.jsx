@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from "react-select";
-import { API_URL, getUserId } from "../../config";
+import { API_URL, getUserId } from "../../config/config";
 import { useNavigate } from "react-router-dom";
 
 const timezones = [

@@ -15,6 +15,7 @@ import MentorDirectory from './pages/MentorDirectory';
 import Test from './components/layout/TestLayout';
 import MenteeProfileStep from './components/Auth/MenteeProfileStep';
 import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
+import CalendarPreview from './pages/CalendarPreview';
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/test" element={<Test />} />
+        <Route path='/calendar' element={<CalendarPreview/>}/>
 
 
 
