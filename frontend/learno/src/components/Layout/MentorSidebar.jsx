@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FaRegCalendarAlt, FaAddressBook, FaRegCommentDots, FaUserCircle, FaSignOutAlt, FaBars, FaSearch } from 'react-icons/fa';
 import { MdDashboard, MdToday } from "react-icons/md";
 import logoImage from "../../assets/images/learno_logo_long.png";
@@ -10,8 +10,8 @@ const MentorSidebar = ({ children }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Detect mobile view
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -21,7 +21,6 @@ const MentorSidebar = ({ children }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Set sidebar state based on mobile view
   useEffect(() => {
     setSidebarOpen(!isMobile);
   }, [isMobile]);
@@ -35,7 +34,6 @@ const MentorSidebar = ({ children }) => {
 
   return (
     <div className="flex min-h-screen bg-gray-100 font-sans">
-      {/* Sidebar */}
       <div
         className={`
           fixed top-0 left-0 h-full bg-white border-r border-gray-200 z-50 transition-transform duration-300 ease-in-out
@@ -52,30 +50,43 @@ const MentorSidebar = ({ children }) => {
           />
         </div>
         <nav className="flex-1 p-4 space-y-3">
-          {menuItems.map((item) => (
-            <div
-              key={item.name}
-              onClick={() => {
-                navigate(item.path);
-                if (isMobile) setSidebarOpen(false);
-              }}
-              className="flex items-center space-x-4 cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 hover:bg-[var(--primary-lightest, #e0e7ff)] group"
-              style={{ color: 'inherit' }}
-            >
-              <span className="text-xl" style={{ color: 'var(--primary-color, #4f46e5)' }}>
-                {item.icon}
-              </span>
-              {(sidebarOpen || isMobile) && (
-                <span className="text-base font-semibold text-[var(--gray-700, #374151)] group-hover:text-[var(--primary-color, #4f46e5)]">
-                  {item.name}
+          {menuItems.map((item) => {
+            const isActive = location.pathname === item.path;
+
+            return (
+              <div
+                key={item.name}
+                onClick={() => {
+                  navigate(item.path);
+                  if (isMobile) setSidebarOpen(false);
+                }}
+                className={`
+                  flex items-center space-x-4 cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 group
+                  ${isActive
+                    ? 'bg-[var(--primary-color)] text-white'
+                    : 'hover:bg-[var(--primary-lightest)] hover:text-[var(--primary-color)]'
+                  }
+                `}
+              >
+                <span
+                  className="text-xl"
+                  style={{ color: isActive ? 'white' : 'var(--primary-color)' }}
+                >
+                  {item.icon}
                 </span>
-              )}
-            </div>
-          ))}
+                {(sidebarOpen || isMobile) && (
+                  <span
+                    className={`text-base font-semibold ${isActive ? 'text-white' : 'text-[var(--gray-700)] group-hover:text-[var(--primary-color)]'}`}
+                  >
+                    {item.name}
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </nav>
       </div>
 
-      {/* Backdrop overlay on mobile when sidebar is open */}
       {isMobile && sidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
@@ -83,7 +94,6 @@ const MentorSidebar = ({ children }) => {
         />
       )}
 
-      {/* Main Content */}
       <div
         className={`
           flex-1 flex flex-col transition-all duration-300 ease-in-out
@@ -91,7 +101,6 @@ const MentorSidebar = ({ children }) => {
           ${isMobile ? 'ml-0' : ''}
         `}
       >
-        {/* Header */}
         <header
           className="fixed top-0 left-0 right-0 h-20 bg-white shadow z-30 flex items-center px-4 transition-all duration-300"
           style={{
@@ -103,7 +112,7 @@ const MentorSidebar = ({ children }) => {
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="focus:outline-none rounded-md border p-1"
-              style={{ borderColor: 'var(--primary-color, #4f46e5)', color: 'var(--primary-color, #4f46e5)' }}
+              style={{ borderColor: 'var(--primary-color)', color: 'var(--primary-color)' }}
             >
               <FaBars size={24} />
             </button>
@@ -111,7 +120,7 @@ const MentorSidebar = ({ children }) => {
               <input
                 type="text"
                 placeholder="Search..."
-                className="w-full p-3 border border-gray-300 rounded-[10px] pl-10 text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary-light, #c7d2fe)] focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-[10px] pl-10 text-base focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)] focus:border-transparent"
               />
               <FaSearch className="absolute left-3 top-3.5 text-gray-400" />
             </div>
@@ -135,7 +144,6 @@ const MentorSidebar = ({ children }) => {
           </div>
         </header>
 
-        {/* Main Content Area */}
         <main className="pt-24 p-4 overflow-auto flex-1">
           {children}
         </main>
