@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css"; 
-import '../assets/css/calendar.css';
-import transformAvailability from "../config/transformAvailability";
+import '../../assets/css/calendar.css';
+import transformAvailability from "../../config/transformAvailability";
+import { useNavigate } from "react-router-dom";
 
 const bookedAppointments = {
-  "2025-06-05": ["13:00", "14:00"], // Specific times booked
+  "2025-06-05": ["13:00", "14:00"], 
   "2025-06-13": ["14:00"],
   "2025-06-10": ["12:00"]  
 };
@@ -13,6 +14,8 @@ const bookedAppointments = {
 const CalendarPreview = () => {
   const [view, setView] = useState("month");
   const [date, setDate] = useState(new Date());
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
+  const navigate = useNavigate();
 
   const dbAvailability = [
     {
@@ -23,7 +26,7 @@ const CalendarPreview = () => {
   ];
   const AVAILABILITY = transformAvailability(dbAvailability, bookedAppointments);
  
-   function formatDate(date) {
+  function formatDate(date) {
     // Use local time methods!
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -45,25 +48,26 @@ const CalendarPreview = () => {
     return "available";
   };
 
+  // Handle time slot selection
+  const handleTimeSlotClick = (slot) => {
+    if (slotStatus(slot) === "available") {
+      setSelectedTimeSlot(slot);
+    }
+  };
+
+  const handleNextClick = () => {
+    if (selectedTimeSlot) {
+      navigate("/mentee/booking-request", { 
+        state: { 
+          selectedDate: date,
+          selectedTime: selectedTimeSlot,
+        } 
+      });
+    }
+  };
+
   return (
     <div className="max-w-3xl mx-auto font-inter">
-      <div className="flex justify-between items-center mt-4 mb-2">
-        <div />
-        <div className="flex gap-2">
-          <button
-            className={`px-4 py-2 rounded-lg text-sm font-medium ${view === "month" ? "bg-teal-600 text-white" : "bg-gray-200 text-gray-900"}`}
-            onClick={() => setView("month")}
-          >
-            Month
-          </button>
-          <button
-            className={`px-4 py-2 rounded-lg text-sm font-medium ${view === "month" ? "bg-gray-200 text-gray-900" : "bg-teal-600 text-white"}`}
-            onClick={() => setView("week")}
-          >
-            week
-          </button>
-        </div>
-      </div>
 
       <div className="flex gap-7 items-center my-4 text-base">
         <div className="flex items-center"><span className="inline-block w-4 h-4 rounded bg-green-200 mr-2" /> Available</div>
@@ -122,15 +126,19 @@ const CalendarPreview = () => {
             dateSlots.map((slot) => (
               <div
                 key={slot}
+                onClick={() => handleTimeSlotClick(slot)}
                 className={`
                   min-w-[90px] h-16 rounded-lg flex flex-col items-center justify-center border text-base
                   ${slotStatus(slot) === "available"
-                    ? "bg-green-50 border-green-200 text-green-700"
+                    ? selectedTimeSlot === slot 
+                      ? "bg-green-200 border-green-500 text-green-800" // Selected state
+                      : "bg-green-50 border-green-200 text-green-700 hover:bg-green-100"
                     : slotStatus(slot) === "booked"
-                    ? "bg-yellow-50 border-yellow-300 text-yellow-700"
-                    : "bg-gray-100 border-gray-200 text-gray-400"
+                    ? "bg-yellow-50 border-yellow-300 text-yellow-700 cursor-not-allowed"
+                    : "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
                   }
                 `}
+                disabled={slotStatus(slot) !== "available"}
               >
                 <span className="font-medium">{slot}</span>
                 <span className="text-xs">
@@ -144,6 +152,18 @@ const CalendarPreview = () => {
             ))
           )}
         </div>
+      </div>
+
+      <div className="mb-12 flex justify-end">
+        <button
+          onClick={handleNextClick}
+          disabled={!selectedTimeSlot}
+          className={`px-6 py-2 rounded-lg text-white font-medium ${
+            selectedTimeSlot ? "bg-teal-600 hover:bg-teal-700" : "bg-gray-400 cursor-not-allowed"
+          }`}
+        >
+          Next
+        </button>
       </div>
     </div>
   );
