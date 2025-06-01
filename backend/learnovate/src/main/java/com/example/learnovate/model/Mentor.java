@@ -29,7 +29,7 @@ public class Mentor {
 
     // Foreign key to RegisteredUser
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private RegisteredUser user;
 
     @ElementCollection

@@ -31,7 +31,7 @@ public class JwtUtil {
         claims.put("role", role.toUpperCase());
         claims.put("email", email);
         claims.put("name", name);
-        claims.put("id", id);
+        claims.put("userId", id);
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(email)
@@ -66,7 +66,7 @@ public class JwtUtil {
     }
 
     // Parse and return all claims from the token
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(signingKey)
                 .build()

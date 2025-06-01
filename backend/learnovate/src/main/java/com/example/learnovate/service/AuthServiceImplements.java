@@ -5,6 +5,7 @@ import com.example.learnovate.dto.LoginDto;
 import com.example.learnovate.dto.RegistrationDto;
 import com.example.learnovate.model.RegisteredUser;
 import com.example.learnovate.repository.RegisteredUserRespository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,7 +30,7 @@ public class AuthServiceImplements implements AuthService{
 
 
 
-    public AuthServiceImplements(RegisteredUserRespository userRepository, AuthenticationManager authenticationManager,
+    public AuthServiceImplements(RegisteredUserRespository userRepository, @Lazy AuthenticationManager authenticationManager,
                                  PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
@@ -52,7 +53,7 @@ public class AuthServiceImplements implements AuthService{
         //save to database
         RegisteredUser savedUser = userRepository.save(registeredUser);
 
-        response.put("id", savedUser.getId());
+        response.put("id", savedUser.getUserId());
         response.put("name", savedUser.getName());
         response.put("email", savedUser.getEmail());
         response.put("role", savedUser.getRole());
@@ -87,12 +88,12 @@ public class AuthServiceImplements implements AuthService{
             RegisteredUser user = userRepository.findByEmail(loginDto.getEmail())
                     .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
 
-            userInfo.put("id", user.getId());
+            userInfo.put("id", user.getUserId());
             userInfo.put("name", user.getName());
             userInfo.put("email", user.getEmail());
             userInfo.put("role", user.getRole());
 
-            token = jwtUtil.generateToken(user.getEmail(), user.getRole(), user.getName(), user.getId());
+            token = jwtUtil.generateToken(user.getEmail(), user.getRole(), user.getName(), user.getUserId());
         }
         Map<String, Object> response = new HashMap<>();
         response.put("user", userInfo);

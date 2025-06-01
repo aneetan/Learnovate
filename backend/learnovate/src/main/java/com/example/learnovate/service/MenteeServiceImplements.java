@@ -1,11 +1,13 @@
 package com.example.learnovate.service;
 
+import com.example.learnovate.classfile.AuthenticateEmail;
 import com.example.learnovate.dto.MenteeDto;
 import com.example.learnovate.exception.UnauthorizedAccessException;
 import com.example.learnovate.model.Mentee;
 import com.example.learnovate.model.RegisteredUser;
 import com.example.learnovate.repository.MenteeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -13,13 +15,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class MenteeServiceImplements implements MenteeService{
     @Autowired
     private MenteeRepository menteeRepository;
+    Map<String, Object> response = new HashMap<>();
+
     @Override
-    public Mentee saveProfile(MenteeDto menteeDto) {
-        String authenticatedEmail = getAuthenticatedUserEmail();
+    public Map<String, Object> saveProfile(MenteeDto menteeDto) {
+        AuthenticateEmail authenticateEmail = new AuthenticateEmail();
+        String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
 
         // Validate email matches
         if (!authenticatedEmail.equals(menteeDto.getUser().getEmail())) {
@@ -34,31 +42,16 @@ public class MenteeServiceImplements implements MenteeService{
         mentee.setCurrentStatus(menteeDto.getCurrentStatus());
 
         RegisteredUser user = new RegisteredUser();
-        user.setId(Integer.valueOf(menteeDto.getUser().getId()));
+        user.setUserId(Integer.valueOf(menteeDto.getUser().getUserId()));
         user.setName(menteeDto.getUser().getName());
         user.setEmail(menteeDto.getUser().getEmail());
         user.setRole(menteeDto.getUser().getRole());
 
         mentee.setUser(user);
-        return menteeRepository.save(mentee);
-    }
 
-    private String getAuthenticatedUserEmail() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        response.put("mentee", mentee);
+        response.put("status", HttpStatus.OK);
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AuthenticationCredentialsNotFoundException("No authentication found");
-        }
-
-        // The principal should be your UserDetails implementation
-        Object principal = authentication.getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            return ((UserDetails) principal).getUsername(); // or getEmail() if available
-        } else if (principal instanceof String) {
-            return (String) principal; // if JWT subject is the email
-        }
-
-        throw new AuthenticationServiceException("Unable to extract email from authentication");
+        return response;
     }
 }

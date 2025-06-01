@@ -16,6 +16,6 @@ public class Mentee {
     private String currentStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private RegisteredUser user;
 }
