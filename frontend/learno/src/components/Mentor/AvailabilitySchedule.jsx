@@ -4,6 +4,8 @@ import { format } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from "react-select";
+import { API_URL, getUserId } from "../../config";
+import { useNavigate } from "react-router-dom";
 
 const timezones = [
   { value: "Asia/Kathmandu", label: "Kathmandu (GMT+5:45)" },
@@ -25,6 +27,7 @@ export default function AvailabilitySchedule() {
   const [selectedDays, setSelectedDays] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [timeRange, setTimeRange] = useState({ start: "09:00", end: "17:00" });
+  const navigate = useNavigate();
 
   const handleDayCheckbox = (dayValue) => {
     setSelectedDays((prev) =>
@@ -35,33 +38,40 @@ export default function AvailabilitySchedule() {
   };
 
   const handleSubmit = async (e) => {
+  e.preventDefault();
+  setSubmitting(true);
 
-    const formData = {
-        days: selectedDays.map((day) => ({
-          day,
-        })),
-        timeRanges: [timeRange],
-
-    }
-
-    console.log(formData);
-    e.preventDefault();
-    setSubmitting(true);
-    try {
-      await axios.post("/api/mentor/availability", {
-        timezone: selectedTimezone.value,
-        days: selectedDays.map((day) => ({
-          day,
-          timeRanges: [timeRange],
-        }))
-      });
-      alert("Availability saved successfully!");
-    } catch (err) {
-      alert("Failed to save availability. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
+  const formData = {
+    days: selectedDays,
+    startTime: timeRange.start,
+    endTime: timeRange.end,
+    userId: getUserId(localStorage.getItem("token"))
   };
+
+  try {
+    const response = await fetch(`${API_URL}/mentor/setAvailability`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem("token")}`
+      },
+      body: JSON.stringify(formData)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to save availability');
+    }
+
+    const data = await response.json();
+    navigate("/mentor/dashboard");
+  } catch (err) {
+    console.error("Error submitting availability:", err);
+    alert(err.message || "Failed to save availability. Please try again.");
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">

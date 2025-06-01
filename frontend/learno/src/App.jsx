@@ -26,7 +26,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/test" element={<Test />} />
 
-        <Route path='/availability' element={<AvailabilitySchedule/>}/>
+
 
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
@@ -53,6 +53,7 @@ function App() {
           <Route path='/mentor' element={<MenteeLayout/>}>
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
             <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
+            <Route path='/mentor/availability' element={<AvailabilitySchedule/>}/>
           </Route>
         </Route>
       </Routes>
