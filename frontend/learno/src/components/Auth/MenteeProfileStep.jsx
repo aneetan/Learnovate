@@ -5,6 +5,7 @@ import logoImage from '../../assets/images/learno_logo.png';
 import backgroundImage from '../../assets/images/auth_bg.png';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
+import { API_URL } from '../../config/config'
 
 
 
@@ -64,7 +65,7 @@ const MenteeProfileSetup = ({ onFinish, initialValues }) => {
         user: user
       };
       
-       fetch('http://localhost:8080/api/mentee/register', {
+       fetch(`${API_URL}/mentee/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

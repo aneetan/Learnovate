@@ -1,29 +1,40 @@
 package com.example.learnovate.service;
 
+import com.example.learnovate.classfile.AuthenticateEmail;
+import com.example.learnovate.dto.MentorAvailabilityDto;
 import com.example.learnovate.dto.MentorDTO;
 import com.example.learnovate.exception.UnauthorizedAccessException;
 import com.example.learnovate.model.Mentor;
+import com.example.learnovate.model.MentorAvailability;
 import com.example.learnovate.model.RegisteredUser;
+import com.example.learnovate.repository.MentorAvailabilityRepository;
 import com.example.learnovate.repository.MentorRepository;
+import com.example.learnovate.repository.RegisteredUserRespository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class MentorServiceImplements implements MentorService{
 
     @Autowired
     private MentorRepository mRepo;
+
+    @Autowired
+    private MentorAvailabilityRepository availableRepo;
+
+    @Autowired
+    private RegisteredUserRespository rRepo;
+
+
+    Map<String, Object> response = new HashMap<>();
+    //set the data for profile
     @Override
-    public Mentor saveProfile(MentorDTO mentorDTO) {
-        String authenticatedEmail = getAuthenticatedUserEmail();
+    public Map<String, Object> saveProfile(MentorDTO mentorDTO) {
+        AuthenticateEmail authenticateEmail = new AuthenticateEmail();
+        String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
 
         // Validate email matches
         if (!authenticatedEmail.equals(mentorDTO.getUser().getEmail())) {
@@ -49,7 +60,7 @@ public class MentorServiceImplements implements MentorService{
         mentor.setDocumentUrl(mentorDTO.getDocumentUpload().get("documentUrl"));
 
         RegisteredUser user = new RegisteredUser();
-        user.setId(Integer.valueOf(mentorDTO.getUser().getId()));
+        user.setUserId(Integer.valueOf(mentorDTO.getUser().getUserId()));
         user.setName(mentorDTO.getUser().getName());
         user.setEmail(mentorDTO.getUser().getEmail());
         user.setRole(mentorDTO.getUser().getRole());
@@ -57,25 +68,44 @@ public class MentorServiceImplements implements MentorService{
         mentor.setUser(user);
 
         mentor.setStatus(mentorDTO.getStatus());
-        return mRepo.save(mentor);
+
+        response.put("mentor", mentor);
+        response.put("status", HttpStatus.OK);
+
+        return  response;
+
     }
 
-    private String getAuthenticatedUserEmail() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    @Override
+    public Map<String, Object> saveAvailability(MentorAvailabilityDto availabilityDto) {
+        RegisteredUser user = rRepo.findById(availabilityDto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + availabilityDto.getUserId()));
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AuthenticationCredentialsNotFoundException("No authentication found");
+        AuthenticateEmail authenticateEmail = new AuthenticateEmail();
+        String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
+
+        // Validate email matches
+        if (!authenticatedEmail.equals(user.getEmail())) {
+            throw new UnauthorizedAccessException("Email in request does not match authenticated user");
         }
 
-        // The principal should be your UserDetails implementation
-        Object principal = authentication.getPrincipal();
+        MentorAvailability availability = availableRepo.findByUser(user)
+                .orElse(new MentorAvailability());
 
-        if (principal instanceof UserDetails) {
-            return ((UserDetails) principal).getUsername(); // or getEmail() if available
-        } else if (principal instanceof String) {
-            return (String) principal; // if JWT subject is the email
-        }
+        availability.setStartTime(availabilityDto.getStartTime());
+        availability.setEndTime(availabilityDto.getEndTime());
+        availability.setDays(availabilityDto.getDays());
+        availability.setUser(user);
 
-        throw new AuthenticationServiceException("Unable to extract email from authentication");
+        availableRepo.save(availability);
+
+        response.put("availability", availability);
+        response.put("status", HttpStatus.OK);
+
+        return  response;
     }
+
+
+
+
 }

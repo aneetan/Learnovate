@@ -1,0 +1,40 @@
+/* Hide most react-calendar default styles, let Tailwind take over */
+.react-calendar {
+  border: none !important;
+  font-family: inherit !important;
+  width: 100% !important;
+  background: transparent !important;
+}
+.react-calendar__tile {
+  min-height: 56px !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 0;
+}
+.react-calendar__month-view__days__day--weekend {
+  color: inherit;
+}
+.calendar-available {
+  background-color: #f0fdf4 !important;
+}
+.calendar-booked {
+  background-color: #fffbeb !important;
+}
+.react-calendar__navigation {
+  margin-bottom: 0.5rem;
+}
+.react-calendar__navigation button {
+  background: #f3f4f6 !important;
+  border-radius: 8px !important;
+  margin: 0 0.25rem !important;
+  color: #222 !important;
+  font-weight: 500;
+  font-size: 1rem !important;
+}
+.react-calendar__navigation__label {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+}
+.react-calendar__tile--active {
+  background: #e0f2fe !important;
+}

@@ -14,6 +14,9 @@ import Home from './pages/Home';
 import MentorDirectory from './pages/MentorDirectory';
 import Test from './components/layout/TestLayout';
 import MenteeProfileStep from './components/Auth/MenteeProfileStep';
+import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
+import CalendarPreview from './pages/Mentee/CalendarPreview';
+import BookingRequest from './pages/Mentee/BookingRequest';
 
 function App() {
 
@@ -24,12 +27,11 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
         <Route path="/test" element={<Test />} />
+        <Route path='/mentee/calendar' element={<CalendarPreview/>}/>
+        <Route path='/mentee/booking-request' element={<BookingRequest/>} />
 
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
-
-
-
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]}/>}>
           <Route path='/mentee' element={<MenteeLayout/>}>
@@ -50,6 +52,7 @@ function App() {
           <Route path='/mentor' element={<MenteeLayout/>}>
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
             <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
+            <Route path='/mentor/availability' element={<AvailabilitySchedule/>}/>
           </Route>
         </Route>
       </Routes>

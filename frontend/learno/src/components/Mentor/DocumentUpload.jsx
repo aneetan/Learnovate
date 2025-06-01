@@ -101,6 +101,7 @@ const DocumentUpload = ({ onFinish, initialValues }) => {
               name = "profile"
               onChange={handleProfileChange}
               className="hidden"
+              required
             />
             <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium border border-blue-300 hover:bg-blue-200 transition duration-200">
               <UploadOutlined /> Choose Profile Image
@@ -124,6 +125,7 @@ const DocumentUpload = ({ onFinish, initialValues }) => {
             name = "document"
             onChange={handleDocumentChange}
             className="hidden"
+            required
           />
           <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-lg text-sm font-medium border border-green-300 hover:bg-green-200 transition duration-200">
             <UploadOutlined /> Choose Documents
