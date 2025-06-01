@@ -15,7 +15,7 @@ import Home from './pages/Home';
 import MentorDirectory from './pages/MentorDirectory';
 import MentorLayout from './components/layout/MentorLayout';
 import MenteeProfileStep from './components/Auth/MenteeProfileStep';
-import Test from "./pages/mentor/Dashboard";
+import Test from "./pages/mentor/MentorDashboard";
 
 function App() {
 
