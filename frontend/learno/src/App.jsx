@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import 'flowbite';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Register from './components/Auth/Register';
 import Login from './pages/Login';
@@ -12,8 +13,9 @@ import AdminLayout from './components/Layout/AdminLayout';
 import MentorStepperForm from './pages/MentorStepperForm';
 import Home from './pages/Home';
 import MentorDirectory from './pages/MentorDirectory';
-import Test from './components/layout/TestLayout';
+import MentorLayout from './components/layout/MentorLayout';
 import MenteeProfileStep from './components/Auth/MenteeProfileStep';
+import Test from "./pages/mentor/MentorDashboard";
 import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
 import CalendarPreview from './pages/Mentee/CalendarPreview';
 import BookingRequest from './pages/Mentee/BookingRequest';
@@ -26,12 +28,17 @@ function App() {
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
-        <Route path="/test" element={<Test />} />
         <Route path='/mentee/calendar' element={<CalendarPreview/>}/>
         <Route path='/mentee/booking-request' element={<BookingRequest/>} />
 
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
+
+<Route path="/ment" element={<MentorLayout />}>
+          <Route path="dashboard" element={<Test />} />
+          {/* Other routes */}
+        </Route>
+
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]}/>}>
           <Route path='/mentee' element={<MenteeLayout/>}>
@@ -49,7 +56,9 @@ function App() {
         </Route>
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]}/>}>
+        
           <Route path='/mentor' element={<MenteeLayout/>}>
+            <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
             <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
             <Route path='/mentor/availability' element={<AvailabilitySchedule/>}/>

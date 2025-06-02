@@ -11,7 +11,7 @@ import { API_URL } from '../../config/config'
 
 const { Option } = Select;
 
-const MenteeProfileSetup = ({ onFinish, initialValues }) => {
+const MenteeProfileStep = ({ onFinish, initialValues }) => {
   const [profile, setProfile] = useState(null);
   const [profilePreview, setProfilePreview] = useState(null);
   const [loading, setLoading] = useState(false);
