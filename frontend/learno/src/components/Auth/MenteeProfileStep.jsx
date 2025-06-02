@@ -3,12 +3,21 @@ import { Button, Form, Input, Select } from 'antd';
 import { UploadOutlined, PictureOutlined, PhoneOutlined, UserOutlined, AppstoreOutlined } from '@ant-design/icons';
 import logoImage from '../../assets/images/learno_logo.png';
 import backgroundImage from '../../assets/images/auth_bg.png';
+import { useSelector } from 'react-redux';
+import { useNavigate } from "react-router-dom";
+import { API_URL } from '../../config/config'
+
+
 
 const { Option } = Select;
 
 const MenteeProfileStep = ({ onFinish, initialValues }) => {
   const [profile, setProfile] = useState(null);
   const [profilePreview, setProfilePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+   const user =  useSelector((state) => state.user.user)
+   const navigate = useNavigate();
+
 
   const handleProfileChange = (e) => {
     const file = e.target.files[0];
@@ -20,9 +29,61 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
     }
   };
 
-  const handleFinish = (values) => {
-    const formData = { ...values, profile };
-    if (onFinish) onFinish(formData);
+  const uploadToCloudinary = async (file, type = "image") => {
+    setLoading(true);
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", import.meta.env.VITE_CLOUDINARY_PRESET);
+    const cloudname = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+
+    const url = `https://api.cloudinary.com/v1_1/${cloudname}/${type}/upload`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      body: data
+    });
+
+    const result = await response.json();
+    setLoading(false);
+    return result.secure_url;
+
+  };
+
+  const handleFinish = async (values) => {
+    try {
+      let uploadedProfileUrl = null;
+
+      // Upload profile picture to Cloudinary if selected
+      if (profile) {
+        uploadedProfileUrl = await uploadToCloudinary(profile, "image");
+      }
+
+      // Combine form values with uploaded image URL
+      const formData = {
+        ...values,
+        profileUrl: uploadedProfileUrl, 
+        user: user
+      };
+      
+       fetch(`${API_URL}/mentee/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem("token")}` 
+          },
+          body: JSON.stringify(formData)
+        })
+      .then(res => res.json())
+      .then(() => {
+        navigate("/mentee/dashboard");
+      })
+      .catch(error => {
+        console.log(error);
+        }); 
+       console.log(formData);
+    } catch (error) {
+      console.error("Upload failed", error);
+    }
   };
 
   return (
@@ -84,7 +145,7 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <Form.Item
               label={<span className="font-semibold text-lg"><PhoneOutlined className="mr-1" /> Phone Number</span>}
-              name="phoneNumber"
+              name="phone"
               rules={[
                 { required: true, message: 'Please input your phone number!' },
                 { pattern: /^\d{10}$/, message: 'Phone number must be 10 digits' },
@@ -107,7 +168,7 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
 
             <Form.Item
               label={<span className="font-semibold text-lg"><AppstoreOutlined className="mr-1" /> Interest Area</span>}
-              name="interestArea"
+              name="area"
               rules={[{ required: true, message: 'Please select your interest area!' }]}
             >
               <Select placeholder="Select your interest area" size="large">
@@ -135,4 +196,4 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
   );
 };
 
-export default MenteeProfileStep;
+export default MenteeProfileSetup;

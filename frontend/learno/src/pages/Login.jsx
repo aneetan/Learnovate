@@ -65,9 +65,9 @@ const Login = ({ setCurrentUser, users }) => {
         if (role === "ADMIN") {
           navigate("/admin/dashboard");
         } else if (role === "MENTOR") {
-          navigate("/mentor/dashboard");
+          navigate("/mentor/registerDetails");
         } else if (role === "MENTEE") {
-          navigate("/mentee/dashboard");
+          navigate("/mentee/registerDetails");
         } else {
           setError("Invalid role");
         }

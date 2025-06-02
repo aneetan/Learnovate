@@ -1,5 +1,6 @@
 package com.example.learnovate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,18 +16,16 @@ public class RegisteredUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer userId;
 
-    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
-    @Column(nullable = false)
     private String role;
 
     public RegisteredUser(String name, String email, String password, String role) {
@@ -37,14 +36,6 @@ public class RegisteredUser {
     }
 
     public RegisteredUser() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getName() {

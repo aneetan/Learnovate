@@ -2,17 +2,21 @@ package com.example.learnovate.controller;
 
 import com.example.learnovate.dto.MenteeDto;
 import com.example.learnovate.dto.MentorDTO;
+import com.example.learnovate.exception.UnauthorizedAccessException;
 import com.example.learnovate.model.Mentee;
 import com.example.learnovate.model.Mentor;
 import com.example.learnovate.model.RegisteredUser;
 import com.example.learnovate.repository.MenteeRepository;
+import com.example.learnovate.service.MenteeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/mentee")
@@ -20,25 +24,23 @@ import java.util.List;
 public class MenteeController {
 
     @Autowired
-    private MenteeRepository menteeRepo;
+    private final MenteeService menteeService;
+
+    public MenteeController(MenteeService menteeService){
+        this.menteeService = menteeService;
+    }
 
     @PostMapping(value = "/register")
-//    @PreAuthorize("hasRole('MENTEE')")
-    public Mentee saveProfile(@RequestBody MenteeDto menteeDTO) {
-        Mentee mentee = new Mentee();
-
-        mentee.setArea(menteeDTO.getArea());
-        mentee.setPhone(menteeDTO.getPhone());
-        mentee.setProfileUrl(menteeDTO.getProfileUrl());
-        mentee.setCurrentStatus(menteeDTO.getCurrentStatus());
-
-        RegisteredUser user = new RegisteredUser();
-        user.setId(Integer.valueOf(menteeDTO.getUser().getId()));
-        user.setName(menteeDTO.getUser().getName());
-        user.setEmail(menteeDTO.getUser().getEmail());
-        user.setRole(menteeDTO.getUser().getRole());
-
-        mentee.setUser(user);
-        return menteeRepo.save(mentee);
+    public ResponseEntity<?> saveProfile(@RequestBody MenteeDto menteeDTO) {
+        try {
+            Map<String, Object> response = menteeService.saveProfile(menteeDTO);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response);
+        } catch (UnauthorizedAccessException e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("You are unauthorized to access the system");
+        }
     }
 }
