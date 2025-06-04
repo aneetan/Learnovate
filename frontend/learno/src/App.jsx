@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import 'flowbite';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Register from './components/Auth/Register';
 import Login from './pages/Login';
 import RegistrationForm from './pages/RegistrationForm';
 import Dashboard from './pages/Dashboard';
@@ -14,7 +12,7 @@ import MentorStepperForm from './pages/MentorStepperForm';
 import Home from './pages/Home';
 import MentorDirectory from './pages/MentorDirectory';
 import MentorLayout from './components/layout/MentorLayout';
-import MenteeProfileStep from './components/Auth/MenteeProfileStep';
+import MenteeProfileStep from './pages/MenteeProfileStep';
 import Test from "./pages/mentor/MentorDashboard";
 import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
 import CalendarPreview from './pages/Mentee/CalendarPreview';
