@@ -17,6 +17,7 @@ import Test from "./pages/mentor/MentorDashboard";
 import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
 import CalendarPreview from './pages/Mentee/CalendarPreview';
 import BookingRequest from './pages/Mentee/BookingRequest';
+import MenteeDashboard from './pages/Mentee/MenteeDashboard';
 
 function App() {
 
@@ -37,6 +38,8 @@ function App() {
 
 
 <Route path="/mentee" element={<MenteeLayout />}>
+
+<Route path='/mentee/dashboard' element={<MenteeDashboard/>}/>
 <Route path='/mentee/calendar' element={<CalendarPreview/>}/>
         <Route path='/mentee/booking-request' element={<BookingRequest/>} />
           {/* Other routes */}
@@ -44,7 +47,6 @@ function App() {
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]}/>}>
           <Route path='/mentee' element={<MenteeLayout/>}>
-            <Route path='/mentee/dashboard' element={<Dashboard/>}/>
             <Route path="/mentee/registerDetails" element={<MenteeProfileStep />} />
 
           </Route>
