@@ -62,8 +62,8 @@ const CalendarPreview = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10 font-sans">
-      <div className="bg-white rounded-[var(--radius-lg)] shadow-[var(--shadow-lg)] overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center px-4 py-10 font-sans bg-gray-50">
+      <div className="bg-white w-full max-w-6xl rounded-[var(--radius-lg)] shadow-[var(--shadow-lg)] overflow-hidden">
         <div className="bg-[var(--primary-color)] px-8 py-6 text-white">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
