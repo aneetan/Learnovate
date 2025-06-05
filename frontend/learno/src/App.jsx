@@ -11,7 +11,7 @@ import AdminLayout from './components/Layout/AdminLayout';
 import MentorStepperForm from './pages/MentorStepperForm';
 import Home from './pages/Home';
 import MentorDirectory from './pages/MentorDirectory';
-import MentorLayout from './components/layout/MentorLayout';
+import MentorLayout from './components/Layout/MentorLayout';
 import MenteeProfileStep from './pages/MenteeProfileStep';
 import Test from "./pages/mentor/MentorDashboard";
 import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
@@ -26,8 +26,6 @@ function App() {
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
-        <Route path='/mentee/calendar' element={<CalendarPreview/>}/>
-        <Route path='/mentee/booking-request' element={<BookingRequest/>} />
 
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
@@ -37,6 +35,12 @@ function App() {
           {/* Other routes */}
         </Route>
 
+
+<Route path="/mentee" element={<MenteeLayout />}>
+<Route path='/mentee/calendar' element={<CalendarPreview/>}/>
+        <Route path='/mentee/booking-request' element={<BookingRequest/>} />
+          {/* Other routes */}
+        </Route>
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]}/>}>
           <Route path='/mentee' element={<MenteeLayout/>}>
