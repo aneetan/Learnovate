@@ -28,7 +28,7 @@ public class Mentor {
     private String status;
 
     // Foreign key to RegisteredUser
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private RegisteredUser user;
 

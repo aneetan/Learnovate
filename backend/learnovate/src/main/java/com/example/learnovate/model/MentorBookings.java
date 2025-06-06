@@ -6,30 +6,29 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MentorAvailability {
+public class MentorBookings {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int availabilityId;
+    private int bookingId;
 
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private LocalDate bookingDate;
+    private LocalTime timeSlot;
+    private String topic;
+    private String notes;
+    private String paymentStatus;
 
-    // Foreign key to RegisteredUser
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private RegisteredUser user;
 
-    @ElementCollection
-    @CollectionTable(name = "available_days", joinColumns = @JoinColumn(name = "availabilityId"))
-    @Column(name = "days")
-    private List<String> days;
+    @ManyToOne
+    @JoinColumn(name = "mentorId", nullable = false)
+    private Mentor mentor;
 }

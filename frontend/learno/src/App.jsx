@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import './App.css'
-import 'flowbite';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Register from './components/Auth/Register';
 import Login from './pages/Login';

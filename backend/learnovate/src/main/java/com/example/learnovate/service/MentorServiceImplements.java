@@ -13,6 +13,7 @@ import com.example.learnovate.repository.RegisteredUserRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 
@@ -68,6 +69,8 @@ public class MentorServiceImplements implements MentorService{
         mentor.setUser(user);
 
         mentor.setStatus(mentorDTO.getStatus());
+
+        mRepo.save(mentor);
 
         response.put("mentor", mentor);
         response.put("status", HttpStatus.OK);

@@ -7,8 +7,6 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { API_URL } from '../../config/config'
 
-
-
 const { Option } = Select;
 
 const MenteeProfileStep = ({ onFinish, initialValues }) => {
@@ -196,4 +194,4 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
   );
 };
 
-export default MenteeProfileSetup;
+export default MenteeProfileStep;
