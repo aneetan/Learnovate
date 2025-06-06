@@ -5,6 +5,23 @@ const BookingRequest = () => {
   const location = useLocation();
   const { selectedDate, selectedTime } = location.state || {};
 
+  function formatBookingDate(dateInput, dayOffset = 0) {
+    // Parse input (works with Date object or date string)
+    const date = new Date(dateInput);
+
+    // Adjust day if offset is provided (e.g., +6 to change 06 to 12)
+    if (dayOffset) {
+      date.setDate(date.getDate() + dayOffset);
+    }
+
+    // Format as YYYY-MM-DD
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `"bookingDate": "${year}-${month}-${day}"`;
+  }
+
   const [formData, setFormData] = useState({
     mentorshipTopic: '',
     notes: ''
@@ -40,8 +57,9 @@ const BookingRequest = () => {
     if (validateForm()) {
       setIsSubmitting(true);
       console.log('Submitting:', {
-        date: selectedDate,
+        date: formatBookingDate(selectedDate),
         time: selectedTime,
+        paymentStatus: "pending",
         ...formData
       });
       setTimeout(() => {
