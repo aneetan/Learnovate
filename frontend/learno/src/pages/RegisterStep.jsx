@@ -1,6 +1,6 @@
 import { useState } from "react";
-import backgroundImage from "../../assets/images/auth_bg.png";
-import logoImage from "../../assets/images/learno_logo.png";
+import logoImage from '../assets/images/learno_logo.png';
+import backgroundImage from '../assets/images/auth_bg.png';
 import { FcGoogle } from "react-icons/fc";
 
 

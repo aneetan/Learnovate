@@ -1,13 +1,12 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet } from "react-router-dom";
+import MenteeSidebar from "./MenteeSidebar";
 
 const MenteeLayout = () => {
   return (
-    <div>
-       Mentee 
-        <Outlet/>
-    </div>
-  )
-}
+    <MenteeSidebar>
+      <Outlet />
+    </MenteeSidebar>
+  );
+};
 
-export default MenteeLayout
+export default MenteeLayout;

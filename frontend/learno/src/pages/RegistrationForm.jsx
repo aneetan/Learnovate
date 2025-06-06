@@ -1,6 +1,6 @@
 import { useState } from "react";
-import RegisterStep from "../components/Auth/RegisterStep";
-import SelectRoleStep from "../components/Auth/SelectRoleStep";
+import RegisterStep from "./RegisterStep";
+import SelectRoleStep from "./SelectRoleStep";
 
 const RegistrationForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
