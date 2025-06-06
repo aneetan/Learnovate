@@ -28,6 +28,9 @@ const BookingRequest = () => {
     if (!formData.mentorshipTopic.trim()) {
       newErrors.mentorshipTopic = 'Mentorship topic is required';
     }
+     if (!formData.notes.trim()) {
+      newErrors.mentorshipTopic = 'Explain why you need this mentorship';
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };

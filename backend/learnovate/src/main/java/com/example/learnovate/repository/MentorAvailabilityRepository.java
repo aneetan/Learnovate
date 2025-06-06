@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface MentorAvailabilityRepository extends JpaRepository<MentorAvailability, Integer> {
     Optional<MentorAvailability> findByUser(RegisteredUser user);
 
+
 }
