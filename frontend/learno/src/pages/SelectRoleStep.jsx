@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logoImage from "../../assets/images/learno_logo.png";
-import backgroundImage from "../../assets/images/auth_bg.png";
+import logoImage from '../assets/images/learno_logo.png';
+import backgroundImage from '../assets/images/auth_bg.png';
 
 const SelectRoleStep = ({ formData, handleChange, onSubmit }) => {
   const navigate = useNavigate();
