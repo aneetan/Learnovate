@@ -7,6 +7,7 @@ import com.example.learnovate.model.MentorAvailability;
 import com.example.learnovate.model.MentorBookings;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
 import java.util.Map;
 
 public interface MenteeService {
@@ -16,7 +17,7 @@ public interface MenteeService {
 
     MentorAvailability getAvailability(@PathVariable int id);
 
-    MentorBookings getBookingDetails(@PathVariable int id);
+    List<MentorBookings> getAllBookingsForMentor(@PathVariable int id);
 
 
 }

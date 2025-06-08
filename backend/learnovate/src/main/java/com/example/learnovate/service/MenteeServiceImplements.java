@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,10 +36,10 @@ public class MenteeServiceImplements implements MenteeService{
     Map<String, Object> response = new HashMap<>();
 
     AuthenticateEmail authenticateEmail = new AuthenticateEmail();
-    String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
 
     @Override
     public Map<String, Object> saveProfile(MenteeDto menteeDto) {
+        String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
 
         // Validate email matches
         if (!authenticatedEmail.equals(menteeDto.getUser().getEmail())) {
@@ -68,6 +69,7 @@ public class MenteeServiceImplements implements MenteeService{
     @Override
     public Map<String, Object> saveBookingRequest(MentorBookingsDto mentorBookingsDto,
                                                   @PathVariable int id) {
+        String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
         RegisteredUser user = uRepo.findById(mentorBookingsDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with id: " +  mentorBookingsDto.getUserId()));
 
@@ -98,13 +100,14 @@ public class MenteeServiceImplements implements MenteeService{
 
     @Override
     public MentorAvailability getAvailability(int id) {
+        String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
 
         RegisteredUser user = uRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
-        if (!authenticatedEmail.equals(user.getEmail())) {
-            throw new UnauthorizedAccessException("Email in request does not match authenticated user");
-        }
+//        if (!authenticatedEmail.equals(user.getEmail())) {
+//            throw new UnauthorizedAccessException("Email in request does not match authenticated user");
+//        }
 
         MentorAvailability mentorAvailability = availableRepo.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Mentor not found with id: " + id));
@@ -113,16 +116,21 @@ public class MenteeServiceImplements implements MenteeService{
     }
 
     @Override
-    public MentorBookings getBookingDetails(int id) {
+    public List<MentorBookings> getAllBookingsForMentor(int id) {
+        String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
         Mentor mentor = mRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Mentor not found with id: " + id));
+        System.out.println(mentor);
 
-        if (!authenticatedEmail.equals(mentor.getUser().getEmail())) {
-            throw new UnauthorizedAccessException("Email in request does not match authenticated user");
+//        if (!authenticatedEmail.equals(mentor.getUser().getEmail())) {
+//            throw new UnauthorizedAccessException("Email in request does not match authenticated user");
+//        }
+
+        List<MentorBookings> bookings = bookingRepo.findByMentor(mentor);
+
+        if (bookings.isEmpty()) {
+            throw new RuntimeException("No bookings found for mentor with id: " + id);
         }
-
-        MentorBookings bookings = bookingRepo.findByMentor(mentor)
-                .orElseThrow(() -> new RuntimeException("Booking not found with id: " + id));
 
         return bookings;
     }

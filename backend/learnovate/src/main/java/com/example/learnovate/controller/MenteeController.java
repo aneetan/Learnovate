@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -82,7 +83,7 @@ public class MenteeController {
     @GetMapping("/getBookingDetails/{id}")
     public ResponseEntity<?> getBookingDetails(@PathVariable int id) {
         try {
-            MentorBookings bookings = menteeService.getBookingDetails(id);
+            List<MentorBookings> bookings = menteeService.getAllBookingsForMentor(id);
             return ResponseEntity.ok(bookings);
         } catch (UnauthorizedAccessException e) {
             return ResponseEntity

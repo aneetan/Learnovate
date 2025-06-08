@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../../assets/css/calendar.css";
 import transformAvailability from "../../config/transformAvailability";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { API_URL } from "../../config/config";
 
 const bookedAppointments = {
   "2025-06-05": ["13:00", "14:00"],
@@ -16,16 +18,68 @@ const CalendarPreview = () => {
   const [date, setDate] = useState(new Date());
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const navigate = useNavigate();
+  const [availability, setAvailability] = useState(null);
+  const[loading, setLoading] = useState(true);
+  const[error, setError] = useState(null);
+  const [transformedAvailability, setTransformedAvailability] = useState({});
+  const [bookedAppointments, setBookedAppointments] = useState({});
 
-  const dbAvailability = [
-    {
-      days: ["monday", "tuesday", "wednesday", "thursday", "friday"],
-      startTime: "12:00",
-      endTime: "17:00",
-    },
-  ];
 
-  const AVAILABILITY = transformAvailability(dbAvailability, bookedAppointments);
+  useEffect(() => {
+     const fetchData = async () => {
+      try {
+        // Fetch availability
+        const availabilityResponse = await axios.get(`${API_URL}/mentee/getAvailability/4`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+
+        // Fetch booked appointments
+        const bookingsResponse = await axios.get(`${API_URL}/mentee/getBookingDetails/1`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+
+        // Transform bookings data into the required format
+        const transformedBookings = bookingsResponse.data.reduce((acc, booking) => {
+          const date = booking.bookingDate;
+          const time = booking.timeSlot.slice(0, 5); // Get HH:MM format
+          
+          if (!acc[date]) {
+            acc[date] = [];
+          }
+          
+          if (!acc[date].includes(time)) {
+            acc[date].push(time);
+          }
+          
+          return acc;
+        }, {});
+
+        setBookedAppointments(transformedBookings);
+        setAvailability(availabilityResponse.data);
+
+        // Transform availability data
+        if (availabilityResponse.data) {
+          const dbAvailability = [{
+            days: availabilityResponse.data.days.map(day => day.toLowerCase()),
+            startTime: availabilityResponse.data.startTime.slice(0, 5), 
+            endTime: availabilityResponse.data.endTime.slice(0, 5),    
+          }];
+          setTransformedAvailability(transformAvailability(dbAvailability, transformedBookings));
+        }
+
+        setLoading(false);
+      } catch (err) {
+        setError(err.message || 'Something went wrong');
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  },[])
 
   const formatDate = (date) => {
     const year = date.getFullYear();
@@ -35,10 +89,10 @@ const CalendarPreview = () => {
   };
 
   const selectedDayKey = formatDate(date);
-  const dateSlots = AVAILABILITY[selectedDayKey]?.slots || [];
+  const dateSlots = transformedAvailability[selectedDayKey]?.slots || [];
 
   const slotStatus = (slot) => {
-    const dayInfo = AVAILABILITY[selectedDayKey];
+    const dayInfo =  transformedAvailability[selectedDayKey];
     if (!dayInfo || !dayInfo.slots.includes(slot)) return "unavailable";
     if (dayInfo.bookedTimes?.includes(slot)) return "booked";
     return "available";
@@ -52,7 +106,7 @@ const CalendarPreview = () => {
 
   const handleNextClick = () => {
     if (selectedTimeSlot) {
-      navigate("/mentee/booking-request", {
+      navigate("/mentee/booking-request/1", {
         state: {
           selectedDate: date,
           selectedTime: selectedTimeSlot,
@@ -60,6 +114,9 @@ const CalendarPreview = () => {
       });
     }
   };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (error) return <div className="min-h-screen flex items-center justify-center">Error: {error}</div>;
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10 font-sans bg-gray-50">
@@ -95,7 +152,7 @@ const CalendarPreview = () => {
             className="!border-0"
             tileContent={({ date: tileDate }) => {
               const key = formatDate(tileDate);
-              const status = AVAILABILITY[key]?.status;
+              const status = transformedAvailability[key]?.status;
               const colorClass = {
                 available: "bg-green-500",
                 partiallyBooked: "bg-yellow-400",
@@ -107,7 +164,7 @@ const CalendarPreview = () => {
             }}
             tileClassName={({ date: tileDate }) => {
               const key = formatDate(tileDate);
-              const status = AVAILABILITY[key]?.status;
+              const status = transformedAvailability[key]?.status
               return {
                 available: "calendar-available",
                 partiallyBooked: "calendar-booked",

@@ -39,14 +39,18 @@ function App() {
 
         <Route path="/mentee" element={<MenteeLayout />}>
           <Route path='/mentee/dashboard' element={<MenteeDashboard/>}/>
-          <Route path='/mentee/calendar' element={<CalendarPreview/>}/>
-          <Route path='/mentee/booking-request' element={<BookingRequest/>} />
-          {/* Other routes */}
+          {/* <Route path='/mentee/calendar' element={<CalendarPreview/>}/> */}
+          {/* <Route path='/mentee/booking-request/:id' element={<BookingRequest/>} /> */}
+          <Route path='/mentee/booking-request/1' element={<BookingRequest/>} />
+
         </Route>
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]}/>}>
           <Route path='/mentee' element={<MenteeLayout/>}>
             <Route path="/mentee/registerDetails" element={<MenteeProfileStep />} />
+            <Route path='/mentee/booking-request/1' element={<BookingRequest/>} />
+          <Route path='/mentee/calendar' element={<CalendarPreview/>}/>
+
           </Route>
         </Route>
 
