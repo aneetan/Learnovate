@@ -1,5 +1,6 @@
 package com.example.learnovate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class Mentor {
     private String status;
 
     // Foreign key to RegisteredUser
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private RegisteredUser user;

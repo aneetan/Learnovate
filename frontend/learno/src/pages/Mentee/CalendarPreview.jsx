@@ -7,12 +7,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../../config/config";
 
-const bookedAppointments = {
-  "2025-06-05": ["13:00", "14:00"],
-  "2025-06-13": ["14:00"],
-  "2025-06-10": ["12:00"],
-};
-
 const CalendarPreview = () => {
   const [view, setView] = useState("month");
   const [date, setDate] = useState(new Date());
