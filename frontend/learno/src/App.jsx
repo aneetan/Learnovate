@@ -18,6 +18,7 @@ import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
 import CalendarPreview from './pages/Mentee/CalendarPreview';
 import BookingRequest from './pages/Mentee/BookingRequest';
 import MenteeDashboard from './pages/Mentee/MenteeDashboard';
+import PaymentPortal from './pages/Mentee/PaymentPortal';
 
 function App() {
 

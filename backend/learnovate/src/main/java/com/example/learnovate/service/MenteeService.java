@@ -2,9 +2,7 @@ package com.example.learnovate.service;
 
 import com.example.learnovate.dto.MenteeDto;
 import com.example.learnovate.dto.MentorBookingsDto;
-import com.example.learnovate.model.Mentee;
-import com.example.learnovate.model.MentorAvailability;
-import com.example.learnovate.model.MentorBookings;
+import com.example.learnovate.model.*;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
@@ -18,6 +16,8 @@ public interface MenteeService {
     MentorAvailability getAvailability(@PathVariable int id);
 
     List<MentorBookings> getAllBookingsForMentor(@PathVariable int id);
+
+    MentorBookings  updatePaymentForBookings(int id);
 
 
 }
