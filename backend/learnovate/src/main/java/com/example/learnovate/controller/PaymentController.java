@@ -3,7 +3,11 @@ package com.example.learnovate.controller;
 import com.example.learnovate.config.EsewaConfig;
 import com.example.learnovate.dto.PaymentRequestDto;
 import com.example.learnovate.dto.PaymentResponseDto;
+import com.example.learnovate.model.Mentor;
+import com.example.learnovate.model.MentorBookings;
 import com.example.learnovate.model.PaymentDetails;
+import com.example.learnovate.model.RegisteredUser;
+import com.example.learnovate.service.MenteeServiceImplements;
 import com.example.learnovate.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +25,7 @@ public class PaymentController {
 
     private final PaymentService paymentService;
     private final EsewaConfig esewaConfig;
+    private final MenteeServiceImplements menteeService;
 
     @PostMapping("/initiate/{mentorId}")
     public ResponseEntity<?> initiatePayment(@RequestBody PaymentRequestDto request,
@@ -66,6 +71,10 @@ public class PaymentController {
             PaymentDetails updatedPayment = paymentService.updateTransactionStatus(
                     transactionUuid,
                     "SUCCESS");
+
+            menteeService.updatePaymentForBookings(updatedPayment.getMentorBookings().getBookingId());
+
+
 
             return ResponseEntity.ok(Map.of(
                     "status", HttpStatus.OK.value(),

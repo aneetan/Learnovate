@@ -134,4 +134,15 @@ public class MenteeServiceImplements implements MenteeService{
 
         return bookings;
     }
+
+    @Override
+    public MentorBookings updatePaymentForBookings(int bookingId) {
+        MentorBookings bookings = bookingRepo.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        bookings.setPaymentStatus("PAID");
+
+        bookingRepo.save(bookings);
+        return bookings;
+    }
 }
