@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 
 const timezones = [
   { value: "Asia/Kathmandu", label: "Kathmandu (GMT+5:45)" },
-  // Add other timezones here if needed
 ];
 
 const daysOfWeek = [

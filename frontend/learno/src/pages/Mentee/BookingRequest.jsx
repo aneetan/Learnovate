@@ -1,12 +1,32 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { API_URL, getUserId } from "../../config/config";
 
 const BookingRequest = () => {
   const location = useLocation();
   const { selectedDate, selectedTime } = location.state || {};
+  let params = useParams();
+  const navigate = useNavigate();
+
+  function formatBookingDate(dateInput, dayOffset = 0) {
+    // Parse input (works with Date object or date string)
+    const date = new Date(dateInput);
+
+    // Adjust day if offset is provided (e.g., +6 to change 06 to 12)
+    if (dayOffset) {
+      date.setDate(date.getDate() + dayOffset);
+    }
+
+    // Format as YYYY-MM-DD
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
 
   const [formData, setFormData] = useState({
-    mentorshipTopic: '',
+    topic: '',
     notes: ''
   });
   const [errors, setErrors] = useState({});
@@ -25,11 +45,11 @@ const BookingRequest = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.mentorshipTopic.trim()) {
-      newErrors.mentorshipTopic = 'Mentorship topic is required';
+    if (!formData.topic.trim()) {
+      newErrors.topic = 'Mentorship topic is required';
     }
      if (!formData.notes.trim()) {
-      newErrors.mentorshipTopic = 'Explain why you need this mentorship';
+      newErrors.notes = 'Explain why you need this mentorship';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -39,15 +59,32 @@ const BookingRequest = () => {
     e.preventDefault();
     if (validateForm()) {
       setIsSubmitting(true);
-      console.log('Submitting:', {
-        date: selectedDate,
-        time: selectedTime,
-        ...formData
-      });
-      setTimeout(() => {
-        setIsSubmitting(false);
-        alert('Booking request submitted successfully!');
-      }, 1500);
+      const submitData = {
+          bookingDate: formatBookingDate(selectedDate),
+          timeSlot: selectedTime,
+          paymentStatus: "pending",
+          mentorId: 1,
+          ...formData,
+          userId: getUserId(localStorage.getItem("token"))
+        };
+
+      fetch(`${API_URL}/mentee/requestBooking/${submitData.mentorId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem("token")}` 
+          },
+          body: JSON.stringify(submitData)
+        })
+      .then(res => res.json())
+      .then(() => {
+        navigate("/mentee/dashboard");
+      })
+      .catch(error => {
+        console.log(error);
+        }); 
+      console.log('Submitting:', submitData);
+      setIsSubmitting(false);
     }
   };
 
@@ -92,26 +129,26 @@ const BookingRequest = () => {
           {/* Mentorship Topic */}
           <div>
             <label
-              htmlFor="mentorshipTopic"
+              htmlFor="topic"
               className="block text-sm font-medium text-[var(--gray-700)] mb-1"
             >
               What do you need mentorship on? <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              id="mentorshipTopic"
-              name="mentorshipTopic"
-              value={formData.mentorshipTopic}
+              id="topic"
+              name="topic"
+              value={formData.topic}
               onChange={handleChange}
               placeholder="E.g. Scholarships, career advice, etc."
               className={`w-full px-4 py-2 rounded-[var(--radius)] outline-none transition duration-200 border ${
-                errors.mentorshipTopic
+                errors.topic
                   ? 'border-red-500 ring-1 ring-red-300'
                   : 'border-[var(--gray-300)] focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)] focus:ring-1'
               }`}
             />
-            {errors.mentorshipTopic && (
-              <p className="text-sm text-red-500 mt-1">{errors.mentorshipTopic}</p>
+            {errors.topic && (
+              <p className="text-sm text-red-500 mt-1">{errors.topic}</p>
             )}
           </div>
 
@@ -121,17 +158,21 @@ const BookingRequest = () => {
               htmlFor="notes"
               className="block text-sm font-medium text-[var(--gray-700)] mb-1"
             >
-              Additional Notes (optional)
+              Additional Notes 
             </label>
             <textarea
               id="notes"
               name="notes"
               value={formData.notes}
               onChange={handleChange}
+              
               rows="4"
-              placeholder="Any questions or topics you'd like to discuss..."
+              placeholder="Explain why you need this mentorship"
               className="w-full px-4 py-2 resize-none rounded-[var(--radius)] outline-none transition duration-200 border border-[var(--gray-300)] focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)] focus:ring-1"
             />
+             {errors.notes && (
+              <p className="text-sm text-red-500 mt-1">{errors.notes}</p>
+            )}
           </div>
 
           {/* Submit Button */}
