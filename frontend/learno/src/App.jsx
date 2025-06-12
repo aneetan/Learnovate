@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import RegistrationForm from './pages/RegistrationForm';
 import Dashboard from './pages/Dashboard';
-import MentorDashboard from './pages/MentorDashboard';
 import ProtectedRoutes from './security/ProtectedRoutes';
 import MenteeLayout from './components/Layout/MenteeLayout';
 import AdminLayout from './components/Layout/AdminLayout';
@@ -17,6 +16,7 @@ import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
 import CalendarPreview from './pages/Mentee/CalendarPreview';
 import BookingRequest from './pages/Mentee/BookingRequest';
 import MenteeDashboard from './pages/Mentee/MenteeDashboard';
+import MentorDashboard from './pages/mentor/MentorDashboard';
 
 function App() {
 
@@ -38,9 +38,9 @@ function App() {
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]} />}>
           <Route path='/mentee' element={<MenteeLayout />}>
             <Route path='/mentee/dashboard' element={<MenteeDashboard/>}/>
-            <Route path='/mentee/booking-request/1' element={<BookingRequest />} />
+            <Route path='/mentee/booking-request/:mentorId' element={<BookingRequest />} />
             <Route path='/mentee/viewMentors' element={<MentorDirectory />} />
-            <Route path='/mentee/calendar' element={<CalendarPreview />} />
+            <Route path='/mentee/calendar/:mentorId' element={<CalendarPreview />} />
           </Route>
           <Route path='/mentee/registerDetails' element={<MenteeProfileStep />} />
         </Route>

@@ -12,4 +12,5 @@ public interface MentorAvailabilityRepository extends JpaRepository<MentorAvaila
     Optional<MentorAvailability> findByUser(RegisteredUser user);
 
 
+
 }
