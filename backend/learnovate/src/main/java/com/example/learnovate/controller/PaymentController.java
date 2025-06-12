@@ -74,8 +74,6 @@ public class PaymentController {
 
             menteeService.updatePaymentForBookings(updatedPayment.getMentorBookings().getBookingId());
 
-
-
             return ResponseEntity.ok(Map.of(
                     "status", HttpStatus.OK.value(),
                     "message", "Payment completed successfully"

@@ -116,6 +116,12 @@ public class MenteeServiceImplements implements MenteeService{
     }
 
     @Override
+    public List<Mentor> getAllMentors() {
+        return mRepo.findAllMentorsWithUserDetails();
+
+    }
+
+    @Override
     public List<MentorBookings> getAllBookingsForMentor(int id) {
         String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
         Mentor mentor = mRepo.findById(id)

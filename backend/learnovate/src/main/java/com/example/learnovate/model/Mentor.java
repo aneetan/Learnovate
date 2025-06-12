@@ -29,7 +29,6 @@ public class Mentor {
     private String status;
 
     // Foreign key to RegisteredUser
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private RegisteredUser user;
