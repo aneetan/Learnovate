@@ -8,6 +8,7 @@ import DocumentUpload from '../components/Mentor/DocumentUpload';
 import logoImage from "../assets/images/learno_logo.png";
 import backgroundImage from "../assets/images/auth_bg.png";
 import { useSelector } from 'react-redux';
+import { API_URL } from '../config/config';
 
 const MentorStepperForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -15,7 +16,7 @@ const MentorStepperForm = () => {
   const [professionalInfo, setProfessionalInfo] = useState(null);
   const [documentUpload, setDocumentUpload] = useState(null);
   const navigate = useNavigate();
-   const user =  useSelector((state) => state.user.user)
+  const user =  useSelector((state) => state.user.user)
 
   const submitAdditionalInfo = (values) => {
     setAdditionalInfo(values);
@@ -23,24 +24,31 @@ const MentorStepperForm = () => {
   };
 
   const submitProfessionalInfo = (values) => {
-    setProfessionalInfo(values);
+    setProfessionalInfo({
+      ...values,
+      skills: values.skills || [], 
+    });
     setCurrentStep(2);
   };
 
   const data = {
     additionalInfo,
-    professionalInfo,
-  };
+    professionalInfo
+  }
 
-  const submitDocuments = () => {
-    const formValue = {
-      ...data,
-      documentUpload: values,
-      user: user,
-      status: "pending"
-    };
 
-    fetch('http://localhost:8080/api/mentor/register', {
+  const submitDocuments = (values) => {
+    setDocumentUpload(values)
+     const formValue = {
+        ...additionalInfo,
+        ...professionalInfo,
+        skills: professionalInfo?.skills?.join(', '),
+        ...values, 
+        userId: user?.id,
+        status: "pending"
+      };
+
+    fetch(`${API_URL}/mentor/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

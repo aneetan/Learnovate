@@ -202,7 +202,7 @@ const MentorDirectory = ({ users, currentUser, sessionRequests, setSessionReques
                   <div className="p-4">
                     <div className="flex items-center mb-4">
                       <img
-                        src={mentor.profileUrl || "/placeholder.svg"}
+                        src={mentor.profileUrl}
                         alt={mentor.title}
                         className="w-16 h-16 rounded-full object-cover mr-4"
                       />
