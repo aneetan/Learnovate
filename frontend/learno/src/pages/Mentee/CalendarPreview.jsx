@@ -3,7 +3,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../../assets/css/calendar.css";
 import transformAvailability from "../../config/transformAvailability";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../../config/config";
 
@@ -17,20 +17,21 @@ const CalendarPreview = () => {
   const[error, setError] = useState(null);
   const [transformedAvailability, setTransformedAvailability] = useState({});
   const [bookedAppointments, setBookedAppointments] = useState({});
+  let params = useParams();
 
 
   useEffect(() => {
      const fetchData = async () => {
       try {
         // Fetch availability
-        const availabilityResponse = await axios.get(`${API_URL}/mentee/getAvailability/4`, {
+        const availabilityResponse = await axios.get(`${API_URL}/mentee/getAvailability/${params.mentorId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`
           }
         });
 
         // Fetch booked appointments
-        const bookingsResponse = await axios.get(`${API_URL}/mentee/getBookingDetails/1`, {
+        const bookingsResponse = await axios.get(`${API_URL}/mentee/getBookingDetails/${params.mentorId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`
           }
@@ -100,7 +101,7 @@ const CalendarPreview = () => {
 
   const handleNextClick = () => {
     if (selectedTimeSlot) {
-      navigate("/mentee/booking-request/1", {
+      navigate(`/mentee/booking-request/${params.mentorId}`, {
         state: {
           selectedDate: date,
           selectedTime: selectedTimeSlot,

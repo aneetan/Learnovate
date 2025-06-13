@@ -15,6 +15,8 @@ public interface MenteeService {
 
     MentorAvailability getAvailability(@PathVariable int id);
 
+    List<Mentor> getAllMentors();
+
     List<MentorBookings> getAllBookingsForMentor(@PathVariable int id);
 
     MentorBookings  updatePaymentForBookings(int id);

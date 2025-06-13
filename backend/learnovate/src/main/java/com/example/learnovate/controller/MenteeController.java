@@ -96,6 +96,11 @@ public class MenteeController {
         }
     }
 
+    @GetMapping("/getMentors")
+    public List<Mentor> getAllMentors(){
+        return menteeService.getAllMentors();
+    }
+
 
 
 }

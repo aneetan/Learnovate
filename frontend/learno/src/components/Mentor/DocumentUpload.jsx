@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Form } from 'antd';
+import { Button, Form, message } from 'antd';
 import { UploadOutlined, FileTextOutlined, PictureOutlined } from '@ant-design/icons';
 
 const DocumentUpload = ({ onFinish, initialValues }) => {
@@ -10,6 +10,15 @@ const DocumentUpload = ({ onFinish, initialValues }) => {
 
   const handleProfileChange = (e) => {
     const file = e.target.files[0];
+    if(!file.type.match('image.*')){
+      message.error("Please upload an image file (jpeg, png)")
+      return
+    }
+
+    if(file.size > 2 * 1024 * 1024){
+      message.error('File size should be less than 2MB');
+      return;
+    }
     setProfile(file);
     if (file) {
       const reader = new FileReader();
@@ -19,7 +28,12 @@ const DocumentUpload = ({ onFinish, initialValues }) => {
   };
 
   const handleDocumentChange = (e) => {
-    setDocument(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file.size > 5 * 1024 * 1024) {
+        message.error('File size should be less than 5MB');
+        return;
+      }
+    setDocument(file);
   };
 
   const uploadToCloudinary = async (file, type = "image") => {
@@ -43,6 +57,10 @@ const DocumentUpload = ({ onFinish, initialValues }) => {
   };
 
   const handleSubmit = async() => {
+     if (!profile || !document) {
+      message.error('Please upload both profile picture and document');
+      return;
+    }
 
     try {
       let uploadedProfileUrl = null;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FaRegCalendarAlt, FaAddressBook, FaRegCommentDots, FaUserCircle, FaSignOutAlt, FaBars, FaSearch } from 'react-icons/fa';
-import { MdDashboard, MdToday } from "react-icons/md";
+import { MdDashboard, MdPerson, MdTask, MdToday } from "react-icons/md";
 import logoImage from "../../assets/images/learno_logo_long.png";
 import logoImage2 from "../../assets/images/learno_logo_only.png";
 
@@ -27,9 +27,10 @@ const MenteeSidebar = ({ children }) => {
 
   const menuItems = [
     { name: 'Dashboard', icon: <MdDashboard />, path: '/mentee/dashboard' },
-    { name: 'Schedule', icon: <MdToday />, path: '/mentee/calendar' },
+    {name: 'Mentors', icon: <MdPerson/> , path: '/mentee/viewMentors'},
     { name: 'Sessions', icon: <FaAddressBook />, path: '/mentee/sessions' },
     { name: 'Chat', icon: <FaRegCommentDots />, path: '/mentee/chat' },
+    { name: 'Challenges', icon: <MdTask />, path: '/mentee/challenges' },
   ];
 
   return (

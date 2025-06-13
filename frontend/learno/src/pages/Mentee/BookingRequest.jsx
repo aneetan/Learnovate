@@ -63,7 +63,7 @@ const BookingRequest = () => {
           bookingDate: formatBookingDate(selectedDate),
           timeSlot: selectedTime,
           paymentStatus: "pending",
-          mentorId: 1,
+          mentorId: params.mentorId,
           ...formData,
           userId: getUserId(localStorage.getItem("token"))
         };

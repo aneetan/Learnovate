@@ -102,8 +102,10 @@ public class MenteeServiceImplements implements MenteeService{
     public MentorAvailability getAvailability(int id) {
         String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
 
-        RegisteredUser user = uRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+        Mentor mentor = mRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Mentor not found with id: " + id));
+
+        RegisteredUser user = mentor.getUser();
 
 //        if (!authenticatedEmail.equals(user.getEmail())) {
 //            throw new UnauthorizedAccessException("Email in request does not match authenticated user");
@@ -113,6 +115,12 @@ public class MenteeServiceImplements implements MenteeService{
                 .orElseThrow(() -> new RuntimeException("Mentor not found with id: " + id));
 
         return mentorAvailability;
+    }
+
+    @Override
+    public List<Mentor> getAllMentors() {
+        return mRepo.findAllMentorsWithUserDetails();
+
     }
 
     @Override
