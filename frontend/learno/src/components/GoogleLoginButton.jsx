@@ -24,7 +24,7 @@ const GoogleLoginButton = () => {
     });
        
       const responseData = await response.json();
-      console.log('User signed in:', user.displayName, responseData);
+      localStorage.setItem("token", responseData.jwt)
       navigate('/mentee/registerDetails')
       
     } catch (error) {
