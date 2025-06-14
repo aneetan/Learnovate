@@ -3,18 +3,15 @@
     import ch.qos.logback.core.pattern.Converter;
     import com.example.learnovate.service.RegisteredUserService;
     import com.fasterxml.jackson.databind.ObjectMapper;
-    import io.jsonwebtoken.Jwt;
     import jakarta.servlet.http.HttpServletRequest;
     import jakarta.servlet.http.HttpServletResponse;
-    import lombok.AllArgsConstructor;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.context.annotation.Bean;
     import org.springframework.context.annotation.Configuration;
     import org.springframework.http.HttpStatus;
-    import org.springframework.security.authentication.AbstractAuthenticationToken;
     import org.springframework.security.authentication.AuthenticationManager;
-    import org.springframework.security.authentication.AuthenticationProvider;
     import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+    import org.springframework.security.config.Customizer;
     import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
     import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
     import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -85,7 +82,7 @@
                     .csrf(csrf -> csrf.disable())
                     .authorizeHttpRequests(auth -> auth
                             //user don't need to be logged in to access registration page
-                            .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                            .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/google").permitAll()
                             .requestMatchers("/api/admin/**").hasRole("ADMIN")
                             .requestMatchers("/api/mentor/**").hasRole("MENTOR")
                             .requestMatchers("/api/mentee/**").hasRole("MENTEE")

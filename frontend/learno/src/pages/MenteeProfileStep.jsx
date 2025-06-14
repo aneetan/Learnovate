@@ -60,7 +60,7 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
       const formData = {
         ...values,
         profileUrl: uploadedProfileUrl, 
-        user: user
+        userId: user?.id, 
       };
       
        fetch(`${API_URL}/mentee/register`, {

@@ -1,5 +1,8 @@
 package com.example.learnovate.config;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -23,6 +26,10 @@ public class JwtUtil {
     @Autowired
     public JwtUtil(Key signingKey) {
         this.signingKey = signingKey;
+    }
+
+    public FirebaseToken verifyFirebaseToken(String idToken) throws FirebaseAuthException {
+        return FirebaseAuth.getInstance().verifyIdToken(idToken);
     }
 
     // Generate token with a SINGLE role

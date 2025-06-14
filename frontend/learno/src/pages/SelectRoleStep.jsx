@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logoImage from '../assets/images/learno_logo.png';
 import backgroundImage from '../assets/images/auth_bg.png';
+import { API_URL } from "../config/config";
 
 const SelectRoleStep = ({ formData, handleChange, onSubmit }) => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const SelectRoleStep = ({ formData, handleChange, onSubmit }) => {
     setSubmitError(null);
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/register', {
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
