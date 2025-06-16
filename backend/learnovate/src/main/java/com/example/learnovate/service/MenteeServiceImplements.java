@@ -44,7 +44,6 @@ public class MenteeServiceImplements implements MenteeService{
         RegisteredUser user = uRepo.findById(menteeDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + menteeDto.getUserId()));
 
-
         // Validate email matches
         if (!authenticatedEmail.equals(user.getEmail())) {
             throw new UnauthorizedAccessException("Email in request does not match authenticated user");

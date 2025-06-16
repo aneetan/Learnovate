@@ -132,7 +132,7 @@ public class AuthServiceImplements implements AuthService{
 
 
             // Generate custom JWT using JwtUtil
-            String jwt = jwtUtil.generateToken(uid, email, "mentee", user.getUserId());
+            String jwt = jwtUtil.generateToken( email, "mentee", name, user.getUserId());
 
             return new AuthResponse(jwt, email);
         } catch (FirebaseAuthException e) {
