@@ -34,3 +34,6 @@ build/
 
 ## project ##
 .env
+
+## firebase ##
+src/main/resources/firebase-service-account.json

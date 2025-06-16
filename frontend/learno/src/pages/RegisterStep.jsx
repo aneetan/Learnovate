@@ -3,6 +3,7 @@ import logoImage from '../assets/images/learno_logo.png';
 import backgroundImage from '../assets/images/auth_bg.png';
 import { FcGoogle } from "react-icons/fc";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 
 const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
   const { name, email, password, confirmPassword } = formData;
@@ -188,14 +189,7 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
           </div>
 
           {/* Google Signup */}
-          <button
-            type="button"
-            className="w-full flex items-center justify-center gap-3 p-3 border border-gray-300 rounded-lg text-base font-medium text-gray-700 bg-white hover:bg-gray-100 transition duration-300 shadow-sm"
-            onClick={() => alert("Google sign up clicked")} // replace with your Google sign up logic
-          >
-            <FcGoogle size={22} />
-            Sign up with Google
-          </button>
+           <GoogleLoginButton/>
 
           {/* Already have account */}
           <p className="text-center text-gray-700 text-base font-medium">

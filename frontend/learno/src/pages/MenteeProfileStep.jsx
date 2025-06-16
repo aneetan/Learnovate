@@ -6,6 +6,7 @@ import backgroundImage from '../assets/images/auth_bg.png';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { API_URL } from '../config/config'
+import { jwtDecode } from 'jwt-decode';
 
 const { Option } = Select;
 
@@ -15,6 +16,9 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
   const [loading, setLoading] = useState(false);
    const user =  useSelector((state) => state.user.user)
    const navigate = useNavigate();
+
+    const token = localStorage.getItem("token");
+    const decoded = jwtDecode(token);
 
 
   const handleProfileChange = (e) => {
@@ -60,7 +64,7 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
       const formData = {
         ...values,
         profileUrl: uploadedProfileUrl, 
-        user: user
+        userId: user?.id || decoded?.userId,
       };
       
        fetch(`${API_URL}/mentee/register`, {
