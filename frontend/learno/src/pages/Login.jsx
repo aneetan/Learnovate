@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";  // Fixed import here
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import logoImage from "../assets/images/learno_logo.png";
 import backgroundImage from "../assets/images/auth_bg.png";
 import { login } from "../features/userSlice";
@@ -14,9 +15,9 @@ const Login = ({ setCurrentUser, users }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isAuthenticate, setIsAuthenticated] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);  // New state for password visibility
 
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
   const { email, password } = formData;
 
@@ -54,7 +55,6 @@ const Login = ({ setCurrentUser, users }) => {
       }
 
       if (data.user && data.token) {
-        // Save userInfo to Redux
         dispatch(login(data.user));
         setIsAuthenticated(true);
 
@@ -88,9 +88,11 @@ const Login = ({ setCurrentUser, users }) => {
       className="flex justify-center items-center p-6 min-h-screen bg-cover bg-center relative font-sans"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
-    <div className="absolute inset-0 opacity-80" style={{ backgroundColor: 'var(--primary-color)' }}></div>
+      <div
+        className="absolute inset-0 opacity-80"
+        style={{ backgroundColor: "var(--primary-color)" }}
+      ></div>
       <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-10 w-full max-w-[550px] border border-gray-200 relative z-10 flex flex-col justify-center min-h-[70vh]">
-        
         {/* Logo */}
         <div className="flex justify-center mb-2 -mt-15">
           <img src={logoImage} alt="Logo" className="h-44 object-contain" />
@@ -104,7 +106,12 @@ const Login = ({ setCurrentUser, users }) => {
           {error && <div className="text-red-600 text-sm mb-4">{error}</div>}
           <div className="grid grid-cols-1 gap-8 mb-7">
             <div className="flex flex-col gap-4">
-              <label htmlFor="email" className="text-gray-700 text-base font-medium text-left">Email</label>
+              <label
+                htmlFor="email"
+                className="text-gray-700 text-base font-medium text-left"
+              >
+                Email
+              </label>
               <input
                 type="email"
                 id="email"
@@ -115,19 +122,37 @@ const Login = ({ setCurrentUser, users }) => {
                 required
               />
             </div>
-            <div className="flex flex-col gap-4">
-              <label htmlFor="password" className="text-gray-700 text-base font-medium text-left">Password</label>
+
+            <div className="flex flex-col gap-4 relative">
+              <label
+                htmlFor="password"
+                className="text-gray-700 text-base font-medium text-left"
+              >
+                Password
+              </label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
                 value={password}
                 onChange={handleChange}
-                className="w-full p-3 border border-gray-300 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:border-[#26A69A] focus:ring-2 focus:ring-[#26A69A]/10 transition-all duration-300"
+                className="w-full p-3 pr-12 border border-gray-300 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:border-[#26A69A] focus:ring-2 focus:ring-[#26A69A]/10 transition-all duration-300"
                 required
               />
+              <div
+                className="absolute right-4 top-[55px] cursor-pointer text-gray-500"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <AiFillEyeInvisible size={20} />
+                ) : (
+                  <AiFillEye size={20} />
+                )}
+              </div>
             </div>
           </div>
+
           <button
             type="submit"
             className="bg-[#26A69A] text-white px-6 py-3 rounded-lg font-medium cursor-pointer hover:bg-[#20897f] hover:-translate-y-1 transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed w-full"
@@ -140,7 +165,12 @@ const Login = ({ setCurrentUser, users }) => {
         <div className="mt-8 text-center pt-6 border-t border-gray-200 text-gray-500 text-sm">
           <p>
             Don't have an account?{" "}
-            <Link to="/register" className="text-[#26A69A] font-medium hover:underline">Register</Link>
+            <Link
+              to="/register"
+              className="text-[#26A69A] font-medium hover:underline"
+            >
+              Register
+            </Link>
           </p>
         </div>
       </div>
