@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Form, Input, Select } from 'antd';
+import { Button, Form, Input, Select, message } from 'antd';
 import { UploadOutlined, PictureOutlined, PhoneOutlined, UserOutlined, AppstoreOutlined } from '@ant-design/icons';
 import logoImage from '../assets/images/learno_logo.png';
 import backgroundImage from '../assets/images/auth_bg.png';
@@ -14,17 +14,26 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
   const [profile, setProfile] = useState(null);
   const [profilePreview, setProfilePreview] = useState(null);
   const [loading, setLoading] = useState(false);
-   const user =  useSelector((state) => state.user.user)
-   const navigate = useNavigate();
+  const user = useSelector((state) => state.user.user)
+  const navigate = useNavigate();
 
     const token = localStorage.getItem("token");
     const decoded = jwtDecode(token);
 
-
   const handleProfileChange = (e) => {
     const file = e.target.files[0];
-    setProfile(file);
     if (file) {
+      const allowedExtensions = ['jpg', 'jpeg', 'png'];
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      
+      if (!allowedExtensions.includes(fileExtension)) {
+        message.error('Only JPG, JPEG, and PNG formats are allowed.');
+        setProfile(null);
+        setProfilePreview(null);
+        return;
+      }
+
+      setProfile(file);
       const reader = new FileReader();
       reader.onloadend = () => setProfilePreview(reader.result);
       reader.readAsDataURL(file);
@@ -48,43 +57,48 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
     const result = await response.json();
     setLoading(false);
     return result.secure_url;
-
   };
 
   const handleFinish = async (values) => {
     try {
       let uploadedProfileUrl = null;
 
-      // Upload profile picture to Cloudinary if selected
       if (profile) {
         uploadedProfileUrl = await uploadToCloudinary(profile, "image");
       }
 
-      // Combine form values with uploaded image URL
       const formData = {
         ...values,
         profileUrl: uploadedProfileUrl, 
         userId: user?.id || decoded?.userId,
       };
       
-       fetch(`${API_URL}/mentee/register`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem("token")}` 
-          },
-          body: JSON.stringify(formData)
-        })
+      fetch(`${API_URL}/mentee/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("token")}` 
+        },
+        body: JSON.stringify(formData)
+      })
       .then(res => res.json())
       .then(() => {
         navigate("/mentee/dashboard");
       })
       .catch(error => {
         console.log(error);
-        }); 
-       console.log(formData);
+      }); 
+      console.log(formData);
     } catch (error) {
       console.error("Upload failed", error);
+    }
+  };
+
+  // Handler to allow only numeric input
+  const handlePhoneKeyPress = (e) => {
+    const charCode = e.charCode;
+    if (charCode < 48 || charCode > 57) {
+      e.preventDefault();
     }
   };
 
@@ -93,12 +107,9 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
       className="min-h-screen bg-cover bg-center relative flex items-center justify-center px-6"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
-      {/* Overlay */}
       <div className="absolute inset-0 bg-[#148FA8]/90 z-0"></div>
 
-      {/* Main Card */}
       <div className="relative z-10 w-full max-w-5xl bg-white rounded-xl shadow-lg p-10">
-        {/* Logo */}
         <div className="flex justify-center mb-0">
           <img src={logoImage} alt="Logo" className="h-44 object-contain" />
         </div>
@@ -109,7 +120,6 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
           layout="vertical"
           className="space-y-10"
         >
-          {/* Profile Upload Section */}
           <div className="bg-white border border-gray-200 rounded-xl shadow-inner p-8">
             <div className="flex items-center gap-4 mb-6">
               <PictureOutlined className="text-3xl text-blue-600" />
@@ -132,7 +142,7 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
               <label className="cursor-pointer w-full md:w-auto">
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png"
                   onChange={handleProfileChange}
                   className="hidden"
                 />
@@ -143,7 +153,6 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
             </div>
           </div>
 
-          {/* Other Form Fields */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <Form.Item
               label={<span className="font-semibold text-lg"><PhoneOutlined className="mr-1" /> Phone Number</span>}
@@ -153,7 +162,12 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
                 { pattern: /^\d{10}$/, message: 'Phone number must be 10 digits' },
               ]}
             >
-              <Input placeholder="Enter contact number" maxLength={10} size="large" />
+              <Input 
+                placeholder="Enter contact number" 
+                maxLength={10} 
+                size="large"
+                onKeyPress={handlePhoneKeyPress}
+              />
             </Form.Item>
 
             <Form.Item
@@ -182,7 +196,6 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
             </Form.Item>
           </div>
 
-          {/* Submit Button */}
           <div className="w-full text-right">
             <Button
               type="primary"
