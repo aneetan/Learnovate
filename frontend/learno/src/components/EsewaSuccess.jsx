@@ -1,44 +1,67 @@
-import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { API_URL } from '../config/config';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const EsewaSuccess = () => {
+  const [paymentStatus, setPaymentStatus] = useState("Verifying...");
+  const [paymentDetails, setPaymentDetails] = useState(null);
   const location = useLocation();
-   const queryParams = new URLSearchParams(location.search);
-      const transactionUuid = queryParams.get('transaction_uuid');
+  const navigate = useNavigate();
 
-      console.log(transactionUuid)
-  
   useEffect(() => {
     const verifyPayment = async () => {
-        try {
-          console.log(transactionUuid)
-          const response = await axios.get(`${API_URL}/payment/success`, {
-            params: {
-              transaction_uuid: transactionUuid
-            }
-          });
-          
-          const result = await response.json();
-          if (result.status === 200) {
-            // Payment verified successfully
-            console.log('Payment verified:', result);
-          } else {
-            console.error('Payment verification failed:', result.message);
-          }
-        } catch (error) {
-          console.error('Error verifying payment:', error);
+      try {
+        const queryParams = new URLSearchParams(location.search);
+        const encodedData = queryParams.get("data");
+         if (!encodedData) {
+          throw new Error("No payment data received from eSewa");
         }
+
+        //  const decodedData = decodeURIComponent(encodedData);
+         const decodedJson = atob(encodedData); 
+        const esewaResponse = JSON.parse(decodedJson);
+
+        // 3. Extract required fields
+        const transactionUuid = esewaResponse.transaction_uuid;
+         
+        if (!transactionUuid) {
+          throw new Error("No transaction UUID found in callback");
+        }
+
+        const verificationDto = {
+          transactionUuid: transactionUuid,
+          status: "SUCCESS",
+        };
+
+        const response = await fetch(`http://localhost:8080/api/payment/verify`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(verificationDto)
+          });
+
+         if (response.data && response.data.status === "COMPLETED") {
+          setPaymentStatus("Payment verified successfully!");
+          setPaymentDetails(response.data);
+        } else {
+          setPaymentStatus(`Payment status: ${response.data?.status || "UNKNOWN"}`);
+        }
+
+      } catch (error) {
+        setPaymentStatus("Payment verification failed.");
+        console.error(error);
+      }
     };
-    
+
     verifyPayment();
   }, [location]);
 
   return (
-    <div className="payment-success">
-      <h2>Payment Successful!</h2>
-      <p>Thank you for your purchase.</p>
+    <div className="container">
+      <h1>Payment Status</h1>
+      <p>{paymentStatus}</p>
+      <a href="/">Go to Home</a>
     </div>
   );
 };

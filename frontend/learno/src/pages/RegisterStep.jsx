@@ -9,10 +9,8 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
   const { name, email, password, confirmPassword } = formData;
   const [errors, setErrors] = useState({});
   const [isValid, setIsValid] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const validateForm = (fields) => {
     const errors = {};
@@ -130,14 +128,12 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
             <label htmlFor="password" className="text-gray-700 font-medium text-left">Password</label>
             <input
               type={showPassword ? "text" : "password"}
-              type={showPassword ? "text" : "password"}
               id="password"
               name="password"
               value={password}
               onChange={handleChange}
               className={`w-full p-3 pr-12 border rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 transition-all duration-300 ${
-              className={`w-full p-3 pr-12 border rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 transition-all duration-300 ${
-                errors.password ? "border-red-600 focus:ring-red-600/10" : "border-gray-300 focus:ring-[#26A69A]/10"
+                errors.password ? "border-red-600 focus:ring-red-600/10" : "border-gray-300 focus:ring-[#26A69A]/10"}
               }`}
               placeholder="Enter password"
             />
@@ -162,12 +158,10 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
             <label htmlFor="confirmPassword" className="text-gray-700 font-medium text-left">Confirm Password</label>
             <input
               type={showConfirmPassword ? "text" : "password"}
-              type={showConfirmPassword ? "text" : "password"}
               id="confirmPassword"
               name="confirmPassword"
               value={confirmPassword}
               onChange={handleChange}
-              className={`w-full p-3 pr-12 border rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 transition-all duration-300 ${
               className={`w-full p-3 pr-12 border rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 transition-all duration-300 ${
                 errors.confirmPassword ? "border-red-600 focus:ring-red-600/10" : "border-gray-300 focus:ring-[#26A69A]/10"
               }`}
@@ -230,7 +224,11 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
           </p>
         </div>
       </div>
+      
     </div>
+    </div>
+    </div>
+
   );
 };
 

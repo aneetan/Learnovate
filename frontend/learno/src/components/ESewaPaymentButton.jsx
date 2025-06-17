@@ -1,66 +1,117 @@
-import React from 'react';
-import { API_URL } from '../config/config';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
+import CryptoJS from "crypto-js";
 
-const EsewaPaymentButton = ({ amount, productName, onSuccess, onFailure }) => {
-  const initiatePayment = async () => {
+const ESewaPaymentButton = () => {
+  const [amount, setAmount] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const mentorId = 1;
+const bookingId = 1;
+
+  // Generate a unique transaction UUID
+  const generateTransactionUUID = () => {
+    return `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  };
+
+  // Handle form submission
+  const handlePayment = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
     try {
-      // Call your Spring Boot backend to prepare payment
-      const response = await fetch(`${API_URL}/payment/initiate/1`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: amount,
-          productName: productName,
-          userId: 1,
-        }),
-      });
-      
-      const data = await response.json();
+      const transaction_uuid = generateTransactionUUID();
+      const total_amount = parseFloat(amount).toFixed(2);
+      const product_code = import.meta.env.VITE_ESEWA_PRODUCT_CODE;
+      const success_url = "http://localhost:5173/payment-success";
+      const failure_url = import.meta.env.VITE_FAILURE_URL;
 
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
+      const secret_key = import.meta.env.VITE_ESEWA_SECRET_KEY; 
+      const message = `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=${product_code}`;
+      const signature = CryptoJS.HmacSHA256(message, secret_key).toString(
+        CryptoJS.enc.Base64
+      );
 
-      // 3. Add all required parameters as hidden inputs
-      const addField = (name, value) => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = name;
-        input.value = value;
-        form.appendChild(input);
+      const initiationDto = {
+        userId: 1,
+        transactionUuid: transaction_uuid,
+        amount:  parseFloat(total_amount).toFixed(2),
+        signature: signature,
       };
 
-      // Required fields
-      addField('amount', data.payment_params.amount);
-      addField('tax_amount', data.payment_params.tax_amount);
-      addField('total_amount', data.payment_params.total_amount);
-      addField('transaction_uuid', data.transaction.transactionUuid);
-      addField('product_code', data.payment_params.product_code);
-      addField('product_service_charge', data.payment_params.product_service_charge);
-      addField('product_delivery_charge', data.payment_params.product_delivery_charge);
-      addField('success_url', 'https://esewa.com.np');
-      addField('failure_url', data.payment_params.failure_url.trim());
-      addField('signed_field_names', data.payment_params.signed_field_names);
-      addField('signature', data.payment_params.signature);
+      const response = await fetch(`http://localhost:8080/api/payment/initiate?mentorId=1&bookingId=1`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(initiationDto)
+      });
 
-      document.body.appendChild(form);
-      form.submit();
-      
+      const data = await response.json();
+
+      if (data.transactionUuid) {
+      // Prepare form data for eSewa
+        const formData = {
+          amount: total_amount,
+          tax_amount: 0,
+          total_amount: total_amount,
+          transaction_uuid,
+          product_code,
+          product_service_charge: 0,
+          product_delivery_charge: 0,
+          success_url,
+          failure_url,
+          signed_field_names: "total_amount,transaction_uuid,product_code",
+          signature,
+        };
+
+        // Create a form dynamically and submit it to eSewa
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = import.meta.env.VITE_ESEWA_GATEWAY_URL;
+
+        Object.entries(formData).forEach(([key, value]) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = key;
+          input.value = value;
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    } else {
+        throw new Error("Failed to initiate payment on backend");
+      }
     } catch (error) {
-      console.error('Payment initiation failed:', error);
-      onFailure(error);
-      window.location.href = `${window.location.origin}/payment/failure`;
+      console.error("Payment initiation failed:", error);
+      alert("Failed to initiate payment. Please try again.");
+      setIsLoading(false);
     }
   };
 
   return (
-    <button onClick={initiatePayment} className="esewa-payment-button">
-      Pay with eSewa
-    </button>
+    <div className="payment-container">
+      <h1>eSewa Payment Integration</h1>
+      <form onSubmit={handlePayment} className="payment-form">
+        <div className="form-group">
+          <label htmlFor="amount">Amount (NPR):</label>
+          <input
+            type="number"
+            id="amount"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            required
+            placeholder="Enter amount"
+            min="1"
+          />
+        </div>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "Processing..." : "Pay with eSewa"}
+        </button>
+      </form>
+    </div>
   );
 };
 
-export default EsewaPaymentButton;
+export default ESewaPaymentButton;
