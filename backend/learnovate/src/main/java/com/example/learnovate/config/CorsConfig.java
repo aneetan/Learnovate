@@ -21,6 +21,12 @@ public class CorsConfig {
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
         configuration.setAllowCredentials(true);  // This is crucial for credentials
         configuration.setExposedHeaders(List.of("Authorization"));  // Expose headers if needed
+        // Important for Firebase popup auth
+        configuration.setExposedHeaders(Arrays.asList(
+                "Authorization",
+                "Cross-Origin-Opener-Policy",
+                "Cross-Origin-Embedder-Policy"
+        ));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

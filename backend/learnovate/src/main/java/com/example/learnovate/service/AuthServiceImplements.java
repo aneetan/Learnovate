@@ -1,10 +1,18 @@
 package com.example.learnovate.service;
 
 import com.example.learnovate.config.JwtUtil;
+import com.example.learnovate.dto.AuthResponse;
 import com.example.learnovate.dto.LoginDto;
 import com.example.learnovate.dto.RegistrationDto;
+import com.example.learnovate.dto.TokenRequest;
 import com.example.learnovate.model.RegisteredUser;
 import com.example.learnovate.repository.RegisteredUserRespository;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
+import jakarta.persistence.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -21,6 +29,7 @@ import java.util.Map;
 
 @Service
 public class AuthServiceImplements implements AuthService{
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
     private final RegisteredUserRespository userRepository;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
@@ -101,5 +110,37 @@ public class AuthServiceImplements implements AuthService{
         response.put("status", HttpStatus.OK);
 
         return response;
+    }
+
+    public AuthResponse authenticateGoogle(String idToken)  {
+        try {
+            // Verify Firebase ID token
+            FirebaseToken decodedToken = jwtUtil.verifyFirebaseToken(idToken);
+            String uid = decodedToken.getUid();
+            String email = decodedToken.getEmail();
+            String name = (String) decodedToken.getClaims().get("name");
+
+
+            RegisteredUser user = userRepository.findByEmail(email)
+                    .orElseGet(() -> {
+                        RegisteredUser newUser = new RegisteredUser();
+                        newUser.setName(name);
+                        newUser.setEmail(email);
+                        newUser.setRole("mentee");
+                        return userRepository.save(newUser);
+                    });
+
+
+            // Generate custom JWT using JwtUtil
+            String jwt = jwtUtil.generateToken( email, "mentee", name, user.getUserId());
+
+            return new AuthResponse(jwt, email);
+        } catch (FirebaseAuthException e) {
+            logger.error("Firebase token verification failed: {}", e.getMessage());
+            throw new RuntimeException("Invalid token: " + e.getMessage());
+        } catch (Exception e) {
+            logger.error("Unexpected error: {}", e.getMessage());
+            throw new RuntimeException("Authentication error: " + e.getMessage());
+        }
     }
 }

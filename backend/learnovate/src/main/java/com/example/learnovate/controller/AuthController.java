@@ -1,12 +1,21 @@
 package com.example.learnovate.controller;
 
 import com.example.learnovate.config.JwtUtil;
+import com.example.learnovate.dto.AuthResponse;
 import com.example.learnovate.dto.LoginDto;
 import com.example.learnovate.dto.RegistrationDto;
+import com.example.learnovate.dto.TokenRequest;
 import com.example.learnovate.model.RegisteredUser;
 import com.example.learnovate.repository.RegisteredUserRespository;
 import com.example.learnovate.service.AuthService;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Data;
+import org.checkerframework.checker.units.qual.A;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,18 +24,24 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class AuthController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private final AuthService authService;
@@ -64,6 +79,25 @@ public class AuthController {
                     .body(Map.of("error", "An unexpected error occurred"));
         }
     }
+
+    @PostMapping("/google")
+    public ResponseEntity<?> authenticateGoogle(@RequestHeader("Authorization") String authHeader,
+                                                @RequestBody TokenRequest tokenRequest) {
+        logger.info("Received Google auth request with idToken: {}", tokenRequest.getIdToken());
+        try {
+            // Extract token from header
+            String idToken = authHeader.replace("Bearer ", "");
+
+            AuthResponse response = authService.authenticateGoogle(idToken);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Authentication failed: {}", e.getMessage());
+            return ResponseEntity.status(401).body("Authentication failed: " + e.getMessage());
+        }
+    }
+
+
 
     @Data
     private static class ErrorResponse {

@@ -8,6 +8,6 @@ public class MenteeDto {
     private String area;
     private String phone;
     private String currentStatus;
-    private RegistrationDto User;
+    private int userId;
 
 }

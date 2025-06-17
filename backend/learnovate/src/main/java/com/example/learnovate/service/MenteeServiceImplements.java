@@ -41,8 +41,11 @@ public class MenteeServiceImplements implements MenteeService{
     public Map<String, Object> saveProfile(MenteeDto menteeDto) {
         String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
 
+        RegisteredUser user = uRepo.findById(menteeDto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + menteeDto.getUserId()));
+
         // Validate email matches
-        if (!authenticatedEmail.equals(menteeDto.getUser().getEmail())) {
+        if (!authenticatedEmail.equals(user.getEmail())) {
             throw new UnauthorizedAccessException("Email in request does not match authenticated user");
         }
 
@@ -52,14 +55,8 @@ public class MenteeServiceImplements implements MenteeService{
         mentee.setProfileUrl(menteeDto.getProfileUrl());
         mentee.setCurrentStatus(menteeDto.getCurrentStatus());
 
-        RegisteredUser user = new RegisteredUser();
-        user.setUserId(Integer.valueOf(menteeDto.getUser().getUserId()));
-        user.setName(menteeDto.getUser().getName());
-        user.setEmail(menteeDto.getUser().getEmail());
-        user.setRole(menteeDto.getUser().getRole());
-
         mentee.setUser(user);
-
+        menteeRepository.save(mentee);
         response.put("mentee", mentee);
         response.put("status", HttpStatus.OK.value());
 

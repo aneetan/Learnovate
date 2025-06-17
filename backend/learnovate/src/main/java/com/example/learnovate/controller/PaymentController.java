@@ -29,7 +29,7 @@ public class PaymentController {
 
     @PostMapping("/initiate/{mentorId}")
     public ResponseEntity<?> initiatePayment(@RequestBody PaymentRequestDto request,
-                                                              @PathVariable int mentorId ){
+                                             @PathVariable int mentorId ){
         try {
             // Create transaction record in database
             PaymentDetails paymentDetails = paymentService.initiateTransaction(request, mentorId);

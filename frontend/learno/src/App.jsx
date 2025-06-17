@@ -19,6 +19,10 @@ import CalendarPreview from './pages/Mentee/CalendarPreview';
 import BookingRequest from './pages/Mentee/BookingRequest';
 import MenteeDashboard from './pages/Mentee/MenteeDashboard';
 import MentorDashboard from './pages/mentor/MentorDashboard';
+import CheckoutPage from './pages/Mentee/CheckoutPage';
+import EsewaCallback from './components/Mentee/EsewaCallback';
+import EsewaSuccess from './components/EsewaSuccess';
+import EsewaFailure from './components/EsewaFailure';
 
 function App() {
 
@@ -31,6 +35,13 @@ function App() {
 
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
+
+         <Route path="/checkout" element={<CheckoutPage />} />
+        {/* <Route path="/payment/success" element={<EsewaCallback />} /> */}
+        {/* <Route path="/payment/failure" element={<EsewaCallback />} /> */}
+
+         <Route path="/payment/success/:transaction_uuid?" element={<EsewaSuccess />} />
+        <Route path="/payment/failure" element={<EsewaFailure />} />
         
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]} />}>

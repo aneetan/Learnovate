@@ -30,28 +30,43 @@ const CalendarPreview = () => {
           }
         });
 
-        // Fetch booked appointments
-        const bookingsResponse = await axios.get(`${API_URL}/mentee/getBookingDetails/${params.mentorId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
-        });
+        let transformedBookings = {};
 
-        // Transform bookings data into the required format
-        const transformedBookings = bookingsResponse.data.reduce((acc, booking) => {
-          const date = booking.bookingDate;
-          const time = booking.timeSlot.slice(0, 5); // Get HH:MM format
-          
-          if (!acc[date]) {
-            acc[date] = [];
+        try {
+        // Attempt to fetch bookings, but don't fail entirely if this fails
+        const bookingsResponse = await axios.get(
+          `${API_URL}/mentee/getBookingDetails/${params.mentorId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              'Content-Type': 'application/json'  // Explicit content type
+            },
+            params: {  // Add any required parameters
+              mentorId: params.mentorId
+            }
           }
-          
-          if (!acc[date].includes(time)) {
-            acc[date].push(time);
-          }
-          
-          return acc;
-        }, {});
+        );
+
+        if (bookingsResponse.data && Array.isArray(bookingsResponse.data)) {
+          transformedBookings = bookingsResponse.data.reduce((acc, booking) => {
+            const date = booking.bookingDate;
+            const time = booking.timeSlot?.slice(0, 5) || ''; // Safe access with optional chaining
+            
+            if (date && time) {  // Only add if both date and time exist
+              if (!acc[date]) {
+                acc[date] = [];
+              }
+              if (!acc[date].includes(time)) {
+                acc[date].push(time);
+              }
+            }
+            return acc;
+          }, {});
+        }
+      } catch (bookingsError) {
+        console.warn("Bookings fetch failed, proceeding with empty bookings", bookingsError);
+        transformedBookings = {}
+      }
 
         setBookedAppointments(transformedBookings);
         setAvailability(availabilityResponse.data);
@@ -74,7 +89,7 @@ const CalendarPreview = () => {
     };
 
     fetchData();
-  },[])
+  },[params.mentorId])
 
   const formatDate = (date) => {
     const year = date.getFullYear();
