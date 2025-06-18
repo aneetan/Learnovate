@@ -50,8 +50,8 @@ function App() {
             <Route path='/mentee/booking-request/:mentorId' element={<BookingRequest />} />
             <Route path='/mentee/viewMentors' element={<MentorDirectory />} />
             <Route path='/mentee/calendar/:mentorId' element={<CalendarPreview />} />
-            <Route path="/mentee/menteeProfile" element={<MenteeProfile />} />
             <Route path="/mentee/checkout/:mentorId/:bookingId" element={<CheckoutPage />} />
+            <Route path="/mentee/menteeProfile" element={<MenteeProfile />} />
           </Route>
           <Route path='/mentee/registerDetails' element={<MenteeProfileStep />} />
         </Route>
