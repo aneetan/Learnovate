@@ -20,7 +20,6 @@ import BookingRequest from './pages/Mentee/BookingRequest';
 import MenteeDashboard from './pages/Mentee/MenteeDashboard';
 import MentorDashboard from './pages/mentor/MentorDashboard';
 import CheckoutPage from './pages/Mentee/CheckoutPage';
-import EsewaCallback from './components/Mentee/EsewaCallback';
 import EsewaSuccess from './components/EsewaSuccess';
 import EsewaFailure from './components/EsewaFailure';
 
@@ -36,13 +35,14 @@ function App() {
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
 
-         <Route path="/checkout" element={<CheckoutPage />} />
-        {/* <Route path="/payment/success" element={<EsewaCallback />} /> */}
-        {/* <Route path="/payment/failure" element={<EsewaCallback />} /> */}
 
-         <Route path="/payment/success/:transaction_uuid?" element={<EsewaSuccess />} />
-        <Route path="/payment/failure" element={<EsewaFailure />} />
-        
+         <Route path="/payment-success" element={<EsewaSuccess />} />
+        <Route path="/payment-failure" element={<EsewaFailure />} />
+
+        <Route path="/ment" element={<MentorLayout />}>
+          <Route path="/ment/dashboard" element={<Test />} />
+          {/* Other routes */}
+        </Route>
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]} />}>
           <Route path='/mentee' element={<MenteeLayout />}>
@@ -50,6 +50,7 @@ function App() {
             <Route path='/mentee/booking-request/:mentorId' element={<BookingRequest />} />
             <Route path='/mentee/viewMentors' element={<MentorDirectory />} />
             <Route path='/mentee/calendar/:mentorId' element={<CalendarPreview />} />
+            <Route path="/mentee/checkout/:mentorId/:bookingId" element={<CheckoutPage />} />
             <Route path="/mentee/menteeProfile" element={<MenteeProfile />} />
           </Route>
           <Route path='/mentee/registerDetails' element={<MenteeProfileStep />} />

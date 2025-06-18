@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class PaymentDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long payment_id;
+    private int payment_id;
 
     @Column(nullable = false, unique = true)
     private String transactionUuid;

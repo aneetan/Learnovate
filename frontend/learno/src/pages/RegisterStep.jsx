@@ -9,8 +9,8 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
   const { name, email, password, confirmPassword } = formData;
   const [errors, setErrors] = useState({});
   const [isValid, setIsValid] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const validateForm = (fields) => {
     const errors = {};
@@ -82,6 +82,10 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
         <div className="flex justify-center mb-2 -mt-10">
           <img src={logoImage} alt="Logo" className="h-48 object-contain" />
         </div>
+        {/* Logo */}
+        <div className="flex justify-center mb-2 -mt-10">
+          <img src={logoImage} alt="Logo" className="h-48 object-contain" />
+        </div>
         <h3 className="text-2xl text-gray-700 mb-6 -mt-10 font-semibold text-center">Register</h3>
         <div className="grid grid-cols-1 gap-6">
           {/* Name */}
@@ -120,6 +124,7 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
 
           {/* Password */}
           <div className="flex flex-col gap-2 relative">
+          <div className="flex flex-col gap-2 relative">
             <label htmlFor="password" className="text-gray-700 font-medium text-left">Password</label>
             <input
               type={showPassword ? "text" : "password"}
@@ -128,10 +133,16 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
               value={password}
               onChange={handleChange}
               className={`w-full p-3 pr-12 border rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 transition-all duration-300 ${
-                errors.password ? "border-red-600 focus:ring-red-600/10" : "border-gray-300 focus:ring-[#26A69A]/10"
+                errors.password ? "border-red-600 focus:ring-red-600/10" : "border-gray-300 focus:ring-[#26A69A]/10"}
               }`}
               placeholder="Enter password"
             />
+            <div
+              className="absolute right-4 top-[44px] cursor-pointer text-gray-500"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
+            </div>
             <div
               className="absolute right-4 top-[44px] cursor-pointer text-gray-500"
               onClick={() => setShowPassword((prev) => !prev)}
@@ -142,6 +153,7 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
           </div>
 
           {/* Confirm Password */}
+          <div className="flex flex-col gap-2 relative">
           <div className="flex flex-col gap-2 relative">
             <label htmlFor="confirmPassword" className="text-gray-700 font-medium text-left">Confirm Password</label>
             <input
@@ -155,6 +167,12 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
               }`}
               placeholder="Confirm your password"
             />
+            <div
+              className="absolute right-4 top-[44px] cursor-pointer text-gray-500"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+            >
+              {showConfirmPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
+            </div>
             <div
               className="absolute right-4 top-[44px] cursor-pointer text-gray-500"
               onClick={() => setShowConfirmPassword((prev) => !prev)}
@@ -182,6 +200,8 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
           </button>
           
           {/* OR */}
+          
+          {/* OR */}
           <div className="flex items-center my-2">
             <hr className="flex-grow border-gray-300" />
             <span className="mx-3 text-gray-500 font-medium">OR</span>
@@ -204,7 +224,11 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
           </p>
         </div>
       </div>
+      
     </div>
+    </div>
+    </div>
+
   );
 };
 
