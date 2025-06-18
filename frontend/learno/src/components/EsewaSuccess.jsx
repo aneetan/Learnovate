@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../config/config";
 
 const EsewaSuccess = () => {
   const [paymentStatus, setPaymentStatus] = useState("Verifying...");
@@ -33,10 +34,11 @@ const EsewaSuccess = () => {
           status: "SUCCESS",
         };
 
-        const response = await fetch(`http://localhost:8080/api/payment/verify`, {
+        const response = await fetch(`${API_URL}/payment/verify`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              'Authorization': `Bearer ${localStorage.getItem("token")}` 
             },
             body: JSON.stringify(verificationDto)
           });

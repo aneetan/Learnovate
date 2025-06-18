@@ -77,8 +77,9 @@ const BookingRequest = () => {
           body: JSON.stringify(submitData)
         })
       .then(res => res.json())
-      .then(() => {
-        navigate("/mentee/dashboard");
+      .then((data) => {
+         const bookingId = data.bookingId;
+        navigate(`/mentee/checkout/${params.mentorId}/${bookingId}`);
       })
       .catch(error => {
         console.log(error);

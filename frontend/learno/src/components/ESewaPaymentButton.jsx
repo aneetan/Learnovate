@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import CryptoJS from "crypto-js";
+import { API_URL, getUserId } from "../config/config";
+import { useParams } from "react-router-dom";
 
 const ESewaPaymentButton = () => {
   const [amount, setAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const mentorId = 1;
-const bookingId = 1;
+  let params = useParams();
 
   // Generate a unique transaction UUID
   const generateTransactionUUID = () => {
@@ -32,13 +33,13 @@ const bookingId = 1;
       );
 
       const initiationDto = {
-        userId: 1,
+        userId:  getUserId(localStorage.getItem("token")),
         transactionUuid: transaction_uuid,
         amount:  parseFloat(total_amount).toFixed(2),
         signature: signature,
       };
 
-      const response = await fetch(`http://localhost:8080/api/payment/initiate?mentorId=1&bookingId=1`, {
+      const response = await fetch(`${API_URL}/payment/initiate?mentorId=${params.mentorId}&bookingId=${params.bookingId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

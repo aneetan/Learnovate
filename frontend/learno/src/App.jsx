@@ -33,7 +33,6 @@ function App() {
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
 
-         <Route path="/checkout" element={<CheckoutPage />} />
 
          <Route path="/payment-success" element={<EsewaSuccess />} />
         <Route path="/payment-failure" element={<EsewaFailure />} />
@@ -49,6 +48,7 @@ function App() {
             <Route path='/mentee/booking-request/:mentorId' element={<BookingRequest />} />
             <Route path='/mentee/viewMentors' element={<MentorDirectory />} />
             <Route path='/mentee/calendar/:mentorId' element={<CalendarPreview />} />
+            <Route path="/mentee/checkout/:mentorId/:bookingId" element={<CheckoutPage />} />
           </Route>
           <Route path='/mentee/registerDetails' element={<MenteeProfileStep />} />
         </Route>
