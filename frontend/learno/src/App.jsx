@@ -2,7 +2,6 @@ import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import RegistrationForm from './pages/RegistrationForm';
-import Dashboard from './pages/Dashboard';
 import ProtectedRoutes from './security/ProtectedRoutes';
 import MenteeLayout from './components/Layout/MenteeLayout';
 import AdminLayout from './components/Layout/AdminLayout';
@@ -11,7 +10,10 @@ import Home from './pages/Home';
 import MentorDirectory from './pages/MentorDirectory';
 import MentorLayout from './components/Layout/MentorLayout';
 import MenteeProfileStep from './pages/MenteeProfileStep';
-import Test from "./pages/mentor/MentorDashboard";
+import MentorDashboard from "./pages/mentor/MentorDashboard";
+import MenteeProfile from "./pages/Mentee/MenteeProfile";
+import MentorProfile from "./pages/mentor/MentorProfile";
+
 import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
 import CalendarPreview from './pages/Mentee/CalendarPreview';
 import BookingRequest from './pages/Mentee/BookingRequest';
@@ -49,15 +51,17 @@ function App() {
             <Route path='/mentee/viewMentors' element={<MentorDirectory />} />
             <Route path='/mentee/calendar/:mentorId' element={<CalendarPreview />} />
             <Route path="/mentee/checkout/:mentorId/:bookingId" element={<CheckoutPage />} />
+            <Route path="/mentee/menteeProfile" element={<MenteeProfile />} />
           </Route>
           <Route path='/mentee/registerDetails' element={<MenteeProfileStep />} />
         </Route>
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]}/>}>
           <Route path='/mentor' element={<MentorLayout/>}>
-            <Route path='/mentor/dashboard' element={<Test/>}/>
+            <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
             <Route path='/mentor/availability' element={<AvailabilitySchedule/>}/>
+            <Route path="/mentorProfile" element={<MentorProfile />} />
           </Route>
           <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
         </Route>

@@ -3,8 +3,6 @@ import { Button, Form, Input, Select, Checkbox } from 'antd'
 import React, { useEffect, useState } from 'react'
 const { Option } = Select;
 
-
-
 const ProfessionalInfo = ({onFinish, initialValues} ) => {
 
     const areaOptions = {
@@ -43,101 +41,100 @@ const ProfessionalInfo = ({onFinish, initialValues} ) => {
             "Adobe XD", 
             "Product Design",
         ],
-        };
+    };
 
-        const [selectedArea, setSelectedArea] = useState(initialValues?.area || "");
-        const [selectedSkills, setSelectedSkills] = useState([]);
-         const [form] = Form.useForm();
+    const [selectedArea, setSelectedArea] = useState(initialValues?.area || "");
+    const [selectedSkills, setSelectedSkills] = useState([]);
+    const [form] = Form.useForm();
 
-         // Sync form with initialValues when they change
-        useEffect(() => {
-            form.setFieldsValue(initialValues);
-        }, [initialValues, form]);
+    // Sync form with initialValues when they change
+    useEffect(() => {
+        form.setFieldsValue(initialValues);
+    }, [initialValues, form]);
 
-         const handleAreaChange = (value) => {
-            setSelectedArea(value);
-            form.setFieldsValue({
+    const handleAreaChange = (value) => {
+        setSelectedArea(value);
+        form.setFieldsValue({
             skills: [], // Reset skills when area changes
             area: value
-            });
-        };
-        
-        return (
-            <>
-                <Form form={form} onFinish={onFinish} initialValues={initialValues}>
+        });
+    };
+    
+    return (
+        <>
+            <Form form={form} onFinish={onFinish} initialValues={initialValues}>
 
-                    <div className='container flex flex-wrap justify-between'>
-                        <div className='w-full md:w-1/2 px-4 md:px-8'>
-                            <Form.Item
+                <div className='container flex flex-wrap justify-between'>
+                    <div className='w-full md:w-1/2 px-4 md:px-8'>
+                        <Form.Item
                             label="Area of Expertise"
                             name="area"
                             labelCol={{ span: 24 }}
                             wrapperCol={{ span: 24 }}
                             rules={[
                                 {
-                                required: true,
-                                message: 'Please select your area of expertise',
+                                    required: true,
+                                    message: 'Please select your area of expertise',
                                 }
                             ]}
-                            >
-                               <Select placeholder="Select an area" onChange={handleAreaChange}>
-                                    {Object.keys(areaOptions).map((area) => (
+                        >
+                            <Select placeholder="Select an area" onChange={handleAreaChange}>
+                                {Object.keys(areaOptions).map((area) => (
                                     <Option key={area} value={area}>{area}</Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                        </div>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </div>
 
-                        <div className='w-full md:w-1/2 px-4 md:px-8'>
-                            <Form.Item
+                    <div className='w-full md:w-1/2 px-4 md:px-8'>
+                        <Form.Item
                             name="title"
                             label="Professional title"
                             labelCol={{ span: 24 }}
                             wrapperCol={{ span: 24 }}
                             rules={[
                                 {
-                                required: true,
-                                message: 'Enter your professional title',
+                                    required: true,
+                                    message: 'Enter your professional title',
                                 }
                             ]}
-                            >
-                                <Input
+                        >
+                            <Input
                                 style={{padding:"10px", outline: "none"}}
                                 name='title'
                                 placeholder="Eg. Software Engineer"
-                                />
-                            </Form.Item>
-
-                        </div>
+                                maxLength={100}  // Added 100-character limit
+                            />
+                        </Form.Item>
                     </div>
+                </div>
 
-                    <div className='container flex flex-wrap justify-between'>
-                        <div className='w-full md:w-1/2 px-4 md:px-8'>
-                            <Form.Item
+                <div className='container flex flex-wrap justify-between'>
+                    <div className='w-full md:w-1/2 px-4 md:px-8'>
+                        <Form.Item
                             name="experience"
                             label="Years of Experience"
                             labelCol={{ span: 24 }}
                             wrapperCol={{ span: 24 }}
                             rules={[
                                 {
-                                required: true,
-                                message: 'Enter your years of experience',
+                                    required: true,
+                                    message: 'Enter your years of experience',
                                 }
                             ]}
+                        >
+                            <Select
+                                placeholder="---Experience in years---"
+                                allowClear
                             >
-                                 <Select
-                                    placeholder="---Experience in years---"
-                                    allowClear
-                                    >
-                                        <Option value="0-1"> 0-1</Option>
-                                        <Option value="2-3"> 2-3 </Option>
-                                        <Option value="3-4">3-4</Option>
-                                        <Option value="5+">5+</Option>
-                                    </Select>
-                            </Form.Item>
-
-                        </div>
-                         <div className='w-full md:w-1/2 px-4 md:px-8'>
+                                <Option value="0-1"> 0-1</Option>
+                                <Option value="2-3"> 2-3 </Option>
+                                <Option value="3-4">3-4</Option>
+                                <Option value="5+">5+</Option>
+                            </Select>
+                        </Form.Item>
+                    </div>
+                    <div className='w-full md:w-1/2 px-4 md:px-8'>
                         <Form.Item
                             noStyle
                             shouldUpdate={(prevValues, currentValues) => prevValues.area !== currentValues.area}
@@ -169,21 +166,20 @@ const ProfessionalInfo = ({onFinish, initialValues} ) => {
                             }}
                         </Form.Item>
                     </div>
-                    </div>
+                </div>
 
-                    <div className="w-full mt-6 md:w-[14%] float-right">
-                        <Button type="primary"
+                <div className="w-full mt-6 md:w-[14%] float-right">
+                    <Button type="primary"
                         htmlType="submit"
                         className="w-full md:w-auto mr-12 hover:drop-shadow-md hover:scale-102 transition
                         cursor-pointer duration-300 ease-in-out font-bold"
-                        >
+                    >
                         Next <ArrowRightOutlined/>
-                        </Button>
-                    </div>
-                </Form>
-            
-            </>
-        )
-        }
+                    </Button>
+                </div>
+            </Form>
+        </>
+    )
+}
 
-        export default ProfessionalInfo
+export default ProfessionalInfo
