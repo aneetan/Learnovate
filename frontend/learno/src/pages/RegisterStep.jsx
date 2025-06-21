@@ -82,10 +82,6 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
         <div className="flex justify-center mb-2 -mt-10">
           <img src={logoImage} alt="Logo" className="h-48 object-contain" />
         </div>
-        {/* Logo */}
-        <div className="flex justify-center mb-2 -mt-10">
-          <img src={logoImage} alt="Logo" className="h-48 object-contain" />
-        </div>
         <h3 className="text-2xl text-gray-700 mb-6 -mt-10 font-semibold text-center">Register</h3>
         <div className="grid grid-cols-1 gap-6">
           {/* Name */}

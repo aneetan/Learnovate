@@ -38,13 +38,8 @@ function App() {
         <Route path='/websocket' element={<WebSocketClient/>} />
 
 
-         <Route path="/payment-success" element={<EsewaSuccess />} />
+        <Route path="/payment-success" element={<EsewaSuccess />} />
         <Route path="/payment-failure" element={<EsewaFailure />} />
-
-        <Route path="/ment" element={<MentorLayout />}>
-          {/* <Route path="/ment/dashboard" element={<Test />} /> */}
-          {/* Other routes */}
-        </Route>
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]} />}>
           <Route path='/mentee' element={<MenteeLayout />}>

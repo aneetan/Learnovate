@@ -1,7 +1,9 @@
 package com.example.learnovate.service;
 
+import com.example.learnovate.classfile.AuthenticateEmail;
 import com.example.learnovate.dto.EsewaInitiationDto;
 import com.example.learnovate.dto.EsewaVerificationDto;
+import com.example.learnovate.exception.UnauthorizedAccessException;
 import com.example.learnovate.model.Mentor;
 import com.example.learnovate.model.MentorBookings;
 import com.example.learnovate.model.PaymentDetails;
@@ -27,6 +29,7 @@ public class EsewaService {
     private final RegisteredUserRespository uRepo;
 
     private final MentorRepository mRepo;
+    AuthenticateEmail authenticateEmail = new AuthenticateEmail();
 
     public PaymentDetails initiatePayment(EsewaInitiationDto dto, int bookingId, int mentorId) {
         RegisteredUser user = uRepo.findById(dto.getUserId())
@@ -51,11 +54,33 @@ public class EsewaService {
     }
 
     public PaymentDetails verifyPayment(EsewaVerificationDto dto) {
+        String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
+
         PaymentDetails payment = paymentRepository.findByTransactionUuid(dto.getTransactionUuid())
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
 
+        if ("SUCCESS".equals(payment.getStatus())) {
+            throw new RuntimeException("Payment already verified");
+        }
+
+        RegisteredUser user = uRepo.findById(payment.getUser().getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!authenticatedEmail.equals(user.getEmail())) {
+            throw new UnauthorizedAccessException("Email in request does not match authenticated user");
+        }
+
+        Mentor mentor = mRepo.findById(payment.getMentor().getMentorId())
+                .orElseThrow(() -> new RuntimeException("Mentor not found"));
+        System.out.println(mentor);
+
+        MentorBookings bookings = bookingRepo.findByUserAndMentor(user, mentor)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
         payment.setStatus("SUCCESS");
         payment.setUpdatedAt(LocalDateTime.now());
+        bookings.setPaymentStatus("PAID");
+        bookingRepo.save(bookings);
 
         return paymentRepository.save(payment);
     }
