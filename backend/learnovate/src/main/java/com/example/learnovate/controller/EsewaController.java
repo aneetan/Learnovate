@@ -54,6 +54,10 @@ public class EsewaController {
         try {
             PaymentDetails payment = esewaService.verifyPayment(verificationDto);
             return ResponseEntity.ok(new EsewaResponseDto(payment));
+        } catch (UnauthorizedAccessException e) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED.value())
+                    .body("You are unauthorized to access the system");
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)

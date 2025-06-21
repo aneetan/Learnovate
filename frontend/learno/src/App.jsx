@@ -18,10 +18,10 @@ import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
 import CalendarPreview from './pages/Mentee/CalendarPreview';
 import BookingRequest from './pages/Mentee/BookingRequest';
 import MenteeDashboard from './pages/Mentee/MenteeDashboard';
-import MentorDashboard from './pages/mentor/MentorDashboard';
 import CheckoutPage from './pages/Mentee/CheckoutPage';
 import EsewaSuccess from './components/EsewaSuccess';
 import EsewaFailure from './components/EsewaFailure';
+import WebSocketClient from './websocket/WebSocketClient';
 
 function App() {
 
@@ -35,14 +35,11 @@ function App() {
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
 
+        <Route path='/websocket' element={<WebSocketClient/>} />
 
-         <Route path="/payment-success" element={<EsewaSuccess />} />
+
+        <Route path="/payment-success" element={<EsewaSuccess />} />
         <Route path="/payment-failure" element={<EsewaFailure />} />
-
-        <Route path="/ment" element={<MentorLayout />}>
-          <Route path="/ment/dashboard" element={<Test />} />
-          {/* Other routes */}
-        </Route>
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]} />}>
           <Route path='/mentee' element={<MenteeLayout />}>

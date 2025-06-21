@@ -88,7 +88,7 @@ public class MenteeServiceImplements implements MenteeService{
         bookings.setMentor(mentor);
 
         bookingRepo.save(bookings);
-//        response.put("booking", bookings);
+        response.put("bookingId", bookings.getBookingId());
         response.put("status", HttpStatus.OK.value());
         response.put("message", "User booking requested");
 
@@ -118,6 +118,20 @@ public class MenteeServiceImplements implements MenteeService{
     public List<Mentor> getAllMentors() {
         return mRepo.findAllMentorsWithUserDetails();
 
+    }
+
+    @Override
+    public Mentor getMentorById(int id) {
+//        String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
+
+        Mentor mentor = mRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Mentor not found with id: " + id));
+        
+//        if (!authenticatedEmail.equals(mentor.getUser().getEmail())) {
+//            throw new UnauthorizedAccessException("Email in request does not match authenticated user");
+//        }
+
+        return mentor;
     }
 
     @Override
