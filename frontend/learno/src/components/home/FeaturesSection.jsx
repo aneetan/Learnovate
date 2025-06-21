@@ -27,7 +27,7 @@ const features = [
 
 const FeaturesSection = forwardRef(({ inView }, ref) => {
   return (
-    <section ref={ref} className="py-24 bg-[var(--gray-50)]">
+    <section ref={ref} id="features" className="py-24 bg-[var(--gray-50)]">
       <div className="container mx-auto px-6">
         <motion.h2
           className="text-4xl font-bold text-center text-[var(--gray-900)] mb-14"

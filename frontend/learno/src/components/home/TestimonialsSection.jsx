@@ -2,11 +2,11 @@ import { motion } from "framer-motion";
 
 const TestimonialsSection = ({ testimonials, activeTestimonial, setActiveTestimonial }) => {
   return (
-    <section className="py-28 bg-[var(--gray-50)] relative overflow-hidden">
+    <section id="testimonials" className="py-28 bg-[var(--gray-50)] relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22%23CBD5E1%22%20fill-opacity%3D%220.1%22%3E%3Ccircle%20cx%3D%226%22%20cy%3D%226%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%2236%22%20cy%3D%226%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%226%22%20cy%3D%2236%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%2236%22%20cy%3D%2236%22%20r%3D%222%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50 z-0" />
       <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary-lighter)]/10 to-[var(--primary-light)]/10 z-0" />
       <div className="container mx-auto px-6 relative z-10">
-        <h2 className="text-5xl font-extrabold text-[var(--gray-900)] text-center mb-16 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary-color)] to-[var(--primary-dark)]">
+        <h2 className="text-4xl font-bold text-[var(--gray-900)] text-center mb-16 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary-color)] to-[var(--primary-dark)]">
           Success Stories
         </h2>
         <div className="relative max-w-4xl mx-auto h-[450px] md:h-[400px] overflow-hidden">

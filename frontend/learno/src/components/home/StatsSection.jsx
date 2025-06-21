@@ -23,7 +23,7 @@ const StatsSection = forwardRef(({ inView }, ref) => {
               transition={{ duration: 0.6, delay: index * 0.15 }}
             >
               <div
-                className="text-4xl font-extrabold bg-gradient-to-r from-[var(--primary-color)] to-[var(--primary-light)] bg-clip-text text-transparent mb-2 transition-colors duration-300"
+                className="text-4xl font-bold bg-gradient-to-r from-[var(--primary-color)] to-[var(--primary-light)] bg-clip-text text-transparent mb-2 transition-colors duration-300"
                 style={{ fontFamily: "var(--font-sans)" }}
               >
                 <AnimatedCounter end={stat.end} suffix={stat.suffix} />
