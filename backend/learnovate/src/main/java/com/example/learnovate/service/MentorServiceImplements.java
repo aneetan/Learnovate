@@ -63,10 +63,13 @@ public class MentorServiceImplements implements MentorService{
         mentor.setProfileUrl(mentorDTO.getProfileUrl());
         mentor.setDocumentUrl(mentorDTO.getDocumentUrl());
 
+        user.setDetailsFilled(true);
+
         mentor.setUser(user);
 
         mentor.setStatus("pending");
 
+        rRepo.save(user);
         mRepo.save(mentor);
 
         response.put("mentor", mentor);

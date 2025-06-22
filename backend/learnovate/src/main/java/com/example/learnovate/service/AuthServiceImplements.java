@@ -101,6 +101,7 @@ public class AuthServiceImplements implements AuthService{
             userInfo.put("name", user.getName());
             userInfo.put("email", user.getEmail());
             userInfo.put("role", user.getRole());
+            userInfo.put("isDetailsFilled", user.isDetailsFilled());
 
             token = jwtUtil.generateToken(user.getEmail(), user.getRole(), user.getName(), user.getUserId());
         }

@@ -55,6 +55,9 @@ public class MenteeServiceImplements implements MenteeService{
         mentee.setProfileUrl(menteeDto.getProfileUrl());
         mentee.setCurrentStatus(menteeDto.getCurrentStatus());
 
+        user.setDetailsFilled(true);
+        uRepo.save(user);
+
         mentee.setUser(user);
         menteeRepository.save(mentee);
         response.put("mentee", mentee);
@@ -126,7 +129,7 @@ public class MenteeServiceImplements implements MenteeService{
 
         Mentor mentor = mRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Mentor not found with id: " + id));
-        
+
 //        if (!authenticatedEmail.equals(mentor.getUser().getEmail())) {
 //            throw new UnauthorizedAccessException("Email in request does not match authenticated user");
 //        }
