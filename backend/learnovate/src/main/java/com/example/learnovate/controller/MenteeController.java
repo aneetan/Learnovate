@@ -31,7 +31,7 @@ public class MenteeController {
         this.menteeService = menteeService;
     }
 
-    @PostMapping(value = "/register")
+    @PostMapping("/register")
     public ResponseEntity<?> saveProfile(@RequestBody MenteeDto menteeDTO) {
         try {
             Map<String, Object> response = menteeService.saveProfile(menteeDTO);
@@ -116,6 +116,8 @@ public class MenteeController {
                     .body("User not found of id " + id);
         }
     }
+
+
 
 
 

@@ -167,4 +167,10 @@ public class MenteeServiceImplements implements MenteeService{
         bookingRepo.save(bookings);
         return bookings;
     }
+
+    public Mentee getMenteeByUserId(int id){
+        Mentee mentee = menteeRepository.getMenteeByUser_UserId(id);
+        return mentee;
+    }
+
 }
