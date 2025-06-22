@@ -65,9 +65,17 @@ const Login = ({ setCurrentUser, users }) => {
         if (role === "ADMIN") {
           navigate("/admin/dashboard");
         } else if (role === "MENTOR") {
-          navigate("/mentor/registerDetails");
+          if(data.user.isDetailsFilled === true){
+            navigate("/mentor/dashboard");
+          } else {
+            navigate("/mentor/registerDetails");
+          }
         } else if (role === "MENTEE") {
-          navigate("/mentee/registerDetails");
+          if(data.user.isDetailsFilled === true){
+            navigate("/mentee/dashboard");
+          } else {
+            navigate("/mentee/registerDetails");
+          }
         } else {
           setError("Invalid role");
         }
