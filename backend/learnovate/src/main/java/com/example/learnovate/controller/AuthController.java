@@ -5,6 +5,8 @@ import com.example.learnovate.dto.AuthResponse;
 import com.example.learnovate.dto.LoginDto;
 import com.example.learnovate.dto.RegistrationDto;
 import com.example.learnovate.dto.TokenRequest;
+import com.example.learnovate.exception.UnauthorizedAccessException;
+import com.example.learnovate.model.Mentor;
 import com.example.learnovate.model.RegisteredUser;
 import com.example.learnovate.repository.RegisteredUserRespository;
 import com.example.learnovate.service.AuthService;
@@ -94,6 +96,18 @@ public class AuthController {
         } catch (Exception e) {
             logger.error("Authentication failed: {}", e.getMessage());
             return ResponseEntity.status(401).body("Authentication failed: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/getUsers/{id}")
+    public ResponseEntity<?> getMentorById(@PathVariable int id) {
+        try {
+            RegisteredUser user = authService.getUserById(id);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .body("User not found of id " + id);
         }
     }
 
