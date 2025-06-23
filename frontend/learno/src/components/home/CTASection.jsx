@@ -27,7 +27,7 @@ const CTASection = () => {
         transition={{ duration: 0.8 }}
       >
         <h2
-          className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight"
+          className="text-4xl md:text-4xl font-bold mb-6 leading-tight"
           style={{ fontFamily: "var(--font-sans)", color: "white" }}
         >
           Ready to Accelerate Your Growth?

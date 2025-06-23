@@ -1,8 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { format } from "date-fns";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import Select from "react-select";
 import { API_URL, getUserId } from "../../config/config";
 import { useNavigate } from "react-router-dom";
@@ -37,52 +33,50 @@ export default function AvailabilitySchedule() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setSubmitting(true);
+    e.preventDefault();
+    setSubmitting(true);
 
-  const formData = {
-    days: selectedDays,
-    startTime: timeRange.start,
-    endTime: timeRange.end,
-    userId: getUserId(localStorage.getItem("token"))
-  };
+    const formData = {
+      days: selectedDays,
+      startTime: timeRange.start,
+      endTime: timeRange.end,
+      userId: getUserId(localStorage.getItem("token"))
+    };
 
-  try {
-    const response = await fetch(`${API_URL}/mentor/setAvailability`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem("token")}`
-      },
-      body: JSON.stringify(formData)
-    });
+    try {
+      const response = await fetch(`${API_URL}/mentor/setAvailability`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify(formData)
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to save availability');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to save availability');
+      }
+
+      await response.json();
+      navigate("/mentor/dashboard");
+    } catch (err) {
+      console.error("Error submitting availability:", err);
+      alert(err.message || "Failed to save availability. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-
-    const data = await response.json();
-    navigate("/mentor/dashboard");
-  } catch (err) {
-    console.error("Error submitting availability:", err);
-    alert(err.message || "Failed to save availability. Please try again.");
-  } finally {
-    setSubmitting(false);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <form 
-        onSubmit={handleSubmit} 
-        className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6"
-      > 
+      <form onSubmit={handleSubmit} className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
         <h2 className="text-2xl font-bold text-gray-800">Set Your Availability</h2>
-        <span className="text-gray-600 text-sm font-normal"> Each session will be of one hour by default.</span>
-       
-        
-        {/* Timezone Section */}
+        <span className="text-gray-600 text-sm font-normal">
+          Each session will be of one hour by default.
+        </span>
+
+        {/* Timezone */}
         <div className="my-6">
           <label className="block text-sm font-medium text-gray-700 mb-1">Time Zone</label>
           <Select
@@ -106,16 +100,16 @@ export default function AvailabilitySchedule() {
           <p className="mt-1 text-sm text-gray-500">Timezone is set to Kathmandu (GMT+5:45)</p>
         </div>
 
-        {/* Days Selection Section */}
+        {/* Days */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">Select Available Days</label>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {daysOfWeek.map((day) => (
-              <label 
-                key={day.value} 
+              <label
+                key={day.value}
                 className={`inline-flex items-center p-3 rounded-md border cursor-pointer transition-colors ${
-                  selectedDays.includes(day.value) 
-                    ? 'bg-blue-50 border-blue-300' 
+                  selectedDays.includes(day.value)
+                    ? 'bg-blue-50 border-blue-300'
                     : 'border-gray-200 hover:bg-gray-50'
                 }`}
               >
@@ -131,7 +125,7 @@ export default function AvailabilitySchedule() {
           </div>
         </div>
 
-        {/* Time Range Section */}
+        {/* Time Range */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Time Range (applies to all selected days)
@@ -164,11 +158,25 @@ export default function AvailabilitySchedule() {
         <button
           type="submit"
           disabled={submitting || selectedDays.length === 0}
-          className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-            submitting || selectedDays.length === 0
-              ? 'bg-blue-300 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700'
-          }`}
+          className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
+          style={{
+            backgroundColor: submitting || selectedDays.length === 0
+              ? "var(--primary-light)"
+              : "var(--primary-color)",
+            cursor: submitting || selectedDays.length === 0
+              ? "not-allowed"
+              : "pointer"
+          }}
+          onMouseOver={(e) => {
+            if (!(submitting || selectedDays.length === 0)) {
+              e.currentTarget.style.backgroundColor = "var(--primary-dark)";
+            }
+          }}
+          onMouseOut={(e) => {
+            if (!(submitting || selectedDays.length === 0)) {
+              e.currentTarget.style.backgroundColor = "var(--primary-color)";
+            }
+          }}
         >
           {submitting ? (
             <span className="flex items-center justify-center">

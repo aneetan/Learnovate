@@ -2,10 +2,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const FAQSection = ({ faqs, expanded, toggleFaq }) => {
   return (
-    <section className="py-28" style={{ background: 'linear-gradient(to bottom, var(--gray-50), var(--gray-100))' }}>
+    <section id="faq" className="py-28" style={{ background: 'linear-gradient(to bottom, var(--gray-50), var(--gray-100))' }}>
       <div className="container">
         <h2
-          className="text-5xl font-extrabold text-center mb-16 tracking-tight"
+          className="text-4xl font-bold text-center mb-16 tracking-tight"
           style={{ color: 'var(--gray-900)', fontFamily: 'var(--font-sans)' }}
         >
           Frequently Asked Questions
@@ -37,7 +37,10 @@ const FAQSection = ({ faqs, expanded, toggleFaq }) => {
                     backgroundColor: 'transparent',
                   }}
                 >
-                  <span>{faq.question}</span>
+                  {/* Question text on the left */}
+                  <span className="text-left flex-grow">{faq.question}</span>
+
+                  {/* + icon on the right, unchanged size and color */}
                   <motion.span
                     className="text-2xl"
                     style={{ color: 'var(--primary-color)' }}

@@ -26,10 +26,10 @@ const MentorSidebar = ({ children }) => {
   }, [isMobile]);
 
   const menuItems = [
-    { name: 'Dashboard', icon: <MdDashboard />, path: '/ment/dashboard' },
-    { name: 'Schedule', icon: <MdToday />, path: '/ment/schedule' },
-    { name: 'Sessions', icon: <FaAddressBook />, path: '/ment/sessions' },
-    { name: 'Chat', icon: <FaRegCommentDots />, path: '/ment/chat' },
+    { name: 'Dashboard', icon: <MdDashboard />, path: '/mentor/dashboard' },
+    { name: 'Schedule', icon: <MdToday />, path: '/mentor/availability' },
+    { name: 'Sessions', icon: <FaAddressBook />, path: '/mentor/sessions' },
+    { name: 'Chat', icon: <FaRegCommentDots />, path: '/mentor/chat' },
   ];
 
   return (
@@ -135,8 +135,16 @@ const MentorSidebar = ({ children }) => {
             </button>
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-                <a href="#" className="block px-4 py-2 hover:bg-gray-100 transition text-sm">My Profile</a>
-                <a href="#" className="block px-4 py-2 hover:bg-gray-100 transition flex items-center space-x-2 text-sm">
+                 <button
+                  onClick={() => {
+                    navigate('/mentor/profile');
+                    setDropdownOpen(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 transition text-sm"
+                >
+                  My Profile
+                </button>
+                 <a href="#" className="block px-4 py-2 hover:bg-gray-100 transition flex items-center space-x-2 text-sm">
                   <FaSignOutAlt /> <span>Logout</span>
                 </a>
               </div>
