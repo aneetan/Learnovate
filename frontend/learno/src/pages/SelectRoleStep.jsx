@@ -27,7 +27,8 @@ const SelectRoleStep = ({ formData, handleChange, onSubmit }) => {
         },
         body: JSON.stringify({
           ...formData,
-          role: role
+          role: role,
+          isDetailsFilled: false,
         })
       });
 

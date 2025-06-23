@@ -1,38 +1,26 @@
 package com.example.learnovate.controller;
 
-import com.example.learnovate.config.JwtUtil;
 import com.example.learnovate.dto.AuthResponse;
 import com.example.learnovate.dto.LoginDto;
 import com.example.learnovate.dto.RegistrationDto;
 import com.example.learnovate.dto.TokenRequest;
+import com.example.learnovate.exception.UnauthorizedAccessException;
+import com.example.learnovate.model.Mentee;
+import com.example.learnovate.model.Mentor;
 import com.example.learnovate.model.RegisteredUser;
-import com.example.learnovate.repository.RegisteredUserRespository;
 import com.example.learnovate.service.AuthService;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseToken;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.example.learnovate.service.MenteeService;
+import com.example.learnovate.service.MentorService;
 import lombok.Data;
-import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -46,8 +34,16 @@ public class AuthController {
     @Autowired
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
+    @Autowired
+    private  final MentorService mentorService;
+
+    @Autowired
+    private final MenteeService menteeService;
+
+    public AuthController(AuthService authService, MentorService mentorService, MenteeService menteeService) {
         this.authService = authService;
+        this.mentorService = mentorService;
+        this.menteeService = menteeService;
     }
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -94,6 +90,46 @@ public class AuthController {
         } catch (Exception e) {
             logger.error("Authentication failed: {}", e.getMessage());
             return ResponseEntity.status(401).body("Authentication failed: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/getUsers/{id}")
+    public ResponseEntity<?> getMentorById(@PathVariable int id) {
+        try {
+            RegisteredUser user = authService.getUserById(id);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .body("User not found of id " + id);
+        }
+    }
+
+    @GetMapping("/getMentor/{userId}")
+    public ResponseEntity<?> getMentorByUserId(@PathVariable int userId) {
+        try {
+            Mentor mentor = mentorService.getMentorByUserId(userId);
+            return ResponseEntity.ok(mentor);
+        } catch (RuntimeException e){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .body("User not found of id " + userId);
+        }
+    }
+
+    @GetMapping("/getMentee/{userId}")
+    public ResponseEntity<?> getMenteeByUserId(@PathVariable int userId) {
+        try {
+            Mentee mentee = menteeService.getMenteeByUserId(userId);
+            return ResponseEntity.ok(mentee);
+        } catch (UnauthorizedAccessException e) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED.value())
+                    .body("You are unauthorized to access the system");
+        } catch (RuntimeException e){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .body("User not found of id " + userId);
         }
     }
 

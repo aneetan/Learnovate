@@ -16,10 +16,13 @@ public interface MenteeService {
     MentorAvailability getAvailability(@PathVariable int id);
 
     List<Mentor> getAllMentors();
+    Mentor getMentorById(@PathVariable int id);
 
     List<MentorBookings> getAllBookingsForMentor(@PathVariable int id);
 
     MentorBookings  updatePaymentForBookings(int id);
+
+    Mentee getMenteeByUserId(int id);
 
 
 }

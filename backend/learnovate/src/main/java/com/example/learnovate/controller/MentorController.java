@@ -3,6 +3,8 @@ package com.example.learnovate.controller;
 import com.example.learnovate.dto.MentorAvailabilityDto;
 import com.example.learnovate.dto.MentorDTO;
 import com.example.learnovate.exception.UnauthorizedAccessException;
+import com.example.learnovate.model.Mentee;
+import com.example.learnovate.model.Mentor;
 import com.example.learnovate.service.MentorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -56,4 +58,6 @@ public class MentorController {
                     .body("User id not found");
         }
     }
+
+
 }
