@@ -25,7 +25,7 @@ const MentorChat = () => {
      useEffect(()=> {
         const getMentee = async() => {
             try {
-                const response = await axios.get(`${API_URL}/auth/getMentee/${userId}`,{})
+                const response = await axios.get(`${API_URL}/auth/getMentor/${userId}`,{})
                 setMentee(response.data)
 
             } catch (err) {

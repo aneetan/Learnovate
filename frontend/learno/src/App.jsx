@@ -25,6 +25,7 @@ import Chat from './websocket/MenteeChat';
 import AnotherChat from './websocket/MentorChat';
 import MenteeChat from './websocket/MenteeChat';
 import MentorChat from './websocket/MentorChat';
+import MentorDashboard from './pages/mentor/MentorDashboard';
 
 function App() {
 
@@ -56,10 +57,8 @@ function App() {
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]}/>}>
           <Route path='/mentor' element={<MentorLayout/>}>
-            <Route path='dashboard' element={<MentorDashboard/>}/>
             <Route path='availability' element={<AvailabilitySchedule/>}/>
             <Route path="profile" element={<MentorProfile />} />
-            <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
             <Route path='/mentor/availability' element={<AvailabilitySchedule/>}/>
             <Route path="/mentorProfile" element={<MentorProfile />} />
