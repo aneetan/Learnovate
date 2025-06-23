@@ -15,9 +15,11 @@
     "@heroicons/react": "^2.2.0",
     "@react-oauth/google": "^0.12.2",
     "@reduxjs/toolkit": "^2.8.2",
+    "@stomp/stompjs": "^7.1.1",
     "@tailwindcss/vite": "^4.1.6",
     "antd": "^5.25.2",
-    "axios": "^1.9.0",
+    "axios": "^1.10.0",
+    "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
     "firebase": "^11.9.1",
     "framer-motion": "^12.12.2",
@@ -38,7 +40,9 @@
     "recharts": "^2.15.3",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
-    "tailwindcss": "^4.1.6"
+    "sockjs-client": "^1.6.1",
+    "tailwindcss": "^4.1.6",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

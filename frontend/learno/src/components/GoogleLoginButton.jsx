@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { auth, googleProvider } from '../firebase/firebase';
 import { getAuth, signInWithPopup} from 'firebase/auth';
 import { FcGoogle } from 'react-icons/fc';
-import { API_URL } from '../config/config';
+import { API_URL, getUserId } from '../config/config';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const GoogleLoginButton = () => {
     const navigate = useNavigate();
@@ -25,8 +26,20 @@ const GoogleLoginButton = () => {
        
       const responseData = await response.json();
       localStorage.setItem("token", responseData.jwt)
-      navigate('/mentee/registerDetails')
-      
+      const userId = getUserId(responseData.jwt);
+
+      try {
+        const response = await axios.get(`${API_URL}/auth/getUsers/${userId}`, {})
+
+         if(response.data.detailsFilled === true){
+          navigate('/mentee/dashboard')
+        } else {
+          navigate('/mentee/registerDetails')
+        }
+
+      } catch (err) {
+        console.log(err.message)
+      }     
     } catch (error) {
       console.error('Error during sign-in:', error.message);
     }

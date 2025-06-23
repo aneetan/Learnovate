@@ -101,6 +101,7 @@ public class AuthServiceImplements implements AuthService{
             userInfo.put("name", user.getName());
             userInfo.put("email", user.getEmail());
             userInfo.put("role", user.getRole());
+            userInfo.put("isDetailsFilled", user.isDetailsFilled());
 
             token = jwtUtil.generateToken(user.getEmail(), user.getRole(), user.getName(), user.getUserId());
         }
@@ -127,6 +128,7 @@ public class AuthServiceImplements implements AuthService{
                         newUser.setName(name);
                         newUser.setEmail(email);
                         newUser.setRole("mentee");
+                        newUser.setDetailsFilled(false);
                         return userRepository.save(newUser);
                     });
 
@@ -142,5 +144,14 @@ public class AuthServiceImplements implements AuthService{
             logger.error("Unexpected error: {}", e.getMessage());
             throw new RuntimeException("Authentication error: " + e.getMessage());
         }
+    }
+
+    @Override
+    public RegisteredUser getUserById(int id) {
+        RegisteredUser user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+
+        return user;
+
     }
 }

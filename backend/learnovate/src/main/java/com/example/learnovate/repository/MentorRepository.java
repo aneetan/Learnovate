@@ -1,5 +1,6 @@
 package com.example.learnovate.repository;
 
+import com.example.learnovate.model.Mentee;
 import com.example.learnovate.model.Mentor;
 import com.example.learnovate.model.RegisteredUser;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,7 @@ public interface MentorRepository extends JpaRepository<Mentor, Integer> {
 
     @Query("SELECT m FROM Mentor m JOIN FETCH m.user u WHERE u.role = 'MENTOR'")
     List<Mentor> findAllMentorsWithUserDetails();
+    Mentor getMentorByUser_UserId(int userId);
+
+
 }

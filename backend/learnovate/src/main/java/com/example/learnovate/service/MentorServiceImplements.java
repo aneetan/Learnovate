@@ -4,6 +4,7 @@ import com.example.learnovate.classfile.AuthenticateEmail;
 import com.example.learnovate.dto.MentorAvailabilityDto;
 import com.example.learnovate.dto.MentorDTO;
 import com.example.learnovate.exception.UnauthorizedAccessException;
+import com.example.learnovate.model.Mentee;
 import com.example.learnovate.model.Mentor;
 import com.example.learnovate.model.MentorAvailability;
 import com.example.learnovate.model.RegisteredUser;
@@ -63,10 +64,13 @@ public class MentorServiceImplements implements MentorService{
         mentor.setProfileUrl(mentorDTO.getProfileUrl());
         mentor.setDocumentUrl(mentorDTO.getDocumentUrl());
 
+        user.setDetailsFilled(true);
+
         mentor.setUser(user);
 
         mentor.setStatus("pending");
 
+        rRepo.save(user);
         mRepo.save(mentor);
 
         response.put("mentor", mentor);
@@ -103,6 +107,11 @@ public class MentorServiceImplements implements MentorService{
         response.put("status", HttpStatus.OK);
 
         return  response;
+    }
+
+    public Mentor getMentorByUserId(int id){
+        Mentor mentor = mRepo.getMentorByUser_UserId(id);
+        return mentor;
     }
 
 

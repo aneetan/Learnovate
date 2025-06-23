@@ -31,7 +31,7 @@ public class MenteeController {
         this.menteeService = menteeService;
     }
 
-    @PostMapping(value = "/register")
+    @PostMapping("/register")
     public ResponseEntity<?> saveProfile(@RequestBody MenteeDto menteeDTO) {
         try {
             Map<String, Object> response = menteeService.saveProfile(menteeDTO);
@@ -40,7 +40,7 @@ public class MenteeController {
                     .body(response);
         } catch (UnauthorizedAccessException e) {
             return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.UNAUTHORIZED.value())
                     .body("You are unauthorized to access the system");
         }
     }
@@ -56,7 +56,7 @@ public class MenteeController {
 
             } catch (UnauthorizedAccessException e) {
                 return ResponseEntity
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                        .status(HttpStatus.UNAUTHORIZED.value())
                         .body("You are unauthorized to access the system");
             } catch (RuntimeException e){
             return ResponseEntity
@@ -72,7 +72,7 @@ public class MenteeController {
             return ResponseEntity.ok(mentorAvailability);
         } catch (UnauthorizedAccessException e) {
             return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.UNAUTHORIZED.value())
                     .body("You are unauthorized to access the system");
         }  catch (RuntimeException e){
             return ResponseEntity
@@ -87,7 +87,7 @@ public class MenteeController {
             return ResponseEntity.ok(bookings);
         } catch (UnauthorizedAccessException e) {
             return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                    .status(HttpStatus.UNAUTHORIZED.value())
                     .body("You are unauthorized to access the system");
         } catch (RuntimeException e){
             return ResponseEntity
@@ -100,6 +100,24 @@ public class MenteeController {
     public List<Mentor> getAllMentors(){
         return menteeService.getAllMentors();
     }
+
+    @GetMapping("/getMentors/{id}")
+    public ResponseEntity<?> getMentorById(@PathVariable int id) {
+        try {
+            Mentor mentor = menteeService.getMentorById(id);
+            return ResponseEntity.ok(mentor);
+        } catch (UnauthorizedAccessException e) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED.value())
+                    .body("You are unauthorized to access the system");
+        }  catch (RuntimeException e){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .body("User not found of id " + id);
+        }
+    }
+
+
 
 
 

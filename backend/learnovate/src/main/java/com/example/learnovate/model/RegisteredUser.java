@@ -9,6 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class RegisteredUser {
 
@@ -26,48 +27,21 @@ public class RegisteredUser {
 
     private String role;
 
-    public RegisteredUser(String name, String email, String password, String role) {
+    private boolean isDetailsFilled;
+
+    public boolean isDetailsFilled() {
+        return isDetailsFilled;
+    }
+
+    public void setDetailsFilled(boolean detailsFilled) {
+        isDetailsFilled = detailsFilled;
+    }
+
+    public RegisteredUser(String name, String email, String password, String role, boolean isDetailsFilled) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.isDetailsFilled = isDetailsFilled;
     }
-
-    public RegisteredUser() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-
-    // DTO (Data Transfer Object) for Registration
 }
