@@ -347,13 +347,13 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
                     <div className="rounded-full bg-indigo-100 flex items-center justify-center">
                       {msg.sender.userId === currentUser.userId
                         ? (
-                            <img src={roleDetails.profileUrl} alt='img'
-                            className='w-8 h-8 rounded-full'/>
+                            ""
                         )
                         : (  
                             <img src={otherDetails.profileUrl} alt='img'
                             className='w-8 h-8 rounded-full'/>
-                        )}
+                        )
+                        }
                     </div>
                   </div>
                   <div
