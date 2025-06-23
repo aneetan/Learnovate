@@ -6,6 +6,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import logoImage from "../assets/images/learno_logo.png";
 import backgroundImage from "../assets/images/auth_bg.png";
 import { login } from "../features/userSlice";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 
 const Login = ({ setCurrentUser, users }) => {
   const [formData, setFormData] = useState({
@@ -65,9 +66,17 @@ const Login = ({ setCurrentUser, users }) => {
         if (role === "ADMIN") {
           navigate("/admin/dashboard");
         } else if (role === "MENTOR") {
-          navigate("/mentor/registerDetails");
+          if(data.user.isDetailsFilled === true){
+            navigate("/mentor/dashboard");
+          } else {
+            navigate("/mentor/registerDetails");
+          }
         } else if (role === "MENTEE") {
-          navigate("/mentee/registerDetails");
+          if(data.user.isDetailsFilled === true){
+            navigate("/mentee/dashboard");
+          } else {
+            navigate("/mentee/registerDetails");
+          }
         } else {
           setError("Invalid role");
         }
@@ -155,14 +164,23 @@ const Login = ({ setCurrentUser, users }) => {
 
           <button
             type="submit"
-            className="bg-[#26A69A] text-white px-6 py-3 rounded-lg font-medium cursor-pointer hover:bg-[#20897f] hover:-translate-y-1 transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed w-full"
+            className="bg-[var(--primary-color)] text-white px-6 py-3 rounded-lg font-medium cursor-pointer hover:bg-[var(--primary-dark)] hover:-translate-y-1 transition-all duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed w-full"
             disabled={loading}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <div className="mt-8 text-center pt-6 border-t border-gray-200 text-gray-500 text-sm">
+        <div className="flex items-center mt-8 mb-4 ">
+          <hr className="flex-grow border-gray-300" />
+          <span className="mx-3 text-gray-500 font-medium">OR</span>
+          <hr className="flex-grow border-gray-300" />
+        </div>
+
+        {/* Google Signup */}
+          <GoogleLoginButton/>
+
+        <div className="mt-8 text-center border-t border-gray-200 text-gray-500 text-sm">
           <p>
             Don't have an account?{" "}
             <Link

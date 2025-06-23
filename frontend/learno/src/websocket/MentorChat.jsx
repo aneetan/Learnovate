@@ -1,0 +1,49 @@
+import React, { useEffect, useState } from 'react'
+import ChatRoom from './ChatRoom'
+import axios from 'axios';
+import { API_URL, getUserId } from '../config/config';
+
+const MentorChat = () => {
+    const [currentUser, setCurrentUser] = useState(null);
+    const [mentor, setMentor] = useState(null);
+    const userId = getUserId(localStorage.getItem("token"));
+
+    useEffect(()=> {
+        const getUser = async() => {
+            try {
+                const response = await axios.get(`${API_URL}/auth/getUsers/${userId}`)
+                setCurrentUser(response.data)
+                console.log(response.data)
+
+            } catch (err) {
+                console.log(err.message)
+            }
+        }
+        getUser();
+    }, [userId])
+
+     useEffect(()=> {
+        const getMentee = async() => {
+            try {
+                const response = await axios.get(`${API_URL}/auth/getMentee/${userId}`,{})
+                setMentor(response.data)
+
+            } catch (err) {
+                console.log(err.message)
+            }
+        }
+        getMentee();
+    }, [userId])
+
+  return (
+    <div>
+         {currentUser ? (
+            <ChatRoom currentUser={currentUser} roleDetails={mentor} />
+            ) : (
+            <p>Loading chat...</p> 
+            )}
+    </div>
+  )
+}
+
+export default MentorChat

@@ -22,5 +22,7 @@ public interface MenteeService {
 
     MentorBookings  updatePaymentForBookings(int id);
 
+    Mentee getMenteeByUserId(int id);
+
 
 }

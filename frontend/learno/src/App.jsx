@@ -21,7 +21,11 @@ import MenteeDashboard from './pages/Mentee/MenteeDashboard';
 import CheckoutPage from './pages/Mentee/CheckoutPage';
 import EsewaSuccess from './components/EsewaSuccess';
 import EsewaFailure from './components/EsewaFailure';
-import WebSocketClient from './websocket/WebSocketClient';
+import WebSocketClient from './websocket/ChatRoom';
+import Chat from './websocket/MenteeChat';
+import AnotherChat from './websocket/MentorChat';
+import MenteeChat from './websocket/MenteeChat';
+import MentorChat from './websocket/MentorChat';
 
 function App() {
 
@@ -34,10 +38,7 @@ function App() {
 
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
-
-        <Route path='/websocket' element={<WebSocketClient/>} />
-
-
+        
         <Route path="/payment-success" element={<EsewaSuccess />} />
         <Route path="/payment-failure" element={<EsewaFailure />} />
 
@@ -49,6 +50,7 @@ function App() {
             <Route path='/mentee/calendar/:mentorId' element={<CalendarPreview />} />
             <Route path="/mentee/checkout/:mentorId/:bookingId" element={<CheckoutPage />} />
             <Route path="/mentee/menteeProfile" element={<MenteeProfile />} />
+            <Route path='/mentee/chat' element={<MenteeChat/>} />
           </Route>
           <Route path='/mentee/registerDetails' element={<MenteeProfileStep />} />
         </Route>
@@ -59,6 +61,8 @@ function App() {
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
             <Route path='/mentor/availability' element={<AvailabilitySchedule/>}/>
             <Route path="/mentorProfile" element={<MentorProfile />} />
+            <Route path='/mentor/chat' element={<MentorChat/>} />
+
           </Route>
           <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
         </Route>

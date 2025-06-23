@@ -5,7 +5,7 @@ import logoImage from '../assets/images/learno_logo.png';
 import backgroundImage from '../assets/images/auth_bg.png';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
-import { API_URL } from '../config/config'
+import { API_URL, getUserId } from '../config/config'
 import { jwtDecode } from 'jwt-decode';
 
 const { Option } = Select;
@@ -70,14 +70,14 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
       const formData = {
         ...values,
         profileUrl: uploadedProfileUrl, 
-        userId: user?.id || decoded?.userId,
+        userId: decoded?.userId,
       };
       
       fetch(`${API_URL}/mentee/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem("token")}` 
+          'Authorization': `Bearer ${token}` 
         },
         body: JSON.stringify(formData)
       })

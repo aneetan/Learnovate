@@ -1,12 +1,35 @@
 package com.example.learnovate.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.User;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Message {          //holds the message content sent between clients and the server.
+@Entity
+public class Message {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private String content;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
+
+    @ManyToOne
+    @JoinColumn(name = "sender_id")
+    private RegisteredUser sender;
+
+    @ManyToOne
+    @JoinColumn(name = "receiver_id")
+    private RegisteredUser receiver;
+
+    private LocalDateTime timestamp;
 }
+
