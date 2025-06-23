@@ -5,7 +5,7 @@ import { API_URL, getUserId } from '../config/config';
 
 const MentorChat = () => {
     const [currentUser, setCurrentUser] = useState(null);
-    const [mentor, setMentor] = useState(null);
+    const [mentee, setMentee] = useState(null);
     const userId = getUserId(localStorage.getItem("token"));
 
     useEffect(()=> {
@@ -26,7 +26,7 @@ const MentorChat = () => {
         const getMentee = async() => {
             try {
                 const response = await axios.get(`${API_URL}/auth/getMentee/${userId}`,{})
-                setMentor(response.data)
+                setMentee(response.data)
 
             } catch (err) {
                 console.log(err.message)
@@ -38,7 +38,7 @@ const MentorChat = () => {
   return (
     <div>
          {currentUser ? (
-            <ChatRoom currentUser={currentUser} roleDetails={mentor} />
+            <ChatRoom currentUser={currentUser} roleDetails={mentee} />
             ) : (
             <p>Loading chat...</p> 
             )}

@@ -4,6 +4,7 @@ import { FaRegCalendarAlt, FaAddressBook, FaRegCommentDots, FaUserCircle, FaSign
 import { MdDashboard, MdPerson, MdTask, MdToday } from "react-icons/md";
 import logoImage from "../../assets/images/learno_logo_long.png";
 import logoImage2 from "../../assets/images/learno_logo_only.png";
+import NotificationComponent from '../notifications/NotificationComponent';
 
 const MenteeSidebar = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -127,6 +128,7 @@ const MenteeSidebar = ({ children }) => {
             </div>
           </div>
           <div className="relative ml-4">
+            <NotificationComponent/> N
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
