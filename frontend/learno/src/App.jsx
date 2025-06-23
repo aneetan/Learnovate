@@ -56,12 +56,14 @@ function App() {
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]}/>}>
           <Route path='/mentor' element={<MentorLayout/>}>
+            <Route path='dashboard' element={<MentorDashboard/>}/>
+            <Route path='availability' element={<AvailabilitySchedule/>}/>
+            <Route path="profile" element={<MentorProfile />} />
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
             <Route path='/mentor/availability' element={<AvailabilitySchedule/>}/>
             <Route path="/mentorProfile" element={<MentorProfile />} />
             <Route path='/mentor/chat' element={<MentorChat/>} />
-
           </Route>
           <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
         </Route>
