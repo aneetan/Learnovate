@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import PageTransition from "../components/common/PageTransition";
+import HomeNavbar from "../components/home/HomeNavbar";
+import HomeFooter from "../components/home/HomeFooter";
 import HeroSection from "../components/home/HeroSection";
 import StatsSection from "../components/home/StatsSection";
 import CategoriesSection from "../components/home/CategoriesSection";
@@ -165,7 +167,8 @@ const Home = () => {
 
   return (
     <PageTransition>
-      <div className="home">
+      <div className="home pt-16 lg:pt-20">
+        <HomeNavbar />
         <HeroSection />
         <StatsSection ref={statsRef} inView={statsInView} />
         <CategoriesSection
@@ -185,6 +188,7 @@ const Home = () => {
         <FAQSection faqs={faqs} expanded={expanded} toggleFaq={toggleFaq} />
         <CTASection />
         <FeedbackForm />
+        <HomeFooter />
       </div>
     </PageTransition>
   );

@@ -28,7 +28,7 @@ const MenteeSidebar = ({ children }) => {
 
   const menuItems = [
     { name: 'Dashboard', icon: <MdDashboard />, path: '/mentee/dashboard' },
-    {name: 'Mentors', icon: <MdPerson/> , path: '/mentee/viewMentors'},
+    { name: 'Mentors', icon: <MdPerson />, path: '/mentee/viewMentors' },
     { name: 'Sessions', icon: <FaAddressBook />, path: '/mentee/sessions' },
     { name: 'Chat', icon: <FaRegCommentDots />, path: '/mentee/chat' },
     { name: 'Challenges', icon: <MdTask />, path: '/mentee/challenges' },
@@ -138,7 +138,15 @@ const MenteeSidebar = ({ children }) => {
             </button>
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-                <a href="#" className="block px-4 py-2 hover:bg-gray-100 transition text-sm">My Profile</a>
+                <button
+                  onClick={() => {
+                    navigate('/mentee/menteeProfile');
+                    setDropdownOpen(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 transition text-sm"
+                >
+                  My Profile
+                </button>
                 <a href="#" className="block px-4 py-2 hover:bg-gray-100 transition flex items-center space-x-2 text-sm">
                   <FaSignOutAlt /> <span>Logout</span>
                 </a>

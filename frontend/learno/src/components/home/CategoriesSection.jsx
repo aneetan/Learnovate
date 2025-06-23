@@ -9,7 +9,7 @@ const CategoriesSection = forwardRef(
     };
 
     return (
-      <section ref={ref} className="py-24 bg-white">
+      <section ref={ref} id="categories" className="py-24 bg-white">
         <div className="container mx-auto px-6">
           <motion.h2
             className="text-4xl font-bold text-center text-gray-900 mb-4"
