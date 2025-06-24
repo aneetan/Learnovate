@@ -12,19 +12,21 @@ import MentorLayout from './components/Layout/MentorLayout';
 import MenteeProfileStep from './pages/MenteeProfileStep';
 import MenteeProfile from "./pages/Mentee/MenteeProfile";
 import MentorProfile from "./pages/mentor/MentorProfile";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminUsers from "./pages/AdminUsers";
+import AdminMentors from "./pages/AdminMentors";
+import AdminBookings from "./pages/AdminBookings";
+import AdminReviews from './pages/AdminReviews';
 
 import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
 import CalendarPreview from './pages/Mentee/CalendarPreview';
 import BookingRequest from './pages/Mentee/BookingRequest';
 import MenteeDashboard from './pages/Mentee/MenteeDashboard';
+import MentorDashboard from './pages/mentor/MentorDashboard';
 import CheckoutPage from './pages/Mentee/CheckoutPage';
 import EsewaSuccess from './components/EsewaSuccess';
 import EsewaFailure from './components/EsewaFailure';
-import WebSocketClient from './websocket/ChatRoom';
-import Chat from './websocket/MenteeChat';
-import AnotherChat from './websocket/MentorChat';
-import MenteeChat from './websocket/MenteeChat';
-import MentorChat from './websocket/MentorChat';
+import MentorSessions from './pages/mentor/MentorSessions';
 
 function App() {
 
@@ -35,11 +37,25 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
 
+
+        <Route path='/test-adminDashboard' element={<AdminLayout/>}>
+            <Route path='' element={<AdminDashboard/>}/>
+            <Route path='users' element={<AdminUsers/>}/>
+            <Route path='mentors' element={<AdminMentors/>}/>
+            <Route path='bookings' element={<AdminBookings/>}/>
+            <Route path='reviews' element={<AdminReviews />}/>
+          </Route>
+
         <Route path="/findMentor" element={<MentorDirectory />} />
         <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
+
+         <Route path="/checkout" element={<CheckoutPage />} />
+        {/* <Route path="/payment/success" element={<EsewaCallback />} /> */}
+        {/* <Route path="/payment/failure" element={<EsewaCallback />} /> */}
+
+         <Route path="/payment/success/:transaction_uuid?" element={<EsewaSuccess />} />
+        <Route path="/payment/failure" element={<EsewaFailure />} />
         
-        <Route path="/payment-success" element={<EsewaSuccess />} />
-        <Route path="/payment-failure" element={<EsewaFailure />} />
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]} />}>
           <Route path='/mentee' element={<MenteeLayout />}>
@@ -47,9 +63,7 @@ function App() {
             <Route path='/mentee/booking-request/:mentorId' element={<BookingRequest />} />
             <Route path='/mentee/viewMentors' element={<MentorDirectory />} />
             <Route path='/mentee/calendar/:mentorId' element={<CalendarPreview />} />
-            <Route path="/mentee/checkout/:mentorId/:bookingId" element={<CheckoutPage />} />
             <Route path="/mentee/menteeProfile" element={<MenteeProfile />} />
-            <Route path='/mentee/chat' element={<MenteeChat/>} />
           </Route>
           <Route path='/mentee/registerDetails' element={<MenteeProfileStep />} />
         </Route>
@@ -59,19 +73,13 @@ function App() {
             <Route path='dashboard' element={<MentorDashboard/>}/>
             <Route path='availability' element={<AvailabilitySchedule/>}/>
             <Route path="profile" element={<MentorProfile />} />
-            <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
-            <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
-            <Route path='/mentor/availability' element={<AvailabilitySchedule/>}/>
-            <Route path="/mentorProfile" element={<MentorProfile />} />
-            <Route path='/mentor/chat' element={<MentorChat/>} />
+            <Route path="sessions" element={<MentorSessions />} />
           </Route>
           <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
         </Route>
 
          <Route element={<ProtectedRoutes allowedRoles={["ADMIN"]}/>}>
-          <Route path='/admin' element={<AdminLayout/>}>
-            <Route path='/admin/dashboard' element={<div> This is admin </div>}/>
-          </Route>
+         
         </Route>
 
       </Routes>

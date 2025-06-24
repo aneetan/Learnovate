@@ -186,14 +186,29 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
           </p>
 
           {/* Submit */}
-          <button
-            onClick={handleSubmit}
-            className={`w-full p-3 rounded-lg text-white font-semibold transition-all duration-300 ${
-              isValid ? "bg-[#26A69A] hover:bg-[#208f84]" : "bg-[#26A69A]"
-            }`}
-          >
-            Next
-          </button>
+        <button
+  onClick={handleSubmit}
+  style={{
+    backgroundColor: 'var(--primary-color)',
+    color: 'white',
+    padding: '0.75rem',
+    borderRadius: '0.5rem',
+    fontWeight: '600',
+    transition: 'all 0.3s',
+    width: '100%',
+  }}
+  onMouseEnter={(e) => {
+    if (isValid) e.currentTarget.style.backgroundColor = 'var(--primary-dark)';
+  }}
+  onMouseLeave={(e) => {
+    if (isValid) e.currentTarget.style.backgroundColor = 'var(--primary-color)';
+  }}
+  disabled={!isValid}
+>
+  Next
+</button>
+
+
           
           {/* OR */}
           
