@@ -26,6 +26,7 @@ import AnotherChat from './websocket/MentorChat';
 import MenteeChat from './websocket/MenteeChat';
 import MentorChat from './websocket/MentorChat';
 import MentorDashboard from './pages/mentor/MentorDashboard';
+import Notifications from './pages/Notifications';
 
 function App() {
 
@@ -41,6 +42,10 @@ function App() {
         
         <Route path="/payment-success" element={<EsewaSuccess />} />
         <Route path="/payment-failure" element={<EsewaFailure />} />
+
+        <Route path="/noti" element={<Notifications/>} />
+
+
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]} />}>
           <Route path='/mentee' element={<MenteeLayout />}>
