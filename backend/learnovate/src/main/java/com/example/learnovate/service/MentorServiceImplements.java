@@ -4,7 +4,6 @@ import com.example.learnovate.classfile.AuthenticateEmail;
 import com.example.learnovate.dto.MentorAvailabilityDto;
 import com.example.learnovate.dto.MentorDTO;
 import com.example.learnovate.exception.UnauthorizedAccessException;
-import com.example.learnovate.model.Mentee;
 import com.example.learnovate.model.Mentor;
 import com.example.learnovate.model.MentorAvailability;
 import com.example.learnovate.model.RegisteredUser;
@@ -15,7 +14,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 

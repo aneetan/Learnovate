@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Room, Integer> {
-    Optional<Room> findByUser1AndUser2(RegisteredUser user1, RegisteredUser user2);
-    Optional<Room> findByUser2AndUser1(RegisteredUser user2, RegisteredUser user1);
 
     @Query("SELECT r FROM Room r WHERE " +
             "(r.user1.userId = :userId1 AND r.user2.userId = :userId2) OR " +
