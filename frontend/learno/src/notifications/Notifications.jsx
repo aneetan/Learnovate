@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import SockJS from 'sockjs-client';
 import axios from 'axios';
 import { Stomp } from '@stomp/stompjs';
+import { API_URL } from '../config/config';
 
 function Notifications() {
   const [chatMessages, setChatMessages] = useState([]);
@@ -11,7 +12,7 @@ function Notifications() {
 
   useEffect(() => {
     // Connect to the WebSocket endpoint
-    const socket = new SockJS('http://localhost:8080/api/ws');
+    const socket = new SockJS(`${API_URL}/ws`);
     stompClient = Stomp.over(socket);
     stompClient.connect({}, () => {
       // Subscribe to chat messages (adjust destination if different)
@@ -39,7 +40,7 @@ function Notifications() {
   const sendNotification = async () => {
     if (message.trim()) {
       try {
-        await axios.post('http://localhost:8080/api/notify', message, {
+        await axios.post(`${API_URL}/notify`, message, {
           headers: { 'Content-Type': 'text/plain' },
         });
         setMessage('');

@@ -1,0 +1,94 @@
+import { Stomp } from '@stomp/stompjs';
+import React, { useEffect, useState } from 'react';
+import SockJS from 'sockjs-client';
+import { API_URL } from '../config/config';
+import { jwtDecode } from 'jwt-decode';
+
+const AdminNotifications = () => {
+  const [notifications, setNotifications] = useState([]);
+  const [stompClient, setStompClient] = useState(null);
+  const token = localStorage.getItem("token");
+  const [adminEmail, setAdminEmail] = useState('');
+
+  useEffect(() => {
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setAdminEmail(decoded.email || 'admin@gmail.com');
+      } catch (error) {
+        console.error('Error decoding JWT:', error);
+      }
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (!token || !adminEmail) return;
+
+    const socket = new SockJS(`${API_URL}/ws`);
+    const client = Stomp.over(socket);
+    
+    // For debugging only
+    client.debug = (msg) => console.log('STOMP:', msg);
+    
+    client.connect(
+      { Authorization: `Bearer ${token}` },
+      () => {
+        console.log('WebSocket connected for admin');
+        setStompClient(client);
+      },
+      (error) => {
+        console.error('WebSocket connection error:', error);
+      }
+    );
+
+    return () => {
+      if (client.connected) {
+        console.log('Disconnecting WebSocket');
+        client.disconnect();
+      }
+    };
+  }, [token, adminEmail]);
+
+  useEffect(() => {
+  if (stompClient && stompClient.connected && adminEmail) {
+    const subscription = stompClient.subscribe(
+      `/user/${adminEmail}/queue/notifications`,
+      (message) => {
+        try {
+          const notification = JSON.parse(message.body);
+          setNotifications((prev) => [...prev, notification]);
+        } catch (e) {
+          console.error('Error parsing notification:', e);
+          // Fallback to raw message if JSON parsing fails
+          setNotifications((prev) => [...prev, message.body]);
+        }
+      },
+      { Authorization: `Bearer ${token}` }
+    );
+
+    return () => subscription.unsubscribe();
+  }
+}, [stompClient, adminEmail, token]);
+
+  return (
+    <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-xl font-semibold mb-4">Admin Notifications</h2>
+      {notifications.length === 0 ? (
+        <p className="text-gray-500">No notifications yet.</p>
+      ) : (
+        <ul className="space-y-2">
+          {notifications.map((note, index) => (
+             <li key={index} className="bg-gray-100 p-3 rounded-md shadow-sm">
+              {note.message}
+              <div className="text-xs text-gray-500 mt-1">
+                {note.timestamp && new Date(note.timestamp).toLocaleString()}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+export default AdminNotifications;

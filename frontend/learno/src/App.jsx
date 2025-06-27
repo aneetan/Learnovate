@@ -20,13 +20,12 @@ import MenteeDashboard from './pages/Mentee/MenteeDashboard';
 import CheckoutPage from './pages/Mentee/CheckoutPage';
 import EsewaSuccess from './components/EsewaSuccess';
 import EsewaFailure from './components/EsewaFailure';
-import WebSocketClient from './websocket/ChatRoom';
-import Chat from './websocket/MenteeChat';
-import AnotherChat from './websocket/MentorChat';
 import MenteeChat from './websocket/MenteeChat';
 import MentorChat from './websocket/MentorChat';
 import MentorDashboard from './pages/mentor/MentorDashboard';
-import Notifications from './pages/Notifications';
+import Notifications from './notifications/Notifications';
+import UserRequestForm from './notifications/UserRequestForm';
+import AdminNotifications from './notifications/AdminNotifications';
 
 function App() {
 
@@ -44,6 +43,10 @@ function App() {
         <Route path="/payment-failure" element={<EsewaFailure />} />
 
         <Route path="/noti" element={<Notifications/>} />
+        <Route path="/mentor/notify" element={<UserRequestForm/>} />
+        <Route path="/admin/notify" element={<AdminNotifications/>} />
+
+
 
 
 
