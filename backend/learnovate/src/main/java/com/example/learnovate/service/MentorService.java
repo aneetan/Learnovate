@@ -2,10 +2,7 @@ package com.example.learnovate.service;
 
 import com.example.learnovate.dto.MentorAvailabilityDto;
 import com.example.learnovate.dto.MentorDTO;
-import com.example.learnovate.model.Mentee;
 import com.example.learnovate.model.Mentor;
-import com.example.learnovate.model.MentorAvailability;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Map;
 

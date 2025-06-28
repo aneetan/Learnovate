@@ -20,11 +20,12 @@ import MenteeDashboard from './pages/Mentee/MenteeDashboard';
 import CheckoutPage from './pages/Mentee/CheckoutPage';
 import EsewaSuccess from './components/EsewaSuccess';
 import EsewaFailure from './components/EsewaFailure';
-import WebSocketClient from './websocket/ChatRoom';
-import Chat from './websocket/MenteeChat';
-import AnotherChat from './websocket/MentorChat';
 import MenteeChat from './websocket/MenteeChat';
 import MentorChat from './websocket/MentorChat';
+import MentorDashboard from './pages/mentor/MentorDashboard';
+// import Notifications from './notifications/Notifications';
+import AdminNotifications from './notifications/AdminNotifications';
+import EmailConfirmationPage from './pages/EmailConfirmationPage';
 
 function App() {
 
@@ -41,6 +42,8 @@ function App() {
         <Route path="/payment-success" element={<EsewaSuccess />} />
         <Route path="/payment-failure" element={<EsewaFailure />} />
 
+        <Route path="/admin/notify" element={<AdminNotifications/>} />
+
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]} />}>
           <Route path='/mentee' element={<MenteeLayout />}>
             <Route path='/mentee/dashboard' element={<MenteeDashboard/>}/>
@@ -56,16 +59,16 @@ function App() {
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]}/>}>
           <Route path='/mentor' element={<MentorLayout/>}>
-            <Route path='dashboard' element={<MentorDashboard/>}/>
             <Route path='availability' element={<AvailabilitySchedule/>}/>
             <Route path="profile" element={<MentorProfile />} />
-            <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
             <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
             <Route path='/mentor/availability' element={<AvailabilitySchedule/>}/>
             <Route path="/mentorProfile" element={<MentorProfile />} />
             <Route path='/mentor/chat' element={<MentorChat/>} />
           </Route>
           <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
+          <Route path='/mentor/confirmation' element={<EmailConfirmationPage/>}/>
+
         </Route>
 
          <Route element={<ProtectedRoutes allowedRoles={["ADMIN"]}/>}>

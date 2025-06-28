@@ -1,6 +1,5 @@
     package com.example.learnovate.config;
 
-    import ch.qos.logback.core.pattern.Converter;
     import com.example.learnovate.service.RegisteredUserService;
     import com.fasterxml.jackson.databind.ObjectMapper;
     import jakarta.servlet.http.HttpServletRequest;
@@ -11,23 +10,17 @@
     import org.springframework.http.HttpStatus;
     import org.springframework.security.authentication.AuthenticationManager;
     import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-    import org.springframework.security.config.Customizer;
-    import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
     import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
     import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
     import org.springframework.security.config.annotation.web.builders.HttpSecurity;
     import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-    import org.springframework.security.core.GrantedAuthority;
-    import org.springframework.security.core.authority.SimpleGrantedAuthority;
     import org.springframework.security.core.userdetails.UserDetailsService;
     import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
     import org.springframework.security.crypto.password.PasswordEncoder;
     import org.springframework.security.web.AuthenticationEntryPoint;
     import org.springframework.security.web.SecurityFilterChain;
 
-    import java.util.Collections;
     import java.util.HashMap;
-    import java.util.List;
     import java.util.Map;
 
     @Configuration
