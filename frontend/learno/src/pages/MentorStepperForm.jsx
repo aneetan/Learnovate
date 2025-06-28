@@ -22,6 +22,8 @@ const MentorStepperForm = () => {
   const user =  useSelector((state) => state.user.user)
   const [stompClient, setStompClient] = useState(null);
   const [userEmail, setUserEmail] = useState('');
+  const [mentorId, setMentorId] = useState(null);
+  const [userName, setUserName] = useState(null);
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -30,6 +32,8 @@ const MentorStepperForm = () => {
           const decoded = jwtDecode(token);
           if (decoded.email) {
             setUserEmail(decoded.email);
+            setMentorId(decoded.userId);
+            setUserName(decoded.name);
           }
         } catch (error) {
           console.error('Error decoding JWT:', error);
@@ -57,10 +61,13 @@ const MentorStepperForm = () => {
         };
       }, [token, userEmail]);
 
-    const sendRequest = () => {
+    const sendNotification = () => {
     if (stompClient && userEmail) {
       const request = {
         sender: userEmail,
+        senderName: userName,
+        senderId: mentorId,
+        isRead: false,
         type: 'MENTOR_REQUEST',
       };
       stompClient.send(
@@ -112,7 +119,7 @@ const MentorStepperForm = () => {
     })
     .then(res => res.json())
     .then(() => {
-      sendRequest();
+      sendNotification();
       navigate("/mentor/confirmation");
     })
     .catch(error => {

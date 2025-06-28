@@ -1,9 +1,13 @@
+import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { FaBell, FaTimes } from 'react-icons/fa';
+import { API_URL } from '../../config/config';
+import { useNavigate } from 'react-router-dom';
 
 const NotificationsComponent = ({ notifications: propNotifications = [], onMarkAsRead }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const navigate = useNavigate();
 
   // Merge incoming WebSocket notifications with local state
   useEffect(() => {
@@ -20,22 +24,11 @@ const NotificationsComponent = ({ notifications: propNotifications = [], onMarkA
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const handleMarkAsRead = (id) => {
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, read: true } : n)
-    );
-    if (onMarkAsRead) {
-      onMarkAsRead(id);
+   const handleNotificationClick = (notification) => {
+    if (!notification.read && onMarkAsRead) {
+      onMarkAsRead(notification.id);
     }
-  };
-
-  const handleMarkAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-    if (onMarkAsRead) {
-      notifications.forEach(n => {
-        if (!n.read) onMarkAsRead(n.id);
-      });
-    }
+    navigate(`/mentor-profile/${notification.user.userId}`)
   };
 
   const formatTime = (timestamp) => {
@@ -79,7 +72,7 @@ const NotificationsComponent = ({ notifications: propNotifications = [], onMarkA
           <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (
               <div className="px-4 py-6 text-center text-gray-500">
-                No notifications
+                No new notifications
               </div>
             ) : (
               <ul>
@@ -88,16 +81,13 @@ const NotificationsComponent = ({ notifications: propNotifications = [], onMarkA
                     key={notification.id} 
                     className={`border-b border-gray-100 ${!notification.read ? 'bg-blue-50' : ''}`}
                   >
-                    <div className="px-2 py-3 hover:bg-gray-50">
-                      <div className="flex justify-between items-center">
+                     <button
+                      onClick={() => handleNotificationClick(notification)}
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50"
+                    >
+                      <div className="flex justify-between items-start">
                         <div>
-                            <div className='w-17 h-17 rounded-full'>
-                                 <img  className='w-12 h-12 object-cover rounded-full'
-                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnnFf6DXcgRxe71BOQm1orHpnKjJloo9c2jg&s" alt='img'/>
-                            </div>
-                        </div>
-                        <div>
-                          <p className="font-medium text-sm text-gray-900">
+                          <p className="text-sm font-medium text-gray-900">
                             {notification.message || `You have a new request from ${notification.name || 'a user'}`}
                           </p>
                           <p className="text-xs text-gray-500 mt-1">
@@ -105,7 +95,7 @@ const NotificationsComponent = ({ notifications: propNotifications = [], onMarkA
                           </p>
                         </div>
                       </div>
-                    </div>
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -113,7 +103,7 @@ const NotificationsComponent = ({ notifications: propNotifications = [], onMarkA
           </div>
 
           <div className="px-4 py-2 bg-gray-50 text-center border-t border-gray-200">
-            <a href="#" className="text-sm text-blue-600 hover:text-blue-800">
+            <a href="/notifications" className="text-sm text-blue-600 hover:text-blue-800">
               View all notifications
             </a>
           </div>
