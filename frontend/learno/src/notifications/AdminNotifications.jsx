@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { API_URL } from '../config/config';
 import { jwtDecode } from 'jwt-decode';
+import NotificationsComponent from '../components/common/NotificationsComponent';
 
 const AdminNotifications = () => {
   const [notifications, setNotifications] = useState([]);
@@ -69,23 +70,19 @@ const AdminNotifications = () => {
   }
 }, [stompClient, adminEmail, token]);
 
+  const handleMarkAsRead = (notificationId) => {
+    // Implement logic to mark notification as read in backend
+    // For example:
+    // stompClient.send("/app/notifications/read", {}, JSON.stringify({ id: notificationId }));
+  };
+
+
   return (
     <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold mb-4">Admin Notifications</h2>
-      {notifications.length === 0 ? (
-        <p className="text-gray-500">No notifications yet.</p>
-      ) : (
-        <ul className="space-y-2">
-          {notifications.map((note, index) => (
-             <li key={index} className="bg-gray-100 p-3 rounded-md shadow-sm">
-              {note.message}
-              <div className="text-xs text-gray-500 mt-1">
-                {note.timestamp && new Date(note.timestamp).toLocaleString()}
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+       <NotificationsComponent
+        notifications={notifications} 
+        onMarkAsRead={handleMarkAsRead}
+      />
     </div>
   );
 };

@@ -23,8 +23,7 @@ import EsewaFailure from './components/EsewaFailure';
 import MenteeChat from './websocket/MenteeChat';
 import MentorChat from './websocket/MentorChat';
 import MentorDashboard from './pages/mentor/MentorDashboard';
-import Notifications from './notifications/Notifications';
-import UserRequestForm from './notifications/UserRequestForm';
+// import Notifications from './notifications/Notifications';
 import AdminNotifications from './notifications/AdminNotifications';
 import EmailConfirmationPage from './pages/EmailConfirmationPage';
 
@@ -43,13 +42,7 @@ function App() {
         <Route path="/payment-success" element={<EsewaSuccess />} />
         <Route path="/payment-failure" element={<EsewaFailure />} />
 
-        <Route path="/noti" element={<Notifications/>} />
-        <Route path="/mentor/notify" element={<UserRequestForm/>} />
         <Route path="/admin/notify" element={<AdminNotifications/>} />
-
-
-
-
 
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]} />}>
           <Route path='/mentee' element={<MenteeLayout />}>
