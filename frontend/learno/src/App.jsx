@@ -26,6 +26,7 @@ import MentorDashboard from './pages/mentor/MentorDashboard';
 import Notifications from './notifications/Notifications';
 import UserRequestForm from './notifications/UserRequestForm';
 import AdminNotifications from './notifications/AdminNotifications';
+import EmailConfirmationPage from './pages/EmailConfirmationPage';
 
 function App() {
 
@@ -73,6 +74,8 @@ function App() {
             <Route path='/mentor/chat' element={<MentorChat/>} />
           </Route>
           <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
+          <Route path='/mentor/confirmation' element={<EmailConfirmationPage/>}/>
+
         </Route>
 
          <Route element={<ProtectedRoutes allowedRoles={["ADMIN"]}/>}>

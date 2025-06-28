@@ -15,10 +15,6 @@ function Notifications() {
     const socket = new SockJS(`${API_URL}/ws`);
     stompClient = Stomp.over(socket);
     stompClient.connect({}, () => {
-      // Subscribe to chat messages (adjust destination if different)
-      stompClient.subscribe('/topic/chat', (message) => {
-        setChatMessages((prev) => [...prev, message.body]);
-      });
       // Subscribe to notifications
       stompClient.subscribe('/topic/notifications', (message) => {
         setNotifications((prev) => [...prev, message.body]);

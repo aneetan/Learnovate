@@ -59,7 +59,6 @@ const AdminNotifications = () => {
           setNotifications((prev) => [...prev, notification]);
         } catch (e) {
           console.error('Error parsing notification:', e);
-          // Fallback to raw message if JSON parsing fails
           setNotifications((prev) => [...prev, message.body]);
         }
       },
