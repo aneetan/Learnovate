@@ -2,18 +2,13 @@ package com.example.learnovate.controller;
 
 import com.example.learnovate.dto.MenteeDto;
 import com.example.learnovate.dto.MentorBookingsDto;
-import com.example.learnovate.dto.MentorDTO;
 import com.example.learnovate.exception.UnauthorizedAccessException;
 import com.example.learnovate.model.*;
-import com.example.learnovate.repository.MenteeRepository;
 import com.example.learnovate.service.MenteeService;
-import jakarta.websocket.OnClose;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

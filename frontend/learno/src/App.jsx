@@ -31,6 +31,10 @@ import AdminSettings from "./pages/AdminSettings";
 // ✅ Add chat component imports
 import MenteeChat from './websocket/MenteeChat';
 import MentorChat from './websocket/MentorChat';
+import MentorDashboard from './pages/mentor/MentorDashboard';
+// import Notifications from './notifications/Notifications';
+import AdminNotifications from './notifications/AdminNotifications';
+import EmailConfirmationPage from './pages/EmailConfirmationPage';
 
 function App() {
   return (
@@ -46,6 +50,8 @@ function App() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/payment/success/:transaction_uuid?" element={<EsewaSuccess />} />
         <Route path="/payment/failure" element={<EsewaFailure />} />
+
+        <Route path="/admin/notify" element={<AdminNotifications/>} />
 
         {/* ✅ Admin routes */}
         <Route path='/test-adminDashboard' element={<AdminLayout />}>
@@ -70,16 +76,18 @@ function App() {
           <Route path='/mentee/registerDetails' element={<MenteeProfileStep />} />
         </Route>
 
-        {/* ✅ Mentor protected routes */}
-        <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]} />}>
-          <Route path='/mentor' element={<MentorLayout />}>
-            <Route path='dashboard' element={<MentorDashboard />} />
-            <Route path='availability' element={<AvailabilitySchedule />} />
-            <Route path='profile' element={<MentorProfile />} />
-            <Route path='sessions' element={<MentorSessions />} />
-            <Route path='chat' element={<MentorChat />} /> {/* ✅ Chat route added */}
+        <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]}/>}>
+          <Route path='/mentor' element={<MentorLayout/>}>
+            <Route path='availability' element={<AvailabilitySchedule/>}/>
+            <Route path="profile" element={<MentorProfile />} />
+            <Route path='/mentor/dashboard' element={<MentorDashboard/>}/>
+            <Route path='/mentor/availability' element={<AvailabilitySchedule/>}/>
+            <Route path="/mentorProfile" element={<MentorProfile />} />
+            <Route path='/mentor/chat' element={<MentorChat/>} />
           </Route>
           <Route path='/mentor/registerDetails' element={<MentorStepperForm />} />
+          <Route path='/mentor/confirmation' element={<EmailConfirmationPage/>}/>
+
         </Route>
 
         {/* Empty ADMIN route placeholder (optional, can remove if not used) */}
