@@ -2,8 +2,6 @@ package com.example.learnovate.dto;
 
 import lombok.*;
 
-import java.util.List;
-import java.util.Map;
 
 @Data
 @Getter

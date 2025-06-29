@@ -1,6 +1,6 @@
 import { FileOutlined, GroupOutlined, ProfileOutlined } from '@ant-design/icons';
 import { Steps } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import AdditionalInfo from '../components/Mentor/AdditionalInfo';
 import ProfessionalInfo from '../components/Mentor/ProfessionalInfo';
@@ -9,6 +9,9 @@ import logoImage from "../assets/images/learno_logo.png";
 import backgroundImage from "../assets/images/auth_bg.png";
 import { useSelector } from 'react-redux';
 import { API_URL } from '../config/config';
+import { jwtDecode } from 'jwt-decode';
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
 
 const MentorStepperForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -17,6 +20,64 @@ const MentorStepperForm = () => {
   const [documentUpload, setDocumentUpload] = useState(null);
   const navigate = useNavigate();
   const user =  useSelector((state) => state.user.user)
+  const [stompClient, setStompClient] = useState(null);
+  const [userEmail, setUserEmail] = useState('');
+  const [mentorId, setMentorId] = useState(null);
+  const [userName, setUserName] = useState(null);
+  const token = localStorage.getItem('token');
+
+  useEffect(() => {
+      if (token) {
+        try {
+          const decoded = jwtDecode(token);
+          if (decoded.email) {
+            setUserEmail(decoded.email);
+            setMentorId(decoded.userId);
+            setUserName(decoded.name);
+          }
+        } catch (error) {
+          console.error('Error decoding JWT:', error);
+        }
+      }  
+    }, [token]);
+
+    useEffect(() => {
+        if (!token || !userEmail) return;
+  
+        const socket = new SockJS(`${API_URL}/ws`);
+        const client = Stomp.over(socket);
+        client.connect(
+        { Authorization: `Bearer ${token}` },
+        () => {
+          setStompClient(client);
+        },
+        (error) => {
+          console.error('WebSocket connection error:', error);
+        }
+      );
+    
+        return () => {
+          if (client.connected) client.disconnect();
+        };
+      }, [token, userEmail]);
+
+    const sendNotification = () => {
+    if (stompClient && userEmail) {
+      const request = {
+        sender: userEmail,
+        senderName: userName,
+        senderId: mentorId,
+        isRead: false,
+        type: 'MENTOR_REQUEST',
+      };
+      stompClient.send(
+        '/app/mentor-request',
+        { 'content-type': 'application/json', Authorization: `Bearer ${token}` },
+        JSON.stringify(request)
+      );
+    }
+  };
+
 
   const submitAdditionalInfo = (values) => {
     setAdditionalInfo(values);
@@ -58,7 +119,8 @@ const MentorStepperForm = () => {
     })
     .then(res => res.json())
     .then(() => {
-      navigate("/mentor/dashboard");
+      sendNotification();
+      navigate("/mentor/confirmation");
     })
     .catch(error => {
       console.log(error);
