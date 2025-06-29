@@ -50,9 +50,6 @@ function App() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/payment/success/:transaction_uuid?" element={<EsewaSuccess />} />
         <Route path="/payment/failure" element={<EsewaFailure />} />
-
-        <Route path="/admin/notify" element={<AdminNotifications/>} />
-
         {/* ✅ Admin routes */}
         <Route path='/test-adminDashboard' element={<AdminLayout />}>
           <Route path='' element={<AdminDashboard />} />
@@ -64,6 +61,7 @@ function App() {
         </Route>
 
         {/* ✅ Mentee protected routes */}
+        <Route path="/admin/notify" element={<AdminNotifications/>} />
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]} />}>
           <Route path='/mentee' element={<MenteeLayout />}>
             <Route path='dashboard' element={<MenteeDashboard />} />
