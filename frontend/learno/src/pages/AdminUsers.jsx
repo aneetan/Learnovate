@@ -1,11 +1,22 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaSearch, FaEdit, FaTrash, FaEye, FaUsers } from 'react-icons/fa';
+import { PagePreloader } from '../components/common/Preloader';
 
 const AdminUsers = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [entriesPerPage, setEntriesPerPage] = useState(10);
+
+  useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Dummy data for users
   const dummyUsers = [
@@ -61,19 +72,23 @@ const AdminUsers = () => {
     setCurrentPage(page);
   };
 
+  if (isLoading) {
+    return <PagePreloader text="Loading Users..." />;
+  }
+
   return (
     <div className="w-full space-y-8 px-8">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-3" style={{ color: 'var(--primary-color)' }}>
-          <FaUsers className="w-8 h-8" />
+          <FaUsers className="w-6 h-6" />
           Users Management
         </h1>
         <p className="text-gray-600 mt-2">Manage all registered users on the platform.</p>
       </div>
 
       {/* Search and Entries */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div className="relative w-full sm:w-auto">
           <FaSearch className="absolute left-3 top-3 text-gray-400" />
           <input
@@ -115,7 +130,7 @@ const AdminUsers = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile Picture</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
@@ -134,8 +149,16 @@ const AdminUsers = () => {
                   transition={{ delay: index * 0.05 }}
                   className="hover:bg-gray-50"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex-shrink-0 h-10 w-10">
+                      <img
+                        className="h-10 w-10 rounded-full object-cover"
+                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=fff&size=40`}
+                        alt={user.name}
+                      />
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.contact}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.interestArea}</td>

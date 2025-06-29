@@ -1,4 +1,4 @@
-import './App.css'
+import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import RegistrationForm from './pages/RegistrationForm';
@@ -17,7 +17,6 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminMentors from "./pages/AdminMentors";
 import AdminBookings from "./pages/AdminBookings";
 import AdminReviews from './pages/AdminReviews';
-
 import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
 import CalendarPreview from './pages/Mentee/CalendarPreview';
 import BookingRequest from './pages/Mentee/BookingRequest';
@@ -27,9 +26,13 @@ import CheckoutPage from './pages/Mentee/CheckoutPage';
 import EsewaSuccess from './components/EsewaSuccess';
 import EsewaFailure from './components/EsewaFailure';
 import MentorSessions from './pages/mentor/MentorSessions';
+import AdminSettings from "./pages/AdminSettings";
+
+// ✅ Add chat component imports
+import MenteeChat from './websocket/MenteeChat';
+import MentorChat from './websocket/MentorChat';
 
 function App() {
-
   return (
     <Router>
       <Routes>
@@ -37,54 +40,54 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Home />} />
 
-
-        <Route path='/test-adminDashboard' element={<AdminLayout/>}>
-            <Route path='' element={<AdminDashboard/>}/>
-            <Route path='users' element={<AdminUsers/>}/>
-            <Route path='mentors' element={<AdminMentors/>}/>
-            <Route path='bookings' element={<AdminBookings/>}/>
-            <Route path='reviews' element={<AdminReviews />}/>
-          </Route>
-
         <Route path="/findMentor" element={<MentorDirectory />} />
-        <Route path="/unauthorized" element={<div> You are unauthorized! Get lost</div>} />
+        <Route path="/unauthorized" element={<div>You are unauthorized! Get lost</div>} />
 
-         <Route path="/checkout" element={<CheckoutPage />} />
-        {/* <Route path="/payment/success" element={<EsewaCallback />} /> */}
-        {/* <Route path="/payment/failure" element={<EsewaCallback />} /> */}
-
-         <Route path="/payment/success/:transaction_uuid?" element={<EsewaSuccess />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/payment/success/:transaction_uuid?" element={<EsewaSuccess />} />
         <Route path="/payment/failure" element={<EsewaFailure />} />
-        
 
+        {/* ✅ Admin routes */}
+        <Route path='/test-adminDashboard' element={<AdminLayout />}>
+          <Route path='' element={<AdminDashboard />} />
+          <Route path='users' element={<AdminUsers />} />
+          <Route path='mentors' element={<AdminMentors />} />
+          <Route path='bookings' element={<AdminBookings />} />
+          <Route path='reviews' element={<AdminReviews />} />
+          <Route path='settings' element={<AdminSettings />} />
+        </Route>
+
+        {/* ✅ Mentee protected routes */}
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]} />}>
           <Route path='/mentee' element={<MenteeLayout />}>
-            <Route path='/mentee/dashboard' element={<MenteeDashboard/>}/>
-            <Route path='/mentee/booking-request/:mentorId' element={<BookingRequest />} />
-            <Route path='/mentee/viewMentors' element={<MentorDirectory />} />
-            <Route path='/mentee/calendar/:mentorId' element={<CalendarPreview />} />
-            <Route path="/mentee/menteeProfile" element={<MenteeProfile />} />
+            <Route path='dashboard' element={<MenteeDashboard />} />
+            <Route path='booking-request/:mentorId' element={<BookingRequest />} />
+            <Route path='viewMentors' element={<MentorDirectory />} />
+            <Route path='calendar/:mentorId' element={<CalendarPreview />} />
+            <Route path='menteeProfile' element={<MenteeProfile />} />
+            <Route path='chat' element={<MenteeChat />} /> {/* ✅ Chat route added */}
           </Route>
           <Route path='/mentee/registerDetails' element={<MenteeProfileStep />} />
         </Route>
 
-        <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]}/>}>
-          <Route path='/mentor' element={<MentorLayout/>}>
-            <Route path='dashboard' element={<MentorDashboard/>}/>
-            <Route path='availability' element={<AvailabilitySchedule/>}/>
-            <Route path="profile" element={<MentorProfile />} />
-            <Route path="sessions" element={<MentorSessions />} />
+        {/* ✅ Mentor protected routes */}
+        <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]} />}>
+          <Route path='/mentor' element={<MentorLayout />}>
+            <Route path='dashboard' element={<MentorDashboard />} />
+            <Route path='availability' element={<AvailabilitySchedule />} />
+            <Route path='profile' element={<MentorProfile />} />
+            <Route path='sessions' element={<MentorSessions />} />
+            <Route path='chat' element={<MentorChat />} /> {/* ✅ Chat route added */}
           </Route>
-          <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
+          <Route path='/mentor/registerDetails' element={<MentorStepperForm />} />
         </Route>
 
-         <Route element={<ProtectedRoutes allowedRoles={["ADMIN"]}/>}>
-         
-        </Route>
+        {/* Empty ADMIN route placeholder (optional, can remove if not used) */}
+        <Route element={<ProtectedRoutes allowedRoles={["ADMIN"]} />}></Route>
 
       </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

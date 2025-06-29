@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MdDashboard, MdPeople, MdAttachMoney } from 'react-icons/md';
+import { PagePreloader } from '../components/common/Preloader';
 
 const AdminDashboard = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [requests, setRequests] = useState([
     {
       id: 'REQ001',
@@ -45,6 +47,15 @@ const AdminDashboard = () => {
       status: 'pending'
     }
   ]);
+
+  useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const stats = [
     {
@@ -92,6 +103,10 @@ const AdminDashboard = () => {
     // Here you would typically navigate to the user's profile page
     console.log(`Viewing profile for: ${id}`);
   };
+
+  if (isLoading) {
+    return <PagePreloader text="Loading Dashboard..." />;
+  }
 
   return (
     <div className="w-full space-y-8 px-8">
@@ -144,7 +159,7 @@ const AdminDashboard = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile Picture</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
@@ -162,8 +177,16 @@ const AdminDashboard = () => {
                   transition={{ delay: 0.4 + index * 0.05 }}
                   className="hover:bg-gray-50"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{request.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{request.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex-shrink-0 h-10 w-10">
+                      <img
+                        className="h-10 w-10 rounded-full object-cover"
+                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(request.name)}&background=6366f1&color=fff&size=40`}
+                        alt={request.name}
+                      />
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{request.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.contact}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.interestArea}</td>

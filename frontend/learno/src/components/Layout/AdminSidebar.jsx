@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaRegCalendarAlt, FaAddressBook, FaRegCommentDots, FaUserCircle, FaSignOutAlt, FaBars, FaSearch } from 'react-icons/fa';
+import { FaRegCalendarAlt, FaAddressBook, FaRegCommentDots, FaUserCircle, FaSignOutAlt, FaBars, FaSearch, FaCog, FaComment } from 'react-icons/fa';
 import { MdDashboard, MdPeople, MdBookOnline, MdStarRate } from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
 import logoImage from "../../assets/images/learno_logo_long.png";
@@ -31,7 +31,7 @@ const AdminSidebar = ({ children }) => {
     { name: 'Users', icon: <FaUsers />, path: '/test-adminDashboard/users' },
     { name: 'Mentors', icon: <MdPeople />, path: '/test-adminDashboard/mentors' },
     { name: 'Bookings', icon: <MdBookOnline />, path: '/test-adminDashboard/bookings' },
-    { name: 'Reviews', icon: <MdStarRate />, path: '/test-adminDashboard/reviews' },
+    { name: 'Feedback', icon: <FaComment />, path: '/test-adminDashboard/reviews' },
   ];
 
   return (
@@ -139,12 +139,12 @@ const AdminSidebar = ({ children }) => {
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
                  <button
                   onClick={() => {
-                    navigate('/test-adminDashboard');
+                    navigate('/test-adminDashboard/settings');
                     setDropdownOpen(false);
                   }}
                   className="block w-full text-left px-4 py-2 hover:bg-gray-100 transition text-sm"
                 >
-                  Dashboard
+                  Settings
                 </button>
                  <a href="#" className="block px-4 py-2 hover:bg-gray-100 transition flex items-center space-x-2 text-sm">
                   <FaSignOutAlt /> <span>Logout</span>

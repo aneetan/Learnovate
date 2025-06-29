@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaEnvelope, FaCheck, FaClock, FaUser, FaCalendar } from 'react-icons/fa';
+import { FaEnvelope, FaCheck, FaClock, FaUser, FaCalendar, FaAddressBook, FaCommentDots } from 'react-icons/fa';
 
 const MentorSessions = () => {
   const [sessions, setSessions] = useState([
@@ -12,9 +12,7 @@ const MentorSessions = () => {
       menteeEmail: 'alice.johnson@example.com',
       date: '2024-01-15',
       time: '10:00 AM',
-      duration: '60 min',
       status: 'upcoming',
-      topic: 'React Development'
     },
     {
       id: 'SES002',
@@ -24,9 +22,7 @@ const MentorSessions = () => {
       menteeEmail: 'bob.smith@example.com',
       date: '2024-01-16',
       time: '2:00 PM',
-      duration: '90 min',
-      status: 'completed',
-      topic: 'JavaScript'
+      status: 'completed'
     },
     {
       id: 'SES003',
@@ -36,9 +32,7 @@ const MentorSessions = () => {
       menteeEmail: 'carol.davis@example.com',
       date: '2024-01-17',
       time: '11:30 AM',
-      duration: '75 min',
-      status: 'upcoming',
-      topic: 'UI/UX Design'
+      status: 'upcoming'
     },
     {
       id: 'SES004',
@@ -48,9 +42,7 @@ const MentorSessions = () => {
       menteeEmail: 'david.wilson@example.com',
       date: '2024-01-18',
       time: '3:00 PM',
-      duration: '120 min',
-      status: 'upcoming',
-      topic: 'Data Science'
+      status: 'upcoming'
     },
     {
       id: 'SES005',
@@ -60,10 +52,7 @@ const MentorSessions = () => {
       menteeEmail: 'emma.brown@example.com',
       date: '2024-01-19',
       time: '9:00 AM',
-      duration: '90 min',
-      status: 'completed',
-      topic: 'Mobile Development'
-    },
+      status: 'completed',    },
     {
       id: 'SES006',
       sessionName: 'DevOps Best Practices',
@@ -72,9 +61,7 @@ const MentorSessions = () => {
       menteeEmail: 'frank.miller@example.com',
       date: '2024-01-20',
       time: '1:00 PM',
-      duration: '105 min',
-      status: 'upcoming',
-      topic: 'DevOps'
+      status: 'upcoming'
     }
   ]);
 
@@ -127,8 +114,10 @@ const MentorSessions = () => {
     <div className="w-full space-y-8 px-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Sessions</h1>
-        <p className="text-gray-600 mt-2">Manage your mentorship sessions and track progress.</p>
+        <h1 className="text-3xl font-bold flex items-center gap-3" style={{ color: 'var(--primary-color)' }}>
+          <FaAddressBook className="w-6 h-6" />
+          Sessions
+        </h1>
       </div>
 
       {/* Filter Tabs */}
@@ -204,10 +193,6 @@ const MentorSessions = () => {
                 <FaCalendar className="w-4 h-4 mr-2 text-gray-400" />
                 <span>{session.date} at {session.time}</span>
               </div>
-              <div className="flex items-center text-sm text-gray-600">
-                <FaClock className="w-4 h-4 mr-2 text-gray-400" />
-                <span>{session.duration}</span>
-              </div>
             </div>
 
             {/* Action Buttons */}
@@ -217,7 +202,7 @@ const MentorSessions = () => {
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium"
                 style={{ backgroundColor: 'var(--primary-color)', color: 'white' }}
               >
-                <FaEnvelope className="w-4 h-4" />
+                <FaCommentDots className="w-4 h-4" />
                 Message
               </button>
               {session.status === 'upcoming' && (
