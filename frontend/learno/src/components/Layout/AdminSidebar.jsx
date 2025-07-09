@@ -27,11 +27,11 @@ const AdminSidebar = ({ children }) => {
   }, [isMobile]);
 
   const menuItems = [
-    { name: 'Dashboard', icon: <MdDashboard />, path: '/test-adminDashboard' },
-    { name: 'Users', icon: <FaUsers />, path: '/test-adminDashboard/users' },
-    { name: 'Mentors', icon: <MdPeople />, path: '/test-adminDashboard/mentors' },
-    { name: 'Bookings', icon: <MdBookOnline />, path: '/test-adminDashboard/bookings' },
-    { name: 'Feedback', icon: <FaComment />, path: '/test-adminDashboard/reviews' },
+    { name: 'Dashboard', icon: <MdDashboard />, path: '/admin/dashboard' },
+    { name: 'Users', icon: <FaUsers />, path: '/admin/viewUsers' },
+    { name: 'Mentors', icon: <MdPeople />, path: '/admin/viewMentors' },
+    { name: 'Bookings', icon: <MdBookOnline />, path: '/admin/viewBookings' },
+    { name: 'Feedback', icon: <FaComment />, path: '/admin/reviews' },
   ];
 
   return (

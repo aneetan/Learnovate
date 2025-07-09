@@ -4,13 +4,21 @@ import { MdDashboard, MdPeople, MdAttachMoney } from 'react-icons/md';
 import { PagePreloader } from '../components/common/Preloader';
 import axios from 'axios';
 import { API_URL } from '../config/config';
+import ApproveMentorModel from '../components/admin/ApproveMentorModel';
+import DeclineMentorModel from '../components/admin/DeclineMentorModal';
 
 const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [requests, setRequests] = useState([]);
+  const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+  const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
+  const [selectedMentor, setSelectedMentor] = useState(null);
+  const [isApproving, setIsApproving] = useState(false);
+  const [isDeclining, setIsDeclining] = useState(false);
 
 
-  useEffect(() => {
+
+  useEffect(() => { 
     // Simulate loading time
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -35,7 +43,51 @@ const AdminDashboard = () => {
     }
 
     fetchPendingMentor();
-  }, [])
+  }, []);
+
+  const handleApprove = async (id) => {
+    setIsApproving(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `${API_URL}/admin/approve/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setRequests(requests.filter(req => req.mentorId !== id));
+    } catch (err) {
+      console.error("Approval failed:", err.message);
+    } finally {
+      setIsApproving(false);
+      setIsApproveModalOpen(false);
+    }
+  };
+
+  const handleDecline = async (id) => {
+    setIsDeclining(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `${API_URL}/admin/decline/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setRequests(requests.filter(req => req.mentorId !== id));
+    } catch (err) {
+      console.error("Decline failed:", err.message);
+    } finally {
+      setIsDeclining(false);
+      setIsDeclineModalOpen(false);
+    }
+  };
 
   const stats = [
     {
@@ -66,18 +118,6 @@ const AdminDashboard = () => {
       )
     }
   ];
-
-  const handleApprove = (id) => {
-    setRequests(requests.filter(req => req.id !== id));
-    // Here you would typically make an API call to approve the request
-    console.log(`Approved request: ${id}`);
-  };
-
-  const handleDelete = (id) => {
-    setRequests(requests.filter(req => req.id !== id));
-    // Here you would typically make an API call to delete the request
-    console.log(`Deleted request: ${id}`);
-  };
 
   const handleViewProfile = (id) => {
     // Here you would typically navigate to the user's profile page
@@ -192,17 +232,23 @@ const AdminDashboard = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
                       <button
-                        onClick={() => handleApprove(request.mentorId)}
+                        onClick={() => {
+                          setSelectedMentor(request);
+                          setIsApproveModalOpen(true);
+                        }}
                         className="text-white px-3 py-1 rounded-md text-xs transition-colors"
                         style={{ backgroundColor: 'var(--primary-color)' }}
                       >
                         Approve
                       </button>
                       <button
-                        onClick={() => handleDelete(request.id)}
+                        onClick={() => {
+                          setSelectedMentor(request);
+                          setIsDeclineModalOpen(true);
+                        }}
                         className="bg-red-600 text-white px-3 py-1 rounded-md text-xs hover:bg-red-700 transition-colors"
                       >
-                        Delete
+                        Decline
                       </button>
                     </div>
                   </td>
@@ -219,6 +265,22 @@ const AdminDashboard = () => {
           Copyright © 2025. Learnovate. All rights reserved.
         </p>
       </div>
+
+      <ApproveMentorModel
+        isOpen={isApproveModalOpen}
+        onClose={() => setIsApproveModalOpen(false)}
+        mentor={selectedMentor}
+        onApprove={handleApprove}
+        isApproving={isApproving}
+      />
+
+      <DeclineMentorModel
+        isOpen={isDeclineModalOpen}
+        onClose={() => setIsDeclineModalOpen(false)}
+        mentor={selectedMentor}
+        onDecline={handleDecline}
+        isDeclining={isDeclining}
+      />
     </div>
   );
 };
