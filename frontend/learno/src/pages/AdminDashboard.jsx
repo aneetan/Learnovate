@@ -188,6 +188,9 @@ const AdminDashboard = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
+              {requests.length === 0 && (
+                <span className='text-base text-gray-400 m-5'> No new requests </span>
+              )} 
               {requests.map((request, index) => (
                 <motion.tr
                   key={request.id}

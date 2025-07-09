@@ -28,12 +28,33 @@ public class AdminService {
 
     AuthenticateEmail authenticateEmail = new AuthenticateEmail();
 
-    public List<Mentor> getPendingMentors() {
+    public void authenticateAdmin(){
         String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
         if (!authenticatedEmail.equals("admin@gmail.com")) {
             throw new UnauthorizedAccessException("Email in request does not match authenticated user");
         }
+    }
 
+    public List<Mentor> getPendingMentors() {
+        authenticateAdmin();
         return mRepo.findByStatus("pending");
+    }
+
+    public Mentor approveMentor(int mentorId){
+        authenticateAdmin();
+        Mentor mentor = mRepo.findById(mentorId)
+                .orElseThrow(() -> new RuntimeException("Mentor not found with id: " + mentorId));
+        mentor.setStatus("approved");
+        mRepo.save(mentor);
+        return mentor;
+    }
+
+    public Mentor declineMentor(int mentorId){
+        authenticateAdmin();
+        Mentor mentor = mRepo.findById(mentorId)
+                .orElseThrow(() -> new RuntimeException("Mentor not found with id: " + mentorId));
+        mentor.setStatus("declined");
+        mRepo.save(mentor);
+        return mentor;
     }
 }
