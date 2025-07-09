@@ -72,6 +72,7 @@ public class MentorServiceImplements implements MentorService{
         mentor.setUser(user);
 
         mentor.setStatus("pending");
+        mentor.setAvailability(false);
 
         rRepo.save(user);
         mRepo.save(mentor);
@@ -87,6 +88,10 @@ public class MentorServiceImplements implements MentorService{
     public Map<String, Object> saveAvailability(MentorAvailabilityDto availabilityDto) {
         RegisteredUser user = rRepo.findById(availabilityDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + availabilityDto.getUserId()));
+
+        Mentor mentor = mRepo.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Mentor not found with id: " + user.getUserId()));
+
 
         AuthenticateEmail authenticateEmail = new AuthenticateEmail();
         String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
@@ -104,6 +109,8 @@ public class MentorServiceImplements implements MentorService{
         availability.setDays(availabilityDto.getDays());
         availability.setUser(user);
 
+        mentor.setAvailability(true);
+        mRepo.save(mentor);
         availableRepo.save(availability);
 
         response.put("availability", availability);

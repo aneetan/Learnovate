@@ -25,6 +25,7 @@ public class Mentor {
     private String documentUrl;
     private String profileUrl;
     private String status;
+    private boolean isAvailability;
 
     // Foreign key to RegisteredUser
     @ManyToOne

@@ -31,6 +31,7 @@ import MenteeChat from './websocket/MenteeChat';
 import MentorChat from './websocket/MentorChat';
 import AdminNotifications from './notifications/AdminNotifications';
 import EmailConfirmationPage from './pages/EmailConfirmationPage';
+import DeclinedPage from './pages/DeclinedPage';
 
 function App() {
   return (
@@ -69,6 +70,7 @@ function App() {
           </Route>
           <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
           <Route path='/mentor/confirmation' element={<EmailConfirmationPage/>}/>
+          <Route path='/mentor/declination' element={<DeclinedPage/>}/>
         </Route>
 
         <Route element={<ProtectedRoutes allowedRoles={["ADMIN"]} />}>

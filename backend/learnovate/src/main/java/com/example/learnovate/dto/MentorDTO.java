@@ -21,4 +21,5 @@ public class MentorDTO {
 
     private int userId;
     private String status;
+    private boolean isAvailability;
 }
