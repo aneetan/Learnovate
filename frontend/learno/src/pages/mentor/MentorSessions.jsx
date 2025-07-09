@@ -1,69 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaEnvelope, FaCheck, FaClock, FaUser, FaCalendar, FaAddressBook, FaCommentDots } from 'react-icons/fa';
+import axios from 'axios';
+import { API_URL } from '../../config/config';
+import { useParams } from 'react-router-dom';
 
 const MentorSessions = () => {
-  const [sessions, setSessions] = useState([
-    {
-      id: 'SES001',
-      sessionName: 'React Fundamentals',
-      description: 'Learn the basics of React including components, props, state, and hooks. Perfect for beginners starting their React journey.',
-      menteeName: 'Alice Johnson',
-      menteeEmail: 'alice.johnson@example.com',
-      date: '2024-01-15',
-      time: '10:00 AM',
-      status: 'upcoming',
-    },
-    {
-      id: 'SES002',
-      sessionName: 'Advanced JavaScript Concepts',
-      description: 'Deep dive into advanced JavaScript concepts like closures, promises, async/await, and functional programming patterns.',
-      menteeName: 'Bob Smith',
-      menteeEmail: 'bob.smith@example.com',
-      date: '2024-01-16',
-      time: '2:00 PM',
-      status: 'completed'
-    },
-    {
-      id: 'SES003',
-      sessionName: 'UI/UX Design Principles',
-      description: 'Explore fundamental design principles, user research methods, and prototyping techniques for creating user-centered designs.',
-      menteeName: 'Carol Davis',
-      menteeEmail: 'carol.davis@example.com',
-      date: '2024-01-17',
-      time: '11:30 AM',
-      status: 'upcoming'
-    },
-    {
-      id: 'SES004',
-      sessionName: 'Python Data Analysis',
-      description: 'Introduction to data analysis with Python using pandas, numpy, and matplotlib. Learn to clean, analyze, and visualize data.',
-      menteeName: 'David Wilson',
-      menteeEmail: 'david.wilson@example.com',
-      date: '2024-01-18',
-      time: '3:00 PM',
-      status: 'upcoming'
-    },
-    {
-      id: 'SES005',
-      sessionName: 'Mobile App Development',
-      description: 'Build your first mobile app using React Native. Cover navigation, state management, and deploying to app stores.',
-      menteeName: 'Emma Brown',
-      menteeEmail: 'emma.brown@example.com',
-      date: '2024-01-19',
-      time: '9:00 AM',
-      status: 'completed',    },
-    {
-      id: 'SES006',
-      sessionName: 'DevOps Best Practices',
-      description: 'Learn CI/CD pipelines, containerization with Docker, and cloud deployment strategies for modern applications.',
-      menteeName: 'Frank Miller',
-      menteeEmail: 'frank.miller@example.com',
-      date: '2024-01-20',
-      time: '1:00 PM',
-      status: 'upcoming'
+  const [sessions, setSessions] = useState([]);
+  let params = useParams();
+
+  useEffect(() => {
+    const fetchSessionsByMentor = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const response = await axios.get(`${API_URL}/mentor/sessions/${params.userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        setSessions(response.data)
+      } catch (err) {
+        console.log(err.message)
+      } 
     }
-  ]);
+
+    fetchSessionsByMentor();
+  }, [params.userId])
 
   const [filterStatus, setFilterStatus] = useState('all');
 
@@ -101,8 +63,8 @@ const MentorSessions = () => {
     switch (status) {
       case 'completed':
         return 'Completed';
-      case 'upcoming':
-        return 'Upcoming';
+      case 'pending':
+        return 'Pending';
       case 'cancelled':
         return 'Cancelled';
       default:
@@ -141,9 +103,9 @@ const MentorSessions = () => {
                 ? ''
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
-            style={filterStatus === 'upcoming' ? { backgroundColor: 'var(--primary-color)', color: 'white' } : {}}
+            style={filterStatus === 'pending' ? { backgroundColor: 'var(--primary-color)', color: 'white' } : {}}
           >
-            Upcoming ({sessions.filter(s => s.status === 'upcoming').length})
+            Pending ({sessions.filter(s => s.status === 'pending').length})
           </button>
           <button
             onClick={() => setFilterStatus('completed')}
@@ -172,8 +134,8 @@ const MentorSessions = () => {
             {/* Session Header */}
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">{session.sessionName}</h3>
-                <p className="text-sm text-gray-600 mb-2">{session.topic}</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">{session.topic}</h3>
+                <p className="text-sm text-gray-600 mb-2">{session.notes}</p>
                 <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(session.status)}`}>
                   {getStatusText(session.status)}
                 </span>
@@ -181,17 +143,17 @@ const MentorSessions = () => {
             </div>
 
             {/* Session Description */}
-            <p className="text-gray-700 text-sm mb-4 line-clamp-3">{session.description}</p>
+            <p className="text-gray-700 text-sm mb-4 line-clamp-3">{session.notes}</p>
 
             {/* Session Details */}
             <div className="space-y-2 mb-4">
               <div className="flex items-center text-sm text-gray-600">
                 <FaUser className="w-4 h-4 mr-2 text-gray-400" />
-                <span className="font-medium">{session.menteeName}</span>
+                <span className="font-medium">{session.user.name}</span>
               </div>
               <div className="flex items-center text-sm text-gray-600">
                 <FaCalendar className="w-4 h-4 mr-2 text-gray-400" />
-                <span>{session.date} at {session.time}</span>
+                <span>{session.bookingDate} at {session.timeSlot}</span>
               </div>
             </div>
 
@@ -207,7 +169,7 @@ const MentorSessions = () => {
               </button>
               {session.status === 'upcoming' && (
                 <button
-                  onClick={() => handleMarkComplete(session.id)}
+                  onClick={() => handleMarkComplete(session.bookingId)}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
                 >
                   <FaCheck className="w-4 h-4" />

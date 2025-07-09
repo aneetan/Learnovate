@@ -15,5 +15,7 @@ public interface MentorRepository extends JpaRepository<Mentor, Integer> {
     List<Mentor> findAllMentorsWithUserDetails();
     Mentor getMentorByUser_UserId(int userId);
 
+    List<Mentor> findByStatus(String status);
+
 
 }

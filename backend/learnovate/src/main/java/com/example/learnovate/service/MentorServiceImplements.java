@@ -6,8 +6,10 @@ import com.example.learnovate.dto.MentorDTO;
 import com.example.learnovate.exception.UnauthorizedAccessException;
 import com.example.learnovate.model.Mentor;
 import com.example.learnovate.model.MentorAvailability;
+import com.example.learnovate.model.MentorBookings;
 import com.example.learnovate.model.RegisteredUser;
 import com.example.learnovate.repository.MentorAvailabilityRepository;
+import com.example.learnovate.repository.MentorBookingsRepository;
 import com.example.learnovate.repository.MentorRepository;
 import com.example.learnovate.repository.RegisteredUserRespository;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,6 +30,9 @@ public class MentorServiceImplements implements MentorService{
 
     @Autowired
     private RegisteredUserRespository rRepo;
+
+    @Autowired
+    private MentorBookingsRepository bookingRepo;
 
 
     Map<String, Object> response = new HashMap<>();
@@ -110,6 +115,22 @@ public class MentorServiceImplements implements MentorService{
     public Mentor getMentorByUserId(int id){
         Mentor mentor = mRepo.getMentorByUser_UserId(id);
         return mentor;
+    }
+
+
+    public List<Mentor> getPendingMentors() {
+        return mRepo.findByStatus("pending");
+    }
+
+    public List<MentorBookings> getSessionsByMentorId(int userId){
+        RegisteredUser user = rRepo.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        Mentor mentor = mRepo.findByUser(user)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        List<MentorBookings> sessions = bookingRepo.findByMentor(mentor);
+        return  sessions;
     }
 
 

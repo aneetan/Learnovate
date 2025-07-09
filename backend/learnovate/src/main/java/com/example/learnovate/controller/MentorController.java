@@ -3,6 +3,8 @@ package com.example.learnovate.controller;
 import com.example.learnovate.dto.MentorAvailabilityDto;
 import com.example.learnovate.dto.MentorDTO;
 import com.example.learnovate.exception.UnauthorizedAccessException;
+import com.example.learnovate.model.Mentor;
+import com.example.learnovate.model.MentorBookings;
 import com.example.learnovate.service.MentorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -57,5 +60,16 @@ public class MentorController {
         }
     }
 
+    @GetMapping("/sessions/{id}")
+    public List<MentorBookings> getAllSessionsByMentor(@PathVariable int id){
+        return mentorService.getSessionsByMentorId(id);
+    }
+
+
+    @GetMapping("/pending")
+    public ResponseEntity<List<Mentor>> getPendingMentors() {
+        List<Mentor> pendingMentors = mentorService.getPendingMentors();
+        return ResponseEntity.ok(pendingMentors);
+    }
 
 }

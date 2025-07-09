@@ -2,51 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MdDashboard, MdPeople, MdAttachMoney } from 'react-icons/md';
 import { PagePreloader } from '../components/common/Preloader';
+import axios from 'axios';
+import { API_URL } from '../config/config';
 
 const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [requests, setRequests] = useState([
-    {
-      id: 'REQ001',
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      contact: '+1 234-567-8900',
-      interestArea: 'React Development',
-      status: 'pending'
-    },
-    {
-      id: 'REQ002',
-      name: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      contact: '+1 234-567-8901',
-      interestArea: 'UI/UX Design',
-      status: 'pending'
-    },
-    {
-      id: 'REQ003',
-      name: 'Mike Johnson',
-      email: 'mike.johnson@example.com',
-      contact: '+1 234-567-8902',
-      interestArea: 'Python Programming',
-      status: 'pending'
-    },
-    {
-      id: 'REQ004',
-      name: 'Sarah Wilson',
-      email: 'sarah.wilson@example.com',
-      contact: '+1 234-567-8903',
-      interestArea: 'Data Science',
-      status: 'pending'
-    },
-    {
-      id: 'REQ005',
-      name: 'David Brown',
-      email: 'david.brown@example.com',
-      contact: '+1 234-567-8904',
-      interestArea: 'Mobile Development',
-      status: 'pending'
-    }
-  ]);
+  const [requests, setRequests] = useState([]);
+
 
   useEffect(() => {
     // Simulate loading time
@@ -56,6 +18,24 @@ const AdminDashboard = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const fetchPendingMentor = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const response = await axios.get(`${API_URL}/admin/pending`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        setRequests(response.data)
+      } catch (err) {
+        console.log(err.message)
+      } 
+    }
+
+    fetchPendingMentor();
+  }, [])
 
   const stats = [
     {
@@ -159,12 +139,11 @@ const AdminDashboard = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile Picture</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest Area</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Professional Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Document</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -177,31 +156,43 @@ const AdminDashboard = () => {
                   transition={{ delay: 0.4 + index * 0.05 }}
                   className="hover:bg-gray-50"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex-shrink-0 h-10 w-10">
-                      <img
-                        className="h-10 w-10 rounded-full object-cover"
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(request.name)}&background=6366f1&color=fff&size=40`}
-                        alt={request.name}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <div className='flex justify-start items-center'>
+                    <img
+                        className="h-10 w-10 rounded-full mx-2 object-cover"
+                        src={request.profileUrl}
+                        alt={request.user.name}
                       />
+                       <button
+                      onClick={() => handleViewProfile(request.mentorId)}
+                      className="text-[var(--primary-color)] hover:text-[var(--primary-dark)] hover:underline text-sm font-medium"
+                    >
+                      {request.user.name}
+                    </button>
+                    <a className='hover:underline'>  </a>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{request.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.contact}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.interestArea}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.user.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.phoneNumber}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.title}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleViewProfile(request.id)}
-                      className="text-blue-600 hover:text-blue-900 text-sm font-medium"
-                    >
-                      View Profile
-                    </button>
+                    {request.documentUrl ? (
+                      <a
+                        href={request.documentUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-900 text-sm font-medium"
+                      >
+                        View Document
+                      </a>
+                    ) : (
+                      <span className="text-gray-400 text-sm">No document</span>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
                       <button
-                        onClick={() => handleApprove(request.id)}
+                        onClick={() => handleApprove(request.mentorId)}
                         className="text-white px-3 py-1 rounded-md text-xs transition-colors"
                         style={{ backgroundColor: 'var(--primary-color)' }}
                       >

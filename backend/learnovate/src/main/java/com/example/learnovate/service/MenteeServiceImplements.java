@@ -86,6 +86,7 @@ public class MenteeServiceImplements implements MenteeService{
         bookings.setTopic(mentorBookingsDto.getTopic());
         bookings.setNotes(mentorBookingsDto.getNotes());
         bookings.setPaymentStatus(mentorBookingsDto.getPaymentStatus());
+        bookings.setStatus(mentorBookingsDto.getStatus());
         bookings.setUser(user);
         bookings.setMentor(mentor);
 

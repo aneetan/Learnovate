@@ -4,7 +4,6 @@ import SockJS from 'sockjs-client';
 import { API_URL } from '../config/config';
 import { jwtDecode } from 'jwt-decode';
 import NotificationsComponent from '../components/common/NotificationsComponent';
-import axios from 'axios';
 
 const AdminNotifications = () => {
   const [notifications, setNotifications] = useState([]);

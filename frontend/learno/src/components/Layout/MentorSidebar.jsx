@@ -4,6 +4,7 @@ import { FaRegCalendarAlt, FaAddressBook, FaRegCommentDots, FaUserCircle, FaSign
 import { MdDashboard, MdToday } from "react-icons/md";
 import logoImage from "../../assets/images/learno_logo_long.png";
 import logoImage2 from "../../assets/images/learno_logo_only.png";
+import { getUserId } from '../../config/config';
 
 const MentorSidebar = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -11,6 +12,8 @@ const MentorSidebar = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const id = getUserId(localStorage.getItem("token"));
 
   useEffect(() => {
     const handleResize = () => {
@@ -27,8 +30,8 @@ const MentorSidebar = ({ children }) => {
 
   const menuItems = [
     { name: 'Dashboard', icon: <MdDashboard />, path: '/mentor/dashboard' },
-    { name: 'Schedule', icon: <MdToday />, path: '/mentor/availability' },
-    { name: 'Sessions', icon: <FaAddressBook />, path: '/mentor/sessions' },
+    { name: 'Availability', icon: <MdToday />, path: '/mentor/availability' },
+    { name: 'Sessions', icon: <FaAddressBook />, path: `/mentor/sessions/${id}` },
     { name: 'Chat', icon: <FaRegCommentDots />, path: '/mentor/chat' },
   ];
 

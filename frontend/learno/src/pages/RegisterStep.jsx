@@ -203,7 +203,7 @@ const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
   onMouseLeave={(e) => {
     if (isValid) e.currentTarget.style.backgroundColor = 'var(--primary-color)';
   }}
-  disabled={!isValid}
+  // disabled={!isValid}
 >
   Next
 </button>
