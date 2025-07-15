@@ -1,13 +1,25 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaSearch, FaEdit, FaTrash, FaEye, FaUsers } from 'react-icons/fa';
+import { FaSearch, FaEdit, FaTrash, FaEye, FaUsers, FaFileAlt } from 'react-icons/fa';
 import { PagePreloader } from '../components/common/Preloader';
+import DocumentModal from '../components/common/DocumentModal';
+import DetailsModal from '../components/common/DetailsModal';
+import ConfirmationModal from '../components/common/ConfirmationModal';
+import EditModal from '../components/common/EditModal';
 
 const AdminUsers = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const [showDocumentModal, setShowDocumentModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedDetailsUser, setSelectedDetailsUser] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [userToEdit, setUserToEdit] = useState(null);
 
   useEffect(() => {
     // Simulate loading time
@@ -54,18 +66,41 @@ const AdminUsers = () => {
   const currentUsers = filteredUsers.slice(startIndex, endIndex);
 
   const handleEdit = (userId) => {
-    console.log(`Editing user: ${userId}`);
-    // Here you would typically open an edit modal or navigate to edit page
+    const user = currentUsers.find(u => u.id === userId);
+    setUserToEdit(user);
+    setShowEditModal(true);
+  };
+  const handleEditSave = (updatedUser) => {
+    setShowEditModal(false);
+    setUserToEdit(null);
+    // Optionally: update user in state
   };
 
   const handleDelete = (userId) => {
-    console.log(`Deleting user: ${userId}`);
-    // Here you would typically show a confirmation dialog and then delete
+    const user = currentUsers.find(u => u.id === userId);
+    setUserToDelete(user);
+    setShowDeleteConfirm(true);
+  };
+  const confirmDelete = () => {
+    // Remove user from dummyUsers (in real app, call API)
+    setShowDeleteConfirm(false);
+    setUserToDelete(null);
+    // Optionally: setUsers(users => users.filter(u => u.id !== userToDelete.id));
   };
 
-  const handleViewProfile = (userId) => {
-    console.log(`Viewing profile for user: ${userId}`);
-    // Here you would typically navigate to the user's profile page
+  const handleViewDocument = (user) => {
+    setSelectedUser(user);
+    setShowDocumentModal(true);
+  };
+
+  const handleViewDetails = (user) => {
+    setSelectedDetailsUser(user);
+    setShowDetailsModal(true);
+  };
+
+  const handleNameClick = (user) => {
+    setSelectedDetailsUser(user);
+    setShowDetailsModal(true);
   };
 
   const handlePageChange = (page) => {
@@ -136,7 +171,7 @@ const AdminUsers = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest Area</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documents</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -158,7 +193,14 @@ const AdminUsers = () => {
                       />
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <button
+                      onClick={() => handleNameClick(user)}
+                      className="text-blue-600 hover:text-blue-900 hover:underline cursor-pointer"
+                    >
+                      {user.name}
+                    </button>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.contact}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.interestArea}</td>
@@ -167,12 +209,12 @@ const AdminUsers = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
-                      onClick={() => handleViewProfile(user.id)}
+                      onClick={() => handleViewDocument(user)}
                       className="text-sm font-medium flex items-center space-x-1"
                       style={{ color: 'var(--primary-color)' }}
                     >
-                      <FaEye className="w-3 h-3" />
-                      <span>View Profile</span>
+                      <FaFileAlt className="w-3 h-3" />
+                      <span>View Document</span>
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -199,21 +241,20 @@ const AdminUsers = () => {
             </tbody>
           </table>
         </div>
-
-        {/* Pagination */}
-        <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        {/* Pagination Footer - moved back inside the table card */}
+        <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 rounded-b-lg shadow-sm">
           <div className="flex-1 flex justify-between sm:hidden">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
             >
               Previous
             </button>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
             >
               Next
             </button>
@@ -221,13 +262,11 @@ const AdminUsers = () => {
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{startIndex + 1}</span> to{' '}
-                <span className="font-medium">{Math.min(endIndex, filteredUsers.length)}</span> of{' '}
-                <span className="font-medium">{filteredUsers.length}</span> results
+                Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{Math.min(endIndex, filteredUsers.length)}</span> of <span className="font-medium">{filteredUsers.length}</span> results
               </p>
             </div>
             <div>
-              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
@@ -259,14 +298,41 @@ const AdminUsers = () => {
             </div>
           </div>
         </div>
-
-        {/* Copyright Footer */}
-        <div className="text-center py-8 border-t border-gray-200">
-          <p className="text-sm text-gray-500">
-            Copyright © 2025. Learnovate. All rights reserved.
-          </p>
-        </div>
       </motion.div>
+
+      {/* Copyright Footer */}
+      <div className="text-center py-8 border-t border-gray-200">
+        <p className="text-sm text-gray-500">
+          Copyright © 2025. Learnovate. All rights reserved.
+        </p>
+      </div>
+
+      {/* Document Modal */}
+      <DocumentModal
+        isOpen={showDocumentModal}
+        onClose={() => setShowDocumentModal(false)}
+        userData={selectedUser}
+        type="user"
+      />
+      <DetailsModal
+        isOpen={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
+        userData={selectedDetailsUser}
+        type="user"
+      />
+      <EditModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onSave={handleEditSave}
+        data={userToEdit}
+        type="user"
+      />
+      <ConfirmationModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={confirmDelete}
+        message={`Are you sure you want to delete this user? This action cannot be undone.`}
+      />
     </div>
   );
 };
