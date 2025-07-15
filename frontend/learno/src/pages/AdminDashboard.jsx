@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MdDashboard, MdPeople, MdAttachMoney } from 'react-icons/md';
+import { FaFileAlt } from 'react-icons/fa';
 import { PagePreloader } from '../components/common/Preloader';
+import DocumentModal from '../components/common/DocumentModal';
+import DetailsModal from '../components/common/DetailsModal';
+import ApprovalModal from '../components/common/ApprovalModal';
+import ConfirmationModal from '../components/common/ConfirmationModal';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [showDocumentModal, setShowDocumentModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedDetailsUser, setSelectedDetailsUser] = useState(null);
   const [requests, setRequests] = useState([
     {
       id: 'REQ001',
@@ -48,6 +58,22 @@ const AdminDashboard = () => {
     }
   ]);
 
+  const [showApproveModal, setShowApproveModal] = useState(false);
+  const [requestToApprove, setRequestToApprove] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [requestToDelete, setRequestToDelete] = useState(null);
+
+  const navigate = useNavigate();
+
+  // Dummy mapping for demonstration
+  const nameToMentorId = {
+    'Jane Smith': 'MNT001',
+    'John Doe': 'MNT002',
+    'Mike Johnson': 'MNT003',
+    'Sarah Wilson': 'MNT004',
+    'David Brown': 'MNT005',
+  };
+
   useEffect(() => {
     // Simulate loading time
     const timer = setTimeout(() => {
@@ -88,20 +114,43 @@ const AdminDashboard = () => {
   ];
 
   const handleApprove = (id) => {
-    setRequests(requests.filter(req => req.id !== id));
-    // Here you would typically make an API call to approve the request
-    console.log(`Approved request: ${id}`);
+    const req = requests.find(r => r.id === id);
+    setRequestToApprove(req);
+    setShowApproveModal(true);
   };
-
+  const confirmApprove = () => {
+    setShowApproveModal(false);
+    setRequestToApprove(null);
+    // Optionally: update requests state
+  };
   const handleDelete = (id) => {
-    setRequests(requests.filter(req => req.id !== id));
-    // Here you would typically make an API call to delete the request
-    console.log(`Deleted request: ${id}`);
+    const req = requests.find(r => r.id === id);
+    setRequestToDelete(req);
+    setShowDeleteConfirm(true);
+  };
+  const confirmDelete = () => {
+    setShowDeleteConfirm(false);
+    setRequestToDelete(null);
+    // Optionally: update requests state
   };
 
-  const handleViewProfile = (id) => {
-    // Here you would typically navigate to the user's profile page
-    console.log(`Viewing profile for: ${id}`);
+  const handleViewDocument = (user) => {
+    setSelectedUser(user);
+    setShowDocumentModal(true);
+  };
+
+  const handleViewDetails = (user) => {
+    setSelectedDetailsUser(user);
+    setShowDetailsModal(true);
+  };
+
+  const handleNameClick = (user) => {
+    if (nameToMentorId[user.name]) {
+      navigate(`/test-adminDashboard/mentors/${nameToMentorId[user.name]}`);
+    } else {
+      setSelectedDetailsUser(user);
+      setShowDetailsModal(true);
+    }
   };
 
   if (isLoading) {
@@ -164,7 +213,7 @@ const AdminDashboard = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest Area</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documents</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -186,16 +235,25 @@ const AdminDashboard = () => {
                       />
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{request.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <button
+                      onClick={() => handleNameClick(request)}
+                      className="text-blue-600 hover:text-blue-900 hover:underline cursor-pointer"
+                    >
+                      {request.name}
+                    </button>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.contact}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.interestArea}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
-                      onClick={() => handleViewProfile(request.id)}
-                      className="text-blue-600 hover:text-blue-900 text-sm font-medium"
+                      onClick={() => handleViewDocument(request)}
+                      className="text-sm font-medium flex items-center space-x-1"
+                      style={{ color: 'var(--primary-color)' }}
                     >
-                      View Profile
+                      <FaFileAlt className="w-3 h-3" />
+                      <span>View Document</span>
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -228,6 +286,32 @@ const AdminDashboard = () => {
           Copyright © 2025. Learnovate. All rights reserved.
         </p>
       </div>
+
+      {/* Document Modal */}
+      <DocumentModal
+        isOpen={showDocumentModal}
+        onClose={() => setShowDocumentModal(false)}
+        userData={selectedUser}
+        type="user"
+      />
+      <DetailsModal
+        isOpen={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
+        userData={selectedDetailsUser}
+        type="user"
+      />
+      <ApprovalModal
+        isOpen={showApproveModal}
+        onClose={() => setShowApproveModal(false)}
+        onApprove={confirmApprove}
+        message={`Are you sure you want to approve this request?`}
+      />
+      <ConfirmationModal
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={confirmDelete}
+        message={`Are you sure you want to delete this request? This action cannot be undone.`}
+      />
     </div>
   );
 };
