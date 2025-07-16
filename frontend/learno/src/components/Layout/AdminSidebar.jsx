@@ -129,10 +129,10 @@ const AdminSidebar = ({ children }) => {
             </div>
           </div>
           <AdminNotifications/>
-          <div className="relative ml-4">
+          <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
+              className="flex items-center space-x-2 rounded-lg hover:bg-gray-100 transition"
             >
               <FaUserCircle className="text-2xl text-gray-600" />
               <span className="hidden md:block text-base font-semibold">Admin</span>
@@ -144,11 +144,11 @@ const AdminSidebar = ({ children }) => {
                     navigate('/test-adminDashboard/settings');
                     setDropdownOpen(false);
                   }}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 transition text-sm"
+                  className="block w-full text-left hover:bg-gray-100 transition text-sm"
                 >
                   Settings
                 </button>
-                 <a href="#" className="block px-4 py-2 hover:bg-gray-100 transition flex items-center space-x-2 text-sm">
+                 <a href="#" className=" px-4 py-2 hover:bg-gray-100 transition flex items-center space-x-2 text-sm">
                   <FaSignOutAlt /> <span>Logout</span>
                 </a>
               </div>

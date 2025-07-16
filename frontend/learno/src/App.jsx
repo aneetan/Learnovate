@@ -54,7 +54,6 @@ function App() {
 
         <Route path="/unauthorized" element={<div>You are unauthorized! Get lost</div>} />
 
-        <Route path="/payment-success" element={<EsewaSuccess />} />
         <Route path="/payment-failure" element={<EsewaFailure />} />
 
         {/* ✅ Mentee protected routes */}
@@ -82,6 +81,7 @@ function App() {
             <Route path='viewMentors' element={<MentorDirectory />} />
             <Route path='calendar/:mentorId' element={<CalendarPreview />} />
             <Route path="checkout/:mentorId/:bookingId" element={<CheckoutPage />} />
+            <Route path="payment-success" element={<EsewaSuccess />} />
             <Route path='menteeProfile' element={<MenteeProfile />} />
             <Route path='chat' element={<MenteeChat />} />
           </Route>
