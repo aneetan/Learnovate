@@ -137,12 +137,10 @@ const AdminNotifications = () => {
   }
 
   return (
-    <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
       <NotificationsComponent
         notifications={notifications}
         onMarkAsRead={handleMarkAsRead}
       />
-    </div>
   );
 };
 

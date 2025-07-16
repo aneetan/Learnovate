@@ -5,6 +5,7 @@ import { MdDashboard, MdPeople, MdBookOnline, MdStarRate } from "react-icons/md"
 import { FaUsers } from "react-icons/fa";
 import logoImage from "../../assets/images/learno_logo_long.png";
 import logoImage2 from "../../assets/images/learno_logo_only.png";
+import AdminNotifications from '../../notifications/AdminNotifications';
 
 const AdminSidebar = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -127,6 +128,7 @@ const AdminSidebar = ({ children }) => {
               <FaSearch className="absolute left-3 top-3.5 text-gray-400" />
             </div>
           </div>
+          <AdminNotifications/>
           <div className="relative ml-4">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}

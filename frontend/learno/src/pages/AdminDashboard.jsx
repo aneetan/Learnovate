@@ -1,24 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MdDashboard, MdPeople, MdAttachMoney } from 'react-icons/md';
-import { FaFileAlt } from 'react-icons/fa';
 import { PagePreloader } from '../components/common/Preloader';
 import axios from 'axios';
 import { API_URL } from '../config/config';
 import ApproveMentorModel from '../components/admin/ApproveMentorModel';
 import DeclineMentorModel from '../components/admin/DeclineMentorModal';
-import DocumentModal from '../components/common/DocumentModal';
-import DetailsModal from '../components/common/DetailsModal';
-import ApprovalModal from '../components/common/ApprovalModal';
-import ConfirmationModal from '../components/common/ConfirmationModal';
-import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [showDocumentModal, setShowDocumentModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [selectedDetailsUser, setSelectedDetailsUser] = useState(null);
   const [requests, setRequests] = useState([]);
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
   const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
@@ -26,23 +16,6 @@ const AdminDashboard = () => {
   const [isApproving, setIsApproving] = useState(false);
   const [isDeclining, setIsDeclining] = useState(false);
 
-
-
-  const [showApproveModal, setShowApproveModal] = useState(false);
-  const [requestToApprove, setRequestToApprove] = useState(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [requestToDelete, setRequestToDelete] = useState(null);
-
-  const navigate = useNavigate();
-
-  // Dummy mapping for demonstration
-  const nameToMentorId = {
-    'Jane Smith': 'MNT001',
-    'John Doe': 'MNT002',
-    'Mike Johnson': 'MNT003',
-    'Sarah Wilson': 'MNT004',
-    'David Brown': 'MNT005',
-  };
 
   useEffect(() => { 
     // Simulate loading time
@@ -145,18 +118,9 @@ const AdminDashboard = () => {
     }
   ];
 
-  const handleViewDetails = (user) => {
-    setSelectedDetailsUser(user);
-    setShowDetailsModal(true);
-  };
-
-  const handleNameClick = (user) => {
-    if (nameToMentorId[user.name]) {
-      navigate(`/test-adminDashboard/mentors/${nameToMentorId[user.name]}`);
-    } else {
-      setSelectedDetailsUser(user);
-      setShowDetailsModal(true);
-    }
+  const handleViewProfile = (id) => {
+    // Here you would typically navigate to the user's profile page
+    console.log(`Viewing profile for: ${id}`);
   };
 
   if (isLoading) {
@@ -303,32 +267,6 @@ const AdminDashboard = () => {
           Copyright © 2025. Learnovate. All rights reserved.
         </p>
       </div>
-
-      {/* Document Modal */}
-      <DocumentModal
-        isOpen={showDocumentModal}
-        onClose={() => setShowDocumentModal(false)}
-        userData={selectedUser}
-        type="user"
-      />
-      <DetailsModal
-        isOpen={showDetailsModal}
-        onClose={() => setShowDetailsModal(false)}
-        userData={selectedDetailsUser}
-        type="user"
-      />
-      <ApprovalModal
-        isOpen={showApproveModal}
-        onClose={() => setShowApproveModal(false)}
-        onApprove={confirmApprove}
-        message={`Are you sure you want to approve this request?`}
-      />
-      <ConfirmationModal
-        isOpen={showDeleteConfirm}
-        onClose={() => setShowDeleteConfirm(false)}
-        onConfirm={confirmDelete}
-        message={`Are you sure you want to delete this request? This action cannot be undone.`}
-      />
 
       <ApproveMentorModel
         isOpen={isApproveModalOpen}

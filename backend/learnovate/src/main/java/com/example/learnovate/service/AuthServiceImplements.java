@@ -71,7 +71,7 @@ public class AuthServiceImplements implements AuthService{
     @Override
     public Map<String, Object> loginUser(LoginDto loginDto) {
         String token;
-        String adminPw = passwordEncoder.encode("admin@123");
+        String adminPw = passwordEncoder.encode("Admin@123");
         Map<String, Object> userInfo = new HashMap<>();
 
         // Admin shortcut

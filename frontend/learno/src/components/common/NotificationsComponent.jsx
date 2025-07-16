@@ -67,7 +67,7 @@ const NotificationsComponent = ({ notifications: propNotifications = [], onMarkA
 
       {/* Notification Dropdown */}
       {isOpen && (
-        <div className="absolute left-4 mt-2 w-80 bg-white rounded-md shadow-lg overflow-hidden z-50 border border-gray-200">
+        <div className="absolute right-4 mt-2 w-80 bg-white rounded-md shadow-lg overflow-hidden z-50 border border-gray-200">
 
           <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (

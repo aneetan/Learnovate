@@ -29,16 +29,11 @@ import MentorSessions from './pages/mentor/MentorSessions';
 import MentorSchedules from './pages/mentor/MentorSchedules';
 import AdminSettings from "./pages/AdminSettings";
 import AdminMentorProfile from './pages/AdminMentorProfile';
-
-// ✅ Add chat component imports
 import MenteeChat from './websocket/MenteeChat';
 import MentorChat from './websocket/MentorChat';
 import AdminNotifications from './notifications/AdminNotifications';
 import EmailConfirmationPage from './pages/EmailConfirmationPage';
 import DeclinedPage from './pages/DeclinedPage';
-// import Notifications from './notifications/Notifications';
-import AdminNotifications from './notifications/AdminNotifications';
-import EmailConfirmationPage from './pages/EmailConfirmationPage';
 import ForgotPassword from './pages/ForgotPassword';
 import ForgotPasswordEmail from './pages/ForgotPasswordEmail';
 import ForgotPasswordOtp from './pages/ForgotPasswordOtp';
@@ -132,8 +127,6 @@ function App() {
           <Route path='/mentor/confirmation' element={<EmailConfirmationPage />} />
         </Route>
 
-        {/* Empty ADMIN route placeholder (optional, can remove if not used) */}
-        <Route element={<ProtectedRoutes allowedRoles={["ADMIN"]} />}></Route>
       </Routes>
     </Router>
   );
