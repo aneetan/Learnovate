@@ -21,17 +21,28 @@ import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
 import CalendarPreview from './pages/Mentee/CalendarPreview';
 import BookingRequest from './pages/Mentee/BookingRequest';
 import MenteeDashboard from './pages/Mentee/MenteeDashboard';
-import MentorDashboard from './pages/mentor/MentorDashboard';
+import MentorDashboard from './pages/mentor/MentorDashboard'; 
 import CheckoutPage from './pages/Mentee/CheckoutPage';
 import EsewaSuccess from './components/EsewaSuccess';
 import EsewaFailure from './components/EsewaFailure';
 import MentorSessions from './pages/mentor/MentorSessions';
+import MentorSchedules from './pages/mentor/MentorSchedules';
 import AdminSettings from "./pages/AdminSettings";
+import AdminMentorProfile from './pages/AdminMentorProfile';
+
+// ✅ Add chat component imports
 import MenteeChat from './websocket/MenteeChat';
 import MentorChat from './websocket/MentorChat';
 import AdminNotifications from './notifications/AdminNotifications';
 import EmailConfirmationPage from './pages/EmailConfirmationPage';
 import DeclinedPage from './pages/DeclinedPage';
+// import Notifications from './notifications/Notifications';
+import AdminNotifications from './notifications/AdminNotifications';
+import EmailConfirmationPage from './pages/EmailConfirmationPage';
+import ForgotPassword from './pages/ForgotPassword';
+import ForgotPasswordEmail from './pages/ForgotPasswordEmail';
+import ForgotPasswordOtp from './pages/ForgotPasswordOtp';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   return (
@@ -40,6 +51,11 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/forgot-password-email" element={<ForgotPasswordEmail />} />
+        <Route path="/forgot-password-otp" element={<ForgotPasswordOtp />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/" element={<Home />} />
 
         <Route path="/unauthorized" element={<div>You are unauthorized! Get lost</div>} />
 
@@ -47,6 +63,23 @@ function App() {
         <Route path="/payment-failure" element={<EsewaFailure />} />
 
         {/* ✅ Mentee protected routes */}
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/payment/success/:transaction_uuid?" element={<EsewaSuccess />} />
+        <Route path="/payment/failure" element={<EsewaFailure />} />
+
+        {/* ✅ Admin routes */}
+        <Route path='/test-adminDashboard' element={<AdminLayout />}>
+          <Route path='' element={<AdminDashboard />} />
+          <Route path='users' element={<AdminUsers />} />
+          <Route path='mentors' element={<AdminMentors />} />
+          <Route path='mentors/:mentorId' element={<AdminMentorProfile />} />
+          <Route path='bookings' element={<AdminBookings />} />
+          <Route path='reviews' element={<AdminReviews />} />
+          <Route path='settings' element={<AdminSettings />} />
+        </Route>
+
+        {/* ✅ Mentee protected routes */}
+        <Route path="/admin/notify" element={<AdminNotifications />} />
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]} />}>
           <Route path='/mentee' element={<MenteeLayout />}>
             <Route path='dashboard' element={<MenteeDashboard />} />
@@ -85,6 +118,22 @@ function App() {
           <Route path="/admin/notify" element={<AdminNotifications/>} />
         </Route>
 
+        {/* ✅ Mentor protected routes */}
+        <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]} />}>
+          <Route path='/mentor' element={<MentorLayout />}>
+            <Route path='availability' element={<AvailabilitySchedule />} />
+            <Route path='profile' element={<MentorProfile />} />
+            <Route path='dashboard' element={<MentorDashboard />} />
+            <Route path='sessions' element={<MentorSessions />} />
+            <Route path='schedules' element={<MentorSchedules />} />
+            <Route path='chat' element={<MentorChat />} />
+          </Route>
+          <Route path='/mentor/registerDetails' element={<MentorStepperForm />} />
+          <Route path='/mentor/confirmation' element={<EmailConfirmationPage />} />
+        </Route>
+
+        {/* Empty ADMIN route placeholder (optional, can remove if not used) */}
+        <Route element={<ProtectedRoutes allowedRoles={["ADMIN"]} />}></Route>
       </Routes>
     </Router>
   );

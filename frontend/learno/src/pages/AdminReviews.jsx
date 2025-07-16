@@ -1,13 +1,18 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaStar, FaUser, FaEnvelope, FaEye, FaSearch, FaComment, FaThumbsUp, FaLightbulb, FaBug, FaHeart } from 'react-icons/fa';
+import { FaStar, FaUser, FaEnvelope, FaEye, FaSearch, FaComment, FaThumbsUp, FaLightbulb, FaBug, FaHeart, FaTrash, FaEdit } from 'react-icons/fa';
 import { PagePreloader } from '../components/common/Preloader';
+import DetailsModal from '../components/common/DetailsModal';
+import ConfirmationModal from '../components/common/ConfirmationModal';
+import EditModal from '../components/common/EditModal';
 
 const AdminReviews = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [isLoading, setIsLoading] = useState(true);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
 
   const [feedback, setFeedback] = useState([
     {
@@ -106,8 +111,9 @@ const AdminReviews = () => {
   const endIndex = startIndex + entriesPerPage;
   const currentFeedback = filteredFeedback.slice(startIndex, endIndex);
 
-  const handleViewDetails = (feedbackId) => {
-    console.log(`Viewing details for feedback: ${feedbackId}`);
+  const handleViewDetails = (feedback) => {
+    setSelectedFeedback(feedback);
+    setShowDetailsModal(true);
   };
 
   const handlePageChange = (page) => {
@@ -227,11 +233,9 @@ const AdminReviews = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <button
-                      onClick={() => handleViewDetails(item.id)}
-                      className="text-sm font-medium flex items-center space-x-1"
-                      style={{ color: 'var(--primary-color)' }}
+                      onClick={() => handleViewDetails(item)}
+                      className="text-sm font-medium flex items-center space-x-1 text-green-700 hover:text-green-900"
                     >
-                      <FaEye className="w-3 h-3" />
                       <span>View Details</span>
                     </button>
                   </td>
@@ -328,6 +332,13 @@ const AdminReviews = () => {
           Copyright © 2025. Learnovate. All rights reserved.
         </p>
       </div>
+
+      <DetailsModal
+        isOpen={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
+        userData={selectedFeedback}
+        type="feedback"
+      />
     </div>
   );
 };

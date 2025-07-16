@@ -165,12 +165,20 @@ const Login = ({ setCurrentUser, users }) => {
             </div>
 
             <div className="flex flex-col gap-4 relative">
-              <label
-                htmlFor="password"
-                className="text-gray-700 text-base font-medium text-left"
-              >
-                Password
-              </label>
+              <div className="flex justify-between items-center">
+                <label
+                  htmlFor="password"
+                  className="text-gray-700 text-base font-medium text-left"
+                >
+                  Password
+                </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-[#26A69A] text-sm font-medium hover:underline"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
