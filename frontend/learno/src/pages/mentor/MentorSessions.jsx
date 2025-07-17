@@ -3,11 +3,13 @@ import { motion } from 'framer-motion';
 import { FaEnvelope, FaCheck, FaClock, FaUser, FaCalendar, FaAddressBook, FaCommentDots } from 'react-icons/fa';
 import axios from 'axios';
 import { API_URL, formatTimeTo12Hour } from '../../config/config';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const MentorSessions = () => {
   const [sessions, setSessions] = useState([]);
+  const [selectedSession, setSelectedSession] = useState(null);
   let params = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSessionsByMentor = async () => {
@@ -19,6 +21,9 @@ const MentorSessions = () => {
           },
         })
         setSessions(response.data)
+        if (response.data.length > 0) {
+          setSelectedSession(response.data[0]);
+        }
       } catch (err) {
         console.log(err.message)
       } 
@@ -31,15 +36,16 @@ const MentorSessions = () => {
 
   const handleMarkComplete = (sessionId) => {
     setSessions(sessions.map(session => 
-      session.id === sessionId 
+      session.bookingId  === sessionId 
         ? { ...session, status: 'completed' }
         : session
     ));
   };
 
-  const handleMessage = (menteeEmail) => {
-    // Here you would typically open a chat or navigate to messaging
-    console.log(`Opening chat with ${menteeEmail}`);
+  const handleMessage = (session) => {
+    if(sessions){
+      navigate(`/mentor/chat/${session.user.userId}`)
+    }
   };
 
   const filteredSessions = filterStatus === 'all' 
@@ -160,7 +166,7 @@ const MentorSessions = () => {
             {/* Action Buttons */}
             <div className="flex gap-3">
               <button
-                onClick={() => handleMessage(session.menteeEmail)}
+                onClick={() => handleMessage(session)}
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium"
                 style={{ backgroundColor: 'var(--primary-color)', color: 'white' }}
               >

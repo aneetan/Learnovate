@@ -4,16 +4,17 @@ import SockJS from 'sockjs-client';
 import axios from 'axios';
 import { API_URL } from '../config/config';
 
-const ChatRoom = ({ currentUser, roleDetails }) => {
+const ChatRoom = ({ currentUser, roleDetails,  receiverId = null }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [roomId, setRoomId] = useState(null);
   const [error, setError] = useState(null);
   const [chatHistory, setChatHistory] = useState([]);
-  const [otherUser, setOtherUser] = useState(null);
   const stompClient = useRef(null);
   const messagesEndRef = useRef(null);
-  const [otherDetails, setOtherDetails] = useState("")
+  const [otherDetails, setOtherDetails] = useState("");
+  const [otherUser, setOtherUser] = useState("");
+  
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -23,15 +24,49 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
     scrollToBottom();
   }, [messages]);
 
+  const fetchPartnerDetails = async (receiverId) => {
+    try {
+      const endpoint = currentUser.role === "mentee" 
+        ? `${API_URL}/auth/getMentor/${receiverId}`
+        : `${API_URL}/auth/getMentee/${receiverId}`;
+      
+      const response = await axios.get(endpoint);
+      return response.data;
+    } catch (err) {
+      console.error('Error fetching partner details:', err);
+      return {
+        user: {
+          name: 'Unknown User',
+          role: 'user'
+        },
+        profileUrl: null
+      };
+    }
+  };
+
   // Fetch chat history
   useEffect(() => {
     const fetchChatHistory = async () => {
       try {
-        const response = await axios.get(`${API_URL}/rooms/user/${currentUser.userId}`);
+        const response = await axios.get(`${API_URL}/rooms/user/${currentUser.id}`);
         setChatHistory(response.data);
-        // Select the first chat by default if available
-        if (response.data.length > 0) {
-          handleSelectChat(response.data[0].id, response.data[0].partner);
+        
+        // If receiverId is provided, find or create a chat with that user
+        if (receiverId) {
+          const existingChat = response.data.find(chat => {
+            chat.partner.userId === receiverId
+          }
+          );
+          
+          if (existingChat) {
+            await handleSelectChat(existingChat.roomId, existingChat.partner);
+          } else {
+            // Create a new chat if one doesn't exist
+            await handleCreateChat(receiverId);
+          }
+        } else if (response.data.length > 0) {
+          // Default behavior if no receiverId
+          handleSelectChat(response.data[0].roomId, response.data[0].partner);
         }
       } catch (err) {
         console.error('Error fetching chat history:', err);
@@ -40,17 +75,35 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
     };
 
     fetchChatHistory();
-  }, [currentUser.userId]);
-
-
+  }, [currentUser.id, receiverId]);
 
   // Setup WebSocket and load messages for selected room
   const handleSelectChat = async (selectedRoomId, partner) => {
     try {
       setRoomId(selectedRoomId);
       setOtherUser(partner);
-      setMessages([]); // Clear previous messages
+      setMessages([]); 
       setError(null);
+
+      // Fetch partner details if not already available
+      if (!partner.details) {
+        const details = await fetchPartnerDetails(partner.userId);
+        // Update the chat history with the fetched details
+        setChatHistory(prev => prev.map(chat => 
+          chat.roomId === selectedRoomId 
+            ? { ...chat,
+              partner: {
+               ...chat.partner, 
+               details,
+              } } 
+            : chat
+        ));
+        setOtherDetails(details);
+        console.log("Chat partner data:", chatHistory);
+        console.log("other user" , otherUser)
+      } else {
+        setOtherDetails(partner.details);
+      }
 
       // Load messages for the selected room
       const messagesResponse = await axios.get(`${API_URL}/rooms/${selectedRoomId}/messages`);
@@ -59,52 +112,14 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
       // Unsubscribe from previous room and subscribe to new room
       if (stompClient.current?.connected) {
         stompClient.current.unsubscribe('room-subscription');
-        stompClient.current.subscribe(
-          `/topic/room/${selectedRoomId}`,
-          (message) => {
-            const newMsg = JSON.parse(message.body);
-            setMessages((prev) => [...prev, newMsg]);
-          },
-          { id: 'room-subscription' }
-        );
-      } else {
-        // Setup WebSocket if not connected
-        setupWebSocket(selectedRoomId);
       }
+        setupWebSocket(selectedRoomId);
+       
     } catch (err) {
       console.error('Error selecting chat:', err);
       setError('Failed to load chat messages.');
     }
   };
-
-  useEffect(()=> {
-    const getMentor = async() => {
-        try {
-            const response = await axios.get(`${API_URL}/auth/getMentor/${otherUser.userId}`,{})
-            setOtherDetails(response.data)
-
-        } catch (err) {
-            console.log(err.message)
-        }
-    }
-
-    const getMentee = async() => {
-        try {
-            const response = await axios.get(`${API_URL}/auth/getMentee/${otherUser.userId}`,{})
-            setOtherDetails(response.data)
-
-        } catch (err) {
-            console.log(err.message)
-        }
-    }
-
-    if(currentUser.role === "mentee"){
-      getMentor();
-    } else if(currentUser.role === "mentor") {
-      getMentee()
-    }
-
-}, [otherUser])
 
   const setupWebSocket = (roomId) => {
     if (stompClient.current) {
@@ -115,8 +130,10 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
     stompClient.current = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
+      connectHeaders: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      },
       onConnect: () => {
-        console.log('Connected to WebSocket');
         stompClient.current.subscribe(
           `/topic/room/${roomId}`,
           (message) => {
@@ -154,8 +171,8 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
 
     const message = {
       roomId: roomId,
-      senderId: currentUser.userId,
-      recipientId: otherUser?.userId,
+      senderId: currentUser.id,
+      recipientId: receiverId,
       content: newMessage,
     };
 
@@ -169,34 +186,67 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
 
   // Create a new chat room
   const handleCreateChat = async (receiverId) => {
-    try {
-      const roomResponse = await axios.post(`${API_URL}/rooms`, {
-        user1Id: currentUser.userId,
-        user2Id: receiverId,
+  try {
+    // Ensure consistent ID ordering (lower ID first)
+    const [user1Id, user2Id] = [currentUser.userId, receiverId].sort((a, b) => a - b);
+    
+    // First try to find existing room
+    const findResponse = await axios.get(`${API_URL}/rooms/find/${currentUser.id}/${receiverId}`, {
+      headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+    });
+
+     let roomData = findResponse.data.exists 
+        ? findResponse.data.room 
+        : (await axios.post(`${API_URL}/rooms/create/${currentUser.id}/${receiverId}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json'
+            }
+          })).data;
+
+    // Fetch partner details
+      const partnerDetails = await fetchPartnerDetails(receiverId);
+      const partner = {
+        userId: partnerDetails.user?.userId,
+        name: partnerDetails.user?.name || 'Unknown User',
+        role: partnerDetails.user?.role || 'user',
+        profileUrl: partnerDetails.profileUrl || null,
+        details: partnerDetails
+      };
+
+    setChatHistory(prev => {
+        const exists = prev.some(chat => chat.id === roomData.roomId);
+        return exists ? prev : [
+          ...prev,
+          {
+            id: roomData.roomId,
+            partner,
+            lastMessage: null,
+            lastMessageTime: new Date().toISOString(),
+          }
+        ];
       });
-      const newRoomId = roomResponse.data.id;
-      const partner = { userId: receiverId, name: 'User', role: 'Unknown' }; // Fetch actual user details if needed
-      setChatHistory((prev) => [
-        ...prev,
-        {
-          id: newRoomId,
-          partner,
-          lastMessage: null,
-          lastMessageTime: new Date().toISOString(),
-        },
-      ]);
-      handleSelectChat(newRoomId, partner);
-    } catch (err) {
-      console.error('Error creating chat:', err);
-      setError('Failed to create chat.');
-    }
-  };
+      
+    handleSelectChat(roomData.roomId, partner);
+
+  } catch (err) {
+    console.error('Error in chat creation:', {
+      message: err.message,
+      response: err.response?.data,
+      stack: err.stack
+    });
+    
+    setError(err.response?.data?.message || 
+             'Failed to establish chat connection. Please try again.');
+  }
+};
 
   return (
-    <div className="flex h-[82vh] bg-gray-100">
+      <div className="flex h-[82vh] bg-gray-100">
       {/* Sidebar with chat history */}
       <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-        {/* Search */}
         <div className="p-3 border-b border-gray-200">
           <div className="relative">
             <input
@@ -220,7 +270,6 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
           </div>
         </div>
 
-        {/* Chat history list */}
         <div className="flex-1 w-[full]">
           {chatHistory.map((chat) => (
             <div
@@ -231,16 +280,23 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
               onClick={() => handleSelectChat(chat.id, chat.partner)}
             >
               <div className="w-[20%] h-10 border-none flex items-center justify-center mr-3">
-                {otherDetails.profileUrl? (
-                 <img src={otherDetails.profileUrl} alt='img'
-                className='w-12 h-12 rounded-full'/>
-            ): (
-              <>{otherUser.name.charAt(0).toUpperCase()} </>
-            )}
+                {otherUser.profileUrl ? (
+                  <img 
+                    src={otherUser.profileUrl} 
+                    alt='profile'
+                    className='w-12 h-12 rounded-full'
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                    {chat.partner?.name?.charAt(0)?.toUpperCase() || '?'}
+                  </div>
+                )}
               </div>
               <div className="flex-1 w-[80%]">
                 <div className="flex justify-between items-center">
-                  <h3 className="font-medium text-gray-900">{chat.partner.name}</h3>
+                  <h3 className="font-medium text-gray-900">
+                    {chat.partner?.name || 'Unknown User'}
+                  </h3>
                   <span className="w-[34%] text-xs text-gray-500">
                     {chat.lastMessageTime
                       ? new Date(chat.lastMessageTime).toLocaleTimeString([], {
@@ -250,7 +306,7 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
                       : ''}
                   </span>
                 </div>
-                <p className=" w-[85%] text-sm text-gray-500 truncate">
+                <p className="w-[85%] text-sm text-gray-500 truncate">
                   {chat.lastMessage || 'No messages yet'}
                 </p>
               </div>
@@ -262,24 +318,30 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
       {/* Main chat area */}
       <div className="flex-1 flex flex-col">
         {/* Chat header */}
-        {otherUser && (
+        {otherDetails && (
           <div className="flex items-center p-4 border-b border-gray-200 bg-white">
             <div className="rounded-full bg-indigo-100 flex items-center justify-center mr-3">
-            {otherDetails.profileUrl? (
-                 <img src={otherDetails.profileUrl} alt='img'
-                className='w-12 h-12 rounded-full'/>
-            ): (
-              <>{otherUser.name.charAt(0).toUpperCase()} </>
-            )}
-             
+              {otherDetails.profileUrl ? (
+                <img 
+                  src={otherDetails.profileUrl} 
+                  alt='profile'
+                  className='w-12 h-12 rounded-full'
+                />
+              ) : (
+                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                  {otherDetails.user?.name?.charAt(0)?.toUpperCase() || '?'}
+                </div>
+              )}
             </div>
             <div>
-              <h2 className="font-semibold text-gray-900">{otherUser.name}</h2>
+              <h2 className="font-semibold text-gray-900">
+                {otherDetails.user?.name || 'Unknown User'}
+              </h2>
               <p className="text-xs text-gray-500">
-                {otherUser.role.charAt(0).toUpperCase() +otherUser.role.slice(1).toLowerCase()} • <span className="text-green-500">Online</span>
+                {otherDetails.user?.role?.charAt(0)?.toUpperCase() + 
+                 (otherDetails.user?.role?.slice(1)?.toLowerCase() || 'User')} • 
+                <span className="text-green-500"> Online</span>
               </p>
-            </div>
-            <div className="ml-auto flex space-x-2">
             </div>
           </div>
         )}
@@ -291,21 +353,12 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
               {error}
             </div>
           )}
+          
           {!roomId ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center text-gray-500">
-                <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  />
+                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
                 <p className="mt-2">Select a chat to start messaging</p>
               </div>
@@ -313,18 +366,8 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
           ) : messages.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center text-gray-500">
-                <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  />
+                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
                 <p className="mt-2">No messages yet</p>
                 <p className="text-sm">Start the conversation!</p>
@@ -332,45 +375,36 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
             </div>
           ) : (
             messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`flex ${
-                  msg.sender.userId === currentUser.userId ? 'justify-end' : 'justify-start'
-                } mb-4`}
-              >
-                <div
-                  className={`flex max-w-[80%] ${
-                    msg.sender.userId === currentUser.userId ? 'flex-row-reverse' : ''
-                  }`}
-                >
+              <div key={index} className={`flex ${msg.sender.userId === currentUser.id ? 'justify-end' : 'justify-start'} mb-4`}>
+                <div className={`flex max-w-[80%] ${msg.sender.userId === currentUser.id ? 'flex-row-reverse' : ''}`}>
                   <div className="flex-shrink-0 mx-2">
                     <div className="rounded-full bg-indigo-100 flex items-center justify-center">
-                      {msg.sender.userId === currentUser.userId
-                        ? (
-                            ""
-                        )
-                        : (  
-                            <img src={otherDetails.profileUrl} alt='img'
-                            className='w-8 h-8 rounded-full'/>
-                        )
-                        }
+                      {msg.sender.userId !== currentUser.id && (
+                        <img 
+                          src={otherDetails.profileUrl || ''} 
+                          alt='profile'
+                          className='w-8 h-8 rounded-full'
+                          onError={(e) => {
+                            e.target.onerror = null; 
+                            e.target.src = '';
+                            e.target.parentElement.innerHTML = 
+                              otherDetails.user?.name?.charAt(0)?.toUpperCase() || '?';
+                          }}
+                        />
+                      )}
                     </div>
                   </div>
-                  <div
-                    className={`p-3 rounded-lg ${
-                      msg.sender.userId === currentUser.userId
-                        ? 'bg-[var(--primary-light)] text-white rounded-tr-none'
-                        : 'bg-gray-200 text-gray-800 rounded-tl-none'
-                    }`}
-                  >
+                  <div className={`p-3 rounded-lg ${
+                    msg.sender.userId === currentUser.id
+                      ? 'bg-[var(--primary-light)] text-white rounded-tr-none'
+                      : 'bg-gray-200 text-gray-800 rounded-tl-none'
+                  }`}>
                     <div className="text-sm">{msg.content}</div>
-                    <div
-                      className={`text-xs mt-1 ${
-                        msg.sender.userId === currentUser.userId
-                          ? 'text-indigo-100'
-                          : 'text-gray-500'
-                      }`}
-                    >
+                    <div className={`text-xs mt-1 ${
+                      msg.sender.userId === currentUser.id
+                        ? 'text-indigo-100'
+                        : 'text-gray-500'
+                    }`}>
                       {new Date(msg.timestamp).toLocaleTimeString([], {
                         hour: '2-digit',
                         minute: '2-digit',
@@ -388,21 +422,6 @@ const ChatRoom = ({ currentUser, roleDetails }) => {
         {roomId && (
           <div className="p-4 border-t border-gray-200 bg-white">
             <div className="flex items-center">
-              <button className="p-2 rounded-full text-gray-500 hover:bg-gray-100 mr-2">
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                  />
-                </svg>
-              </button>
               <input
                 type="text"
                 value={newMessage}

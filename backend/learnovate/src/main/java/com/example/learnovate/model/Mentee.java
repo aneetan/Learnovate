@@ -16,7 +16,6 @@ public class Mentee {
     private String phone;
     private String currentStatus;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private RegisteredUser user;

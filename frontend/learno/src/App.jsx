@@ -74,7 +74,6 @@ function App() {
         </Route>
 
         {/* ✅ Mentee protected routes */}
-        <Route path="/admin/notify" element={<AdminNotifications />} />
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]} />}>
           <Route path='/mentee' element={<MenteeLayout />}>
             <Route path='dashboard' element={<MenteeDashboard />} />
@@ -84,7 +83,7 @@ function App() {
             <Route path="checkout/:mentorId/:bookingId" element={<CheckoutPage />} />
             <Route path="payment-success" element={<EsewaSuccess />} />
             <Route path='menteeProfile' element={<MenteeProfile />} />
-            <Route path='chat' element={<MenteeChat />} />
+            <Route path='chat?receiverId=:receiverId' element={<MenteeChat />} />
           </Route>
           <Route path='/mentee/registerDetails' element={<MenteeProfileStep />} />
         </Route>
@@ -122,7 +121,7 @@ function App() {
             <Route path='dashboard' element={<MentorDashboard />} />
             <Route path='sessions' element={<MentorSessions />} />
             <Route path='schedules' element={<MentorSchedules />} />
-            <Route path='chat' element={<MentorChat />} />
+            <Route path='chat/:receiverId' element={<MentorChat />} />
           </Route>
           <Route path='/mentor/registerDetails' element={<MentorStepperForm />} />
           <Route path='/mentor/confirmation' element={<EmailConfirmationPage />} />
