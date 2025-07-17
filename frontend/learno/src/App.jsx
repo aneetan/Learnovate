@@ -38,6 +38,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ForgotPasswordEmail from './pages/ForgotPasswordEmail';
 import ForgotPasswordOtp from './pages/ForgotPasswordOtp';
 import ResetPassword from './pages/ResetPassword';
+import Availability from './pages/mentor/Availability';
 
 function App() {
   return (
@@ -91,7 +92,7 @@ function App() {
         <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]}/>}>
           <Route path='/mentor' element={<MentorLayout/>}>
             <Route path='dashboard' element={<MentorDashboard/>}/>
-            <Route path='availability' element={<AvailabilitySchedule/>}/>
+            <Route path='availability' element={<Availability/>}/>
             <Route path="mentorProfile" element={<MentorProfile />} />
             <Route path='chat' element={<MentorChat/>} />
             <Route path="sessions/:userId" element={<MentorSessions/>} />

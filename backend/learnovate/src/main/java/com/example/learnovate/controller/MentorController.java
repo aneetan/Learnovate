@@ -4,6 +4,7 @@ import com.example.learnovate.dto.MentorAvailabilityDto;
 import com.example.learnovate.dto.MentorDTO;
 import com.example.learnovate.exception.UnauthorizedAccessException;
 import com.example.learnovate.model.Mentor;
+import com.example.learnovate.model.MentorAvailability;
 import com.example.learnovate.model.MentorBookings;
 import com.example.learnovate.service.MentorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,5 +72,31 @@ public class MentorController {
         List<Mentor> pendingMentors = mentorService.getPendingMentors();
         return ResponseEntity.ok(pendingMentors);
     }
+
+    @GetMapping("/getMentor/{userId}")
+    public ResponseEntity<?> getMentorByUserId(@PathVariable int userId) {
+        try {
+            Mentor mentor = mentorService.getMentorByUserId(userId);
+            return ResponseEntity.ok(mentor);
+        } catch (RuntimeException e){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .body("User not found of id " + userId);
+        }
+    }
+
+    @GetMapping("getAvailability/{userId}")
+    public ResponseEntity<?> getAvailabilityByMentorId(@PathVariable int userId) {
+        try {
+            MentorAvailability available = mentorService.getAvailabilityByUserId(userId);
+            return ResponseEntity.ok(available);
+        } catch (RuntimeException e){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .body("Mentor not found of id " + userId);
+        }
+    }
+
+
 
 }

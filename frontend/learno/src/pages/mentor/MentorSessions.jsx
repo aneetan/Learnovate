@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaEnvelope, FaCheck, FaClock, FaUser, FaCalendar, FaAddressBook, FaCommentDots } from 'react-icons/fa';
 import axios from 'axios';
-import { API_URL } from '../../config/config';
+import { API_URL, formatTimeTo12Hour } from '../../config/config';
 import { useParams } from 'react-router-dom';
 
 const MentorSessions = () => {
@@ -97,7 +97,7 @@ const MentorSessions = () => {
             All Sessions ({sessions.length})
           </button>
           <button
-            onClick={() => setFilterStatus('upcoming')}
+            onClick={() => setFilterStatus('pending')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filterStatus === 'upcoming'
                 ? ''
@@ -153,7 +153,7 @@ const MentorSessions = () => {
               </div>
               <div className="flex items-center text-sm text-gray-600">
                 <FaCalendar className="w-4 h-4 mr-2 text-gray-400" />
-                <span>{session.bookingDate} at {session.timeSlot}</span>
+                <span>{session.bookingDate} at {formatTimeTo12Hour(session.timeSlot)}</span>
               </div>
             </div>
 
@@ -167,7 +167,7 @@ const MentorSessions = () => {
                 <FaCommentDots className="w-4 h-4" />
                 Message
               </button>
-              {session.status === 'upcoming' && (
+              {session.status === 'pending' && (
                 <button
                   onClick={() => handleMarkComplete(session.bookingId)}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"

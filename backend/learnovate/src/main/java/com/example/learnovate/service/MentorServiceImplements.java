@@ -129,6 +129,17 @@ public class MentorServiceImplements implements MentorService{
         return mRepo.findByStatus("pending");
     }
 
+    @Override
+    public MentorAvailability getAvailabilityByUserId(int userId) {
+        RegisteredUser user = rRepo.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        MentorAvailability availability = availableRepo.findByUser(user)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        return availability;
+    }
+
     public List<MentorBookings> getSessionsByMentorId(int userId){
         RegisteredUser user = rRepo.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
