@@ -94,8 +94,8 @@ function App() {
           <Route path='/mentor' element={<MentorLayout/>}>
             <Route path='dashboard' element={<MentorDashboard/>}/>
             <Route path='availability' element={<Availability/>}/>
-            <Route path="mentorProfile" element={<MentorProfile />} />
-            <Route path='chat' element={<MentorChat/>} />
+            <Route path='profile' element={<MentorProfile />} />
+            <Route path='chat/:receiverId' element={<MentorChat />} />
             <Route path="sessions/:userId" element={<MentorSessions/>} />
             <Route path="editAvailability" element= {<EditAvailability/>} />
           </Route>
@@ -114,20 +114,6 @@ function App() {
             <Route path='settings' element={<AdminSettings />} />
           </Route>
           <Route path="/admin/notify" element={<AdminNotifications/>} />
-        </Route>
-
-        {/* ✅ Mentor protected routes */}
-        <Route element={<ProtectedRoutes allowedRoles={["MENTOR"]} />}>
-          <Route path='/mentor' element={<MentorLayout />}>
-            <Route path='availability' element={<AvailabilitySchedule />} />
-            <Route path='profile' element={<MentorProfile />} />
-            <Route path='dashboard' element={<MentorDashboard />} />
-            <Route path='sessions' element={<MentorSessions />} />
-            <Route path='schedules' element={<MentorSchedules />} />
-            <Route path='chat/:receiverId' element={<MentorChat />} />
-          </Route>
-          <Route path='/mentor/registerDetails' element={<MentorStepperForm />} />
-          <Route path='/mentor/confirmation' element={<EmailConfirmationPage />} />
         </Route>
 
       </Routes>

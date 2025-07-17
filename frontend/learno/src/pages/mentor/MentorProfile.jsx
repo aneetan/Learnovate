@@ -1,54 +1,45 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FiEdit2, FiCamera, FiUser, FiSave, FiX, FiTrash2 } from 'react-icons/fi';
 import { PhoneOutlined, UserOutlined, AppstoreOutlined, MailOutlined, BulbOutlined } from '@ant-design/icons';
+import { API_URL } from '../../config/config';
+import { useSelector } from 'react-redux';
 
 const MentorProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [errors, setErrors] = useState({});
-  const [profile, setProfile] = useState({
-    name: 'Jane Smith',
-    email: 'jane.smith@example.com',
-    phoneNumber: '9876543210',
-    bio: 'Experienced software engineer passionate about mentoring aspiring developers.',
-    sessionPrice: '5000',
-    areaOfExpertise: 'Technology',
-    professionalTitle: 'Software Engineer',
-    yearsOfExperience: '5+',
-    profileUrl: null,
-  });
+  const [profile, setProfile] = useState({});
   const [editedProfile, setEditedProfile] = useState(profile);
   const [profilePreview, setProfilePreview] = useState(null);
   const [fetchError, setFetchError] = useState(null);
   const fileInputRef = useRef(null);
+  const user = useSelector((state) => state.user.user)
+
 
   // Fetch dummy data from JSONPlaceholder
   useEffect(() => {
-    const fetchDummyData = async () => {
-      try {
-        const response = await fetch('https://jsonplaceholder.typicode.com/users/1');
-        if (!response.ok) throw new Error('Failed to fetch dummy data');
-        const data = await response.json();
-        const dummyProfile = {
-          name: data.name || 'Jane Smith',
-          email: data.email || 'jane.smith@example.com',
-          phoneNumber: data.phone?.replace(/\D/g, '').slice(0, 10) || '9876543210',
-          bio: 'Experienced software engineer passionate about mentoring aspiring developers.',
-          sessionPrice: '5000',
-          areaOfExpertise: 'Technology',
-          professionalTitle: 'Software Engineer',
-          yearsOfExperience: '5+',
-          profileUrl: null,
-        };
-        setProfile(dummyProfile);
-        setEditedProfile(dummyProfile);
-      } catch (error) {
-        console.error('Error fetching dummy data:', error);
-        setFetchError('Failed to load profile data. Using default values.');
-      }
-    };
-    fetchDummyData();
-  }, []);
+     const fetchMentorData = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(`${API_URL}/mentor/getMentor/${user.id}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          setProfile(data);
+        } catch (error) {
+          console.error("Error fetching mentor data:", error);
+          throw error;
+        }
+      };
+      fetchMentorData();
+  }, [user.id]);
 
   const validateFields = () => {
     const newErrors = {};
@@ -301,16 +292,17 @@ const MentorProfile = () => {
           {errors.upload && <p className="text-red-500 text-sm">{errors.upload}</p>}
 
           {/* Profile Fields */}
+          {profile && (
           <div className="flex flex-col gap-2">
-            {renderInput('Name', 'name', editedProfile.name, <UserOutlined />)}
-            {renderInput('Email', 'email', editedProfile.email, <MailOutlined />)}
-            {renderInput('Phone Number', 'phoneNumber', editedProfile.phoneNumber, <PhoneOutlined />)}
-            {renderInput('Bio', 'bio', editedProfile.bio, <BulbOutlined />, false, [], true)}
-            {renderInput('Session Price (Nrs.)', 'sessionPrice', editedProfile.sessionPrice, <BulbOutlined />, false, [], false, true)}
+            {renderInput('Name', 'name', profile.user.name, <UserOutlined />)}
+            {renderInput('Email', 'email', profile.user.email, <MailOutlined />)}
+            {renderInput('Phone Number', 'phoneNumber', profile.phoneNumber, <PhoneOutlined />)}
+            {renderInput('Bio', 'bio', profile.bio, <BulbOutlined />, false, [], true)}
+            {renderInput('Session Price (Nrs.)', 'sessionPrice', profile.price, <BulbOutlined />, false, [], false, true)}
             {renderInput(
               'Area of Expertise',
               'areaOfExpertise',
-              editedProfile.areaOfExpertise,
+              profile.area,
               <AppstoreOutlined />,
               true,
               [
@@ -325,7 +317,7 @@ const MentorProfile = () => {
             {renderInput(
               'Professional Title',
               'professionalTitle',
-              editedProfile.professionalTitle,
+              profile.title,
               <BulbOutlined />,
               true,
               [
@@ -339,12 +331,13 @@ const MentorProfile = () => {
             {renderInput(
               'Years of Experience',
               'yearsOfExperience',
-              editedProfile.yearsOfExperience,
+              profile.experience,
               <BulbOutlined />,
               true,
               ['0-1', '2-3', '3-4', '5+']
             )}
           </div>
+          )}
 
           {/* Delete Account Card */}
           <div className="mt-8">

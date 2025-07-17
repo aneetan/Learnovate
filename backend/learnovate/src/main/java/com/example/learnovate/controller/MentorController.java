@@ -104,6 +104,35 @@ public class MentorController {
         }
     }
 
+    @PutMapping ("/updateStatus/{bookingId}")
+    public ResponseEntity<?> updateSessionStatus(@PathVariable int bookingId) {
+        try {
+            MentorBookings bookings = mentorService.updateStatus(bookingId);
+            return ResponseEntity.ok(bookings);
+        } catch (RuntimeException e){
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .body("Booking not found of id " + bookingId);
+        }
+    }
+
+    @PutMapping(value = "/updateAvailability/{bookingId}")
+    public ResponseEntity<?> updateAvailability(
+            @PathVariable Integer bookingId,
+            @RequestBody MentorAvailabilityDto availabilityDto) {
+        try {
+            MentorAvailability availability = mentorService.updateAvailability(bookingId, availabilityDto);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(availability);
+        } catch (RuntimeException e){
+            e.printStackTrace();
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("User id not found");
+        }
+    }
+
 
 
 }

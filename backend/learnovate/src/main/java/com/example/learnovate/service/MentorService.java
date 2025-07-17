@@ -25,6 +25,10 @@ public interface MentorService {
 
     List<PaymentDetails> findPaymentByMentor(int userId);
 
+    MentorBookings updateStatus(int bookingId);
+
+    MentorAvailability updateAvailability(int availabilityId, MentorAvailabilityDto availabilityDto);
+
 
 
 

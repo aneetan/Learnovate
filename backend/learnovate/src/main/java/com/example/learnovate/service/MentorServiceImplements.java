@@ -144,6 +144,30 @@ public class MentorServiceImplements implements MentorService{
         return  payment;
     }
 
+    @Override
+    public MentorBookings updateStatus(int bookingId) {
+        MentorBookings bookings = bookingRepo.findById(bookingId)
+                .orElseThrow(() -> new EntityNotFoundException("Booking not found"));
+
+        bookings.setStatus("completed");
+        bookingRepo.save(bookings);
+
+        return bookings;
+    }
+
+    @Override
+    public MentorAvailability updateAvailability(int availabilityId, MentorAvailabilityDto availabilityDto) {
+        MentorAvailability availability = availableRepo.findById(availabilityId)
+                .orElseThrow(() -> new EntityNotFoundException("Availability not found"));
+
+        availability.setStartTime(availabilityDto.getStartTime());
+        availability.setEndTime(availabilityDto.getEndTime());
+        availability.setDays(availabilityDto.getDays());
+        availableRepo.save(availability);
+
+        return  availability;
+    }
+
     public List<MentorBookings> getSessionsByMentorId(int userId){
         RegisteredUser user = rRepo.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
