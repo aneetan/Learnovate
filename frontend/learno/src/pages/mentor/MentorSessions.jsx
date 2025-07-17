@@ -34,12 +34,34 @@ const MentorSessions = () => {
 
   const [filterStatus, setFilterStatus] = useState('all');
 
-  const handleMarkComplete = (sessionId) => {
-    setSessions(sessions.map(session => 
-      session.bookingId  === sessionId 
-        ? { ...session, status: 'completed' }
-        : session
-    ));
+  const handleMarkComplete = async(sessionId) => {
+    try {
+        const token = localStorage.getItem("token")
+        const response = await axios.put(`${API_URL}/mentor/updateStatus/${sessionId}`,{}, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+        })
+
+        setSessions(prevSessions => 
+          prevSessions.map(session => 
+            session.bookingId === sessionId
+            ?{...session, status: "completed"}
+            :session
+          )
+        )
+
+        console.log(response.data)
+        
+      } catch (err) {
+        console.error('Error marking session complete:', {
+          message: err.message,
+          response: err.response?.data,
+          status: err.response?.status
+        });
+      } 
+
   };
 
   const handleMessage = (session) => {

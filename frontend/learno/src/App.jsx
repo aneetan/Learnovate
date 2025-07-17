@@ -39,6 +39,7 @@ import ForgotPasswordEmail from './pages/ForgotPasswordEmail';
 import ForgotPasswordOtp from './pages/ForgotPasswordOtp';
 import ResetPassword from './pages/ResetPassword';
 import Availability from './pages/mentor/Availability';
+import EditAvailability from './components/Mentor/EditAvailability';
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
         <Route path="/unauthorized" element={<div>You are unauthorized! Get lost</div>} />
 
         <Route path="/payment-failure" element={<EsewaFailure />} />
+        <Route path="/edit" element={<EditAvailability/>} />
 
         {/* ✅ Mentee protected routes */}
         <Route path="/checkout" element={<CheckoutPage />} />
@@ -95,6 +97,7 @@ function App() {
             <Route path="mentorProfile" element={<MentorProfile />} />
             <Route path='chat' element={<MentorChat/>} />
             <Route path="sessions/:userId" element={<MentorSessions/>} />
+            <Route path="editAvailability" element= {<EditAvailability/>} />
           </Route>
           <Route path='/mentor/registerDetails' element={<MentorStepperForm/>}/>
           <Route path='/mentor/confirmation' element={<EmailConfirmationPage/>}/>

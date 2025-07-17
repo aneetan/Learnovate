@@ -153,6 +153,7 @@ const ChatRoom = ({ currentUser, roleDetails,  receiverId = null }) => {
       },
     });
     stompClient.current.activate();
+
   };
 
   const handleSendMessage = () => {
@@ -188,7 +189,6 @@ const ChatRoom = ({ currentUser, roleDetails,  receiverId = null }) => {
   const handleCreateChat = async (receiverId) => {
   try {
     // Ensure consistent ID ordering (lower ID first)
-    const [user1Id, user2Id] = [currentUser.userId, receiverId].sort((a, b) => a - b);
     
     // First try to find existing room
     const findResponse = await axios.get(`${API_URL}/rooms/find/${currentUser.id}/${receiverId}`, {
@@ -348,11 +348,11 @@ const ChatRoom = ({ currentUser, roleDetails,  receiverId = null }) => {
 
         {/* Messages area */}
         <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
-          {error && (
+          {/* {error && (
             <div className="bg-red-100 text-red-700 p-3 mb-4 rounded text-center">
               {error}
             </div>
-          )}
+          )} */}
           
           {!roomId ? (
             <div className="flex items-center justify-center h-full">

@@ -52,7 +52,7 @@ const MentorSchedules = (mentorId) => {
       <div className="flex items-center justify-between">
       <h1 className="text-2xl font-semibold text-gray-900 mb-6">Current Availability</h1>
         <button
-          onClick={() => navigate('/mentor/availability')}
+          onClick={() => navigate('/mentor/editAvailability')}
           className="px-4 py-2 rounded bg-[var(--primary-color)] text-white text-sm font-medium hover:bg-[var(--primary-dark)] transition-colors shadow"
         >
           Edit Availability
