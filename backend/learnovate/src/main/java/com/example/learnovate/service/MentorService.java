@@ -5,6 +5,7 @@ import com.example.learnovate.dto.MentorDTO;
 import com.example.learnovate.model.Mentor;
 import com.example.learnovate.model.MentorAvailability;
 import com.example.learnovate.model.MentorBookings;
+import com.example.learnovate.model.PaymentDetails;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,9 @@ public interface MentorService {
     List<Mentor> getPendingMentors();
 
     MentorAvailability getAvailabilityByUserId(int userId);
+
+    List<PaymentDetails> findPaymentByMentor(int userId);
+
 
 
 

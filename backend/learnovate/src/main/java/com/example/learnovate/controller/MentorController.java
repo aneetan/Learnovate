@@ -6,6 +6,7 @@ import com.example.learnovate.exception.UnauthorizedAccessException;
 import com.example.learnovate.model.Mentor;
 import com.example.learnovate.model.MentorAvailability;
 import com.example.learnovate.model.MentorBookings;
+import com.example.learnovate.model.PaymentDetails;
 import com.example.learnovate.service.MentorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,6 +72,12 @@ public class MentorController {
     public ResponseEntity<List<Mentor>> getPendingMentors() {
         List<Mentor> pendingMentors = mentorService.getPendingMentors();
         return ResponseEntity.ok(pendingMentors);
+    }
+
+    @GetMapping("/getTransactions/{userId}")
+    public ResponseEntity<List<PaymentDetails>> getTransactionList(@PathVariable int userId) {
+        List<PaymentDetails> paymentDetails = mentorService.findPaymentByMentor(userId);
+        return ResponseEntity.ok(paymentDetails);
     }
 
     @GetMapping("/getMentor/{userId}")

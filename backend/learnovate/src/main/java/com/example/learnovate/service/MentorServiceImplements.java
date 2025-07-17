@@ -4,14 +4,8 @@ import com.example.learnovate.classfile.AuthenticateEmail;
 import com.example.learnovate.dto.MentorAvailabilityDto;
 import com.example.learnovate.dto.MentorDTO;
 import com.example.learnovate.exception.UnauthorizedAccessException;
-import com.example.learnovate.model.Mentor;
-import com.example.learnovate.model.MentorAvailability;
-import com.example.learnovate.model.MentorBookings;
-import com.example.learnovate.model.RegisteredUser;
-import com.example.learnovate.repository.MentorAvailabilityRepository;
-import com.example.learnovate.repository.MentorBookingsRepository;
-import com.example.learnovate.repository.MentorRepository;
-import com.example.learnovate.repository.RegisteredUserRespository;
+import com.example.learnovate.model.*;
+import com.example.learnovate.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +27,9 @@ public class MentorServiceImplements implements MentorService{
 
     @Autowired
     private MentorBookingsRepository bookingRepo;
+
+    @Autowired
+    private PaymentDetailsRepository pRepo;
 
 
     Map<String, Object> response = new HashMap<>();
@@ -138,6 +135,13 @@ public class MentorServiceImplements implements MentorService{
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         return availability;
+    }
+
+    @Override
+    public List<PaymentDetails> findPaymentByMentor(int userId) {
+        Mentor mentor = mRepo.getMentorByUser_UserId(userId);
+        List<PaymentDetails> payment = pRepo.findByMentor(mentor);
+        return  payment;
     }
 
     public List<MentorBookings> getSessionsByMentorId(int userId){

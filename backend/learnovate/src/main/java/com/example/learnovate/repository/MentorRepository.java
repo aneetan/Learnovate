@@ -13,6 +13,7 @@ public interface MentorRepository extends JpaRepository<Mentor, Integer> {
 
     @Query("SELECT m FROM Mentor m JOIN FETCH m.user u WHERE u.role = 'MENTOR'")
     List<Mentor> findAllMentorsWithUserDetails();
+
     Mentor getMentorByUser_UserId(int userId);
 
     List<Mentor> findByStatus(String status);
