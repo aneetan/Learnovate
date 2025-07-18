@@ -116,6 +116,7 @@ function App() {
           <Route path="/admin/notify" element={<AdminNotifications/>} />
         </Route>
 
+
       </Routes>
     </Router>
   );
