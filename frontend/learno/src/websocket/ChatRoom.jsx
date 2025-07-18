@@ -36,8 +36,8 @@ const ChatRoom = ({ currentUser, roleDetails,  receiverId = null }) => {
       console.error('Error fetching partner details:', err);
       return {
         user: {
-          name: 'Unknown User',
-          role: 'user'
+          name: '',
+          role: ''
         },
         profileUrl: null
       };
@@ -280,9 +280,9 @@ const ChatRoom = ({ currentUser, roleDetails,  receiverId = null }) => {
               onClick={() => handleSelectChat(chat.id, chat.partner)}
             >
               <div className="w-[20%] h-10 border-none flex items-center justify-center mr-3">
-                {otherUser.profileUrl ? (
+                {chat.profileUrl ? (
                   <img 
-                    src={otherUser.profileUrl} 
+                    src={chat.profileUrl} 
                     alt='profile'
                     className='w-12 h-12 rounded-full'
                   />

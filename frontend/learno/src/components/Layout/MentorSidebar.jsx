@@ -4,7 +4,9 @@ import { FaRegCalendarAlt, FaAddressBook, FaRegCommentDots, FaUserCircle, FaSign
 import { MdDashboard, MdToday } from "react-icons/md";
 import logoImage from "../../assets/images/learno_logo_long.png";
 import logoImage2 from "../../assets/images/learno_logo_only.png";
-import { getUserId } from '../../config/config';
+import { API_URL, getUserId } from '../../config/config';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 const MentorSidebar = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -12,6 +14,7 @@ const MentorSidebar = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const user = useSelector((state) => state.user.user);
 
   const id = getUserId(localStorage.getItem("token"));
 
@@ -28,11 +31,23 @@ const MentorSidebar = ({ children }) => {
     setSidebarOpen(!isMobile);
   }, [isMobile]);
 
+  const handleLogout = async() => {
+    const response = await axios.post(`${API_URL}/auth/logout`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      navigate('/login')
+  }
+
   const menuItems = [
     { name: 'Dashboard', icon: <MdDashboard />, path: '/mentor/dashboard' },
     { name: 'Availability', icon: <MdToday />, path: '/mentor/availability' },
     { name: 'Sessions', icon: <FaAddressBook />, path: `/mentor/sessions/${id}` },
-    { name: 'Chat', icon: <FaRegCommentDots />, path: '/mentor/chat' },
+    { name: 'Chat', icon: <FaRegCommentDots />, path: `/mentor/chat` },
   ];
 
   return (
@@ -134,7 +149,7 @@ const MentorSidebar = ({ children }) => {
               className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
             >
               <FaUserCircle className="text-2xl text-gray-600" />
-              <span className="hidden md:block text-base font-semibold">Mentor</span>
+              <span className="hidden md:block text-base font-semibold">{user.name} </span>
             </button>
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
@@ -147,9 +162,10 @@ const MentorSidebar = ({ children }) => {
                 >
                   My Profile
                 </button>
-                 <a href="#" className="block px-4 py-2 hover:bg-gray-100 transition flex items-center space-x-2 text-sm">
+                <button onClick={handleLogout}
+                 className="px-4 py-2 hover:bg-gray-100 transition flex items-center text-red-500 space-x-2 text-sm">
                   <FaSignOutAlt /> <span>Logout</span>
-                </a>
+                </button>
               </div>
             )}
           </div>

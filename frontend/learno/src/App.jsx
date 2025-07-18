@@ -96,6 +96,7 @@ function App() {
             <Route path='availability' element={<Availability/>}/>
             <Route path='profile' element={<MentorProfile />} />
             <Route path='chat/:receiverId' element={<MentorChat />} />
+            <Route path='chat' element={<MentorChat/>} />
             <Route path="sessions/:userId" element={<MentorSessions/>} />
             <Route path="editAvailability" element= {<EditAvailability/>} />
           </Route>
