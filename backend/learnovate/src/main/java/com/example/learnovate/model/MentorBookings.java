@@ -22,6 +22,8 @@ public class MentorBookings {
     private String topic;
     private String notes;
     private String paymentStatus;
+    private String status;
+
 
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)

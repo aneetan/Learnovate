@@ -6,7 +6,9 @@ import com.example.learnovate.model.Room;
 import com.example.learnovate.repository.MessageRepository;
 import com.example.learnovate.repository.RegisteredUserRespository;
 import com.example.learnovate.repository.RoomRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,23 +26,34 @@ public class ChatService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public Room getOrCreateRoom(int user1Id, int user2Id) {
+        // Always check in consistent order to prevent deadlocks
+        int lowerId = Math.min(user1Id, user2Id);
+        int higherId = Math.max(user1Id, user2Id);
 
-        Optional<Room> existingRoom = roomRepository.findRoomByUserIds(user1Id, user2Id);
+        // Check existing room with lock
+        Optional<Room> existingRoom = roomRepository.findWithLockingByUserIds(lowerId, higherId);
         if (existingRoom.isPresent()) {
             return existingRoom.get();
-        } else {
+        }
 
-            RegisteredUser user1 = userRepository.findById(user1Id)
-                    .orElseThrow(() -> new RuntimeException("User with ID " + user1Id + " not found"));
+        // Proceed with creation
+        RegisteredUser user1 = userRepository.findById(lowerId)
+                .orElseThrow(() -> new RuntimeException("User with ID " + lowerId + " not found"));
 
-            RegisteredUser user2 = userRepository.findById(user2Id)
-                    .orElseThrow(() -> new RuntimeException("User with ID " + user2Id + " not found"));
+        RegisteredUser user2 = userRepository.findById(higherId)
+                .orElseThrow(() -> new RuntimeException("User with ID " + higherId + " not found"));
 
-            Room newRoom = new Room();
-            newRoom.setUsersOrdered(user1, user2);
+        Room newRoom = new Room();
+        newRoom.setUsersOrdered(user1, user2);
 
+        try {
             return roomRepository.save(newRoom);
+        } catch (DataIntegrityViolationException e) {
+            // If we hit a race condition, fetch the existing room
+            return roomRepository.findByUserIds(lowerId, higherId)
+                    .orElseThrow(() -> new RuntimeException("Failed to create or find room"));
         }
     }
 

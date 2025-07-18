@@ -106,7 +106,8 @@ const MentorStepperForm = () => {
         skills: professionalInfo?.skills?.join(', '),
         ...values, 
         userId: user?.id,
-        status: "pending"
+        status: "pending",
+        isAvailability: false
       };
 
     fetch(`${API_URL}/mentor/register`, {

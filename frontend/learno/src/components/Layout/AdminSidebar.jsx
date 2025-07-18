@@ -5,6 +5,7 @@ import { MdDashboard, MdPeople, MdBookOnline, MdStarRate } from "react-icons/md"
 import { FaUsers } from "react-icons/fa";
 import logoImage from "../../assets/images/learno_logo_long.png";
 import logoImage2 from "../../assets/images/learno_logo_only.png";
+import AdminNotifications from '../../notifications/AdminNotifications';
 
 const AdminSidebar = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -27,11 +28,11 @@ const AdminSidebar = ({ children }) => {
   }, [isMobile]);
 
   const menuItems = [
-    { name: 'Dashboard', icon: <MdDashboard />, path: '/test-adminDashboard' },
-    { name: 'Users', icon: <FaUsers />, path: '/test-adminDashboard/users' },
-    { name: 'Mentors', icon: <MdPeople />, path: '/test-adminDashboard/mentors' },
-    { name: 'Bookings', icon: <MdBookOnline />, path: '/test-adminDashboard/bookings' },
-    { name: 'Feedback', icon: <FaComment />, path: '/test-adminDashboard/reviews' },
+    { name: 'Dashboard', icon: <MdDashboard />, path: '/admin/dashboard' },
+    { name: 'Users', icon: <FaUsers />, path: '/admin/viewUsers' },
+    { name: 'Mentors', icon: <MdPeople />, path: '/admin/viewMentors' },
+    { name: 'Bookings', icon: <MdBookOnline />, path: '/admin/viewBookings' },
+    { name: 'Feedback', icon: <FaComment />, path: '/admin/reviews' },
   ];
 
   return (
@@ -127,10 +128,11 @@ const AdminSidebar = ({ children }) => {
               <FaSearch className="absolute left-3 top-3.5 text-gray-400" />
             </div>
           </div>
-          <div className="relative ml-4">
+          <AdminNotifications/>
+          <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
+              className="flex items-center space-x-2 rounded-lg hover:bg-gray-100 transition"
             >
               <FaUserCircle className="text-2xl text-gray-600" />
               <span className="hidden md:block text-base font-semibold">Admin</span>
@@ -142,11 +144,11 @@ const AdminSidebar = ({ children }) => {
                     navigate('/test-adminDashboard/settings');
                     setDropdownOpen(false);
                   }}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 transition text-sm"
+                  className="block w-full text-left hover:bg-gray-100 transition text-sm"
                 >
                   Settings
                 </button>
-                 <a href="#" className="block px-4 py-2 hover:bg-gray-100 transition flex items-center space-x-2 text-sm">
+                 <a href="#" className=" px-4 py-2 hover:bg-gray-100 transition flex items-center space-x-2 text-sm">
                   <FaSignOutAlt /> <span>Logout</span>
                 </a>
               </div>

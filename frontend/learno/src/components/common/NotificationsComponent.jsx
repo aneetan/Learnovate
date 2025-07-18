@@ -54,12 +54,12 @@ const NotificationsComponent = ({ notifications: propNotifications = [], onMarkA
       {/* Notification Bell Icon with Badge */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 rounded-full hover:bg-gray-200 relative"
+        className="rounded-full hover:bg-gray-200 relative"
         aria-label="Notifications"
       >
         <FaBell className="h-6 w-6 text-gray-600" />
         {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+          <span className="absolute top-0 right-4 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
             {unreadCount}
           </span>
         )}
@@ -67,7 +67,7 @@ const NotificationsComponent = ({ notifications: propNotifications = [], onMarkA
 
       {/* Notification Dropdown */}
       {isOpen && (
-        <div className="absolute left-4 mt-2 w-80 bg-white rounded-md shadow-lg overflow-hidden z-50 border border-gray-200">
+        <div className="absolute right-4 mt-2 w-80 bg-white rounded-md shadow-lg overflow-hidden z-50 border border-gray-200">
 
           <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (

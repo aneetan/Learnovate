@@ -33,8 +33,10 @@ const ESewaPaymentButton = () => {
 
   // Generate a unique transaction UUID
   const generateTransactionUUID = () => {
-    return `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  };
+    const timestamp = Date.now();
+    const randomString = Math.random().toString(36).substring(2, 11);
+    return `txn_${timestamp}_${randomString}`;
+};
 
   // Handle form submission
   const handlePayment = async (e) => {
@@ -46,7 +48,7 @@ const ESewaPaymentButton = () => {
       const transaction_uuid = generateTransactionUUID();
       const total_amount = parseFloat(amount).toFixed(2);
       const product_code = import.meta.env.VITE_ESEWA_PRODUCT_CODE;
-      const success_url = "http://localhost:5173/mentee/dashboard";
+      const success_url = "http://localhost:5173/mentee/payment-success";
       const failure_url = import.meta.env.VITE_FAILURE_URL;
 
       const secret_key = import.meta.env.VITE_ESEWA_SECRET_KEY; 

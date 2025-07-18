@@ -13,6 +13,7 @@ import com.example.learnovate.repository.MentorRepository;
 import com.example.learnovate.repository.PaymentDetailsRepository;
 import com.example.learnovate.repository.RegisteredUserRespository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +53,7 @@ public class EsewaService {
         return paymentRepository.save(payment);
     }
 
+    @Transactional
     public PaymentDetails verifyPayment(EsewaVerificationDto dto) {
         String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
 
@@ -79,9 +81,8 @@ public class EsewaService {
         payment.setStatus("SUCCESS");
         payment.setUpdatedAt(LocalDateTime.now());
         bookings.setPaymentStatus("PAID");
-        bookingRepo.save(bookings);
 
-        return paymentRepository.save(payment);
+        return payment;
     }
 
     public PaymentDetails getPaymentByTransactionId(String transactionUuid) {

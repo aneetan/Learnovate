@@ -4,7 +4,6 @@ import SockJS from 'sockjs-client';
 import { API_URL } from '../config/config';
 import { jwtDecode } from 'jwt-decode';
 import NotificationsComponent from '../components/common/NotificationsComponent';
-import axios from 'axios';
 
 const AdminNotifications = () => {
   const [notifications, setNotifications] = useState([]);
@@ -138,12 +137,10 @@ const AdminNotifications = () => {
   }
 
   return (
-    <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
       <NotificationsComponent
         notifications={notifications}
         onMarkAsRead={handleMarkAsRead}
       />
-    </div>
   );
 };
 

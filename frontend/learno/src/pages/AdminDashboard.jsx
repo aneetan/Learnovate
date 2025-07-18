@@ -1,80 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MdDashboard, MdPeople, MdAttachMoney } from 'react-icons/md';
-import { FaFileAlt } from 'react-icons/fa';
 import { PagePreloader } from '../components/common/Preloader';
-import DocumentModal from '../components/common/DocumentModal';
-import DetailsModal from '../components/common/DetailsModal';
-import ApprovalModal from '../components/common/ApprovalModal';
-import ConfirmationModal from '../components/common/ConfirmationModal';
-import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { API_URL } from '../config/config';
+import ApproveMentorModel from '../components/admin/ApproveMentorModel';
+import DeclineMentorModel from '../components/admin/DeclineMentorModal';
 
 const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [showDocumentModal, setShowDocumentModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [selectedDetailsUser, setSelectedDetailsUser] = useState(null);
-  const [requests, setRequests] = useState([
-    {
-      id: 'REQ001',
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      contact: '+1 234-567-8900',
-      interestArea: 'React Development',
-      status: 'pending'
-    },
-    {
-      id: 'REQ002',
-      name: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      contact: '+1 234-567-8901',
-      interestArea: 'UI/UX Design',
-      status: 'pending'
-    },
-    {
-      id: 'REQ003',
-      name: 'Mike Johnson',
-      email: 'mike.johnson@example.com',
-      contact: '+1 234-567-8902',
-      interestArea: 'Python Programming',
-      status: 'pending'
-    },
-    {
-      id: 'REQ004',
-      name: 'Sarah Wilson',
-      email: 'sarah.wilson@example.com',
-      contact: '+1 234-567-8903',
-      interestArea: 'Data Science',
-      status: 'pending'
-    },
-    {
-      id: 'REQ005',
-      name: 'David Brown',
-      email: 'david.brown@example.com',
-      contact: '+1 234-567-8904',
-      interestArea: 'Mobile Development',
-      status: 'pending'
-    }
-  ]);
+  const [requests, setRequests] = useState([]);
+  const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+  const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
+  const [selectedMentor, setSelectedMentor] = useState(null);
+  const [isApproving, setIsApproving] = useState(false);
+  const [isDeclining, setIsDeclining] = useState(false);
 
-  const [showApproveModal, setShowApproveModal] = useState(false);
-  const [requestToApprove, setRequestToApprove] = useState(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [requestToDelete, setRequestToDelete] = useState(null);
 
-  const navigate = useNavigate();
-
-  // Dummy mapping for demonstration
-  const nameToMentorId = {
-    'Jane Smith': 'MNT001',
-    'John Doe': 'MNT002',
-    'Mike Johnson': 'MNT003',
-    'Sarah Wilson': 'MNT004',
-    'David Brown': 'MNT005',
-  };
-
-  useEffect(() => {
+  useEffect(() => { 
     // Simulate loading time
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -82,6 +25,68 @@ const AdminDashboard = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const fetchPendingMentor = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const response = await axios.get(`${API_URL}/admin/pending`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        setRequests(response.data)
+      } catch (err) {
+        console.log(err.message)
+      } 
+    }
+
+    fetchPendingMentor();
+  }, []);
+
+  const handleApprove = async (id) => {
+    setIsApproving(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `${API_URL}/admin/approve/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setRequests(requests.filter(req => req.mentorId !== id));
+    } catch (err) {
+      console.error("Approval failed:", err.message);
+    } finally {
+      setIsApproving(false);
+      setIsApproveModalOpen(false);
+    }
+  };
+
+  const handleDecline = async (id) => {
+    setIsDeclining(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `${API_URL}/admin/decline/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setRequests(requests.filter(req => req.mentorId !== id));
+    } catch (err) {
+      console.error("Decline failed:", err.message);
+    } finally {
+      setIsDeclining(false);
+      setIsDeclineModalOpen(false);
+    }
+  };
 
   const stats = [
     {
@@ -113,44 +118,9 @@ const AdminDashboard = () => {
     }
   ];
 
-  const handleApprove = (id) => {
-    const req = requests.find(r => r.id === id);
-    setRequestToApprove(req);
-    setShowApproveModal(true);
-  };
-  const confirmApprove = () => {
-    setShowApproveModal(false);
-    setRequestToApprove(null);
-    // Optionally: update requests state
-  };
-  const handleDelete = (id) => {
-    const req = requests.find(r => r.id === id);
-    setRequestToDelete(req);
-    setShowDeleteConfirm(true);
-  };
-  const confirmDelete = () => {
-    setShowDeleteConfirm(false);
-    setRequestToDelete(null);
-    // Optionally: update requests state
-  };
-
-  const handleViewDocument = (user) => {
-    setSelectedUser(user);
-    setShowDocumentModal(true);
-  };
-
-  const handleViewDetails = (user) => {
-    setSelectedDetailsUser(user);
-    setShowDetailsModal(true);
-  };
-
-  const handleNameClick = (user) => {
-    if (nameToMentorId[user.name]) {
-      navigate(`/test-adminDashboard/mentors/${nameToMentorId[user.name]}`);
-    } else {
-      setSelectedDetailsUser(user);
-      setShowDetailsModal(true);
-    }
+  const handleViewProfile = (id) => {
+    // Here you would typically navigate to the user's profile page
+    console.log(`Viewing profile for: ${id}`);
   };
 
   if (isLoading) {
@@ -208,16 +178,18 @@ const AdminDashboard = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile Picture</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest Area</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documents</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Professional Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Document</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
+              {requests.length === 0 && (
+                <span className='text-base text-gray-400 m-5'> No new requests </span>
+              )} 
               {requests.map((request, index) => (
                 <motion.tr
                   key={request.id}
@@ -226,50 +198,59 @@ const AdminDashboard = () => {
                   transition={{ delay: 0.4 + index * 0.05 }}
                   className="hover:bg-gray-50"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex-shrink-0 h-10 w-10">
-                      <img
-                        className="h-10 w-10 rounded-full object-cover"
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(request.name)}&background=6366f1&color=fff&size=40`}
-                        alt={request.name}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <div className='flex justify-start items-center'>
+                    <img
+                        className="h-10 w-10 rounded-full mx-2 object-cover"
+                        src={request.profileUrl}
+                        alt={request.user.name}
                       />
+                       <button
+                      onClick={() => handleViewProfile(request.mentorId)}
+                      className="text-[var(--primary-color)] hover:text-[var(--primary-dark)] hover:underline text-sm font-medium"
+                    >
+                      {request.user.name}
+                    </button>
+                    <a className='hover:underline'>  </a>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    <button
-                      onClick={() => handleNameClick(request)}
-                      className="text-blue-600 hover:text-blue-900 hover:underline cursor-pointer"
-                    >
-                      {request.name}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.contact}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.interestArea}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.user.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.phoneNumber}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{request.title}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleViewDocument(request)}
-                      className="text-sm font-medium flex items-center space-x-1"
-                      style={{ color: 'var(--primary-color)' }}
-                    >
-                      <FaFileAlt className="w-3 h-3" />
-                      <span>View Document</span>
-                    </button>
+                    {request.documentUrl ? (
+                      <a
+                        href={request.documentUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-900 text-sm font-medium"
+                      >
+                        View Document
+                      </a>
+                    ) : (
+                      <span className="text-gray-400 text-sm">No document</span>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
                       <button
-                        onClick={() => handleApprove(request.id)}
+                        onClick={() => {
+                          setSelectedMentor(request);
+                          setIsApproveModalOpen(true);
+                        }}
                         className="text-white px-3 py-1 rounded-md text-xs transition-colors"
                         style={{ backgroundColor: 'var(--primary-color)' }}
                       >
                         Approve
                       </button>
                       <button
-                        onClick={() => handleDelete(request.id)}
+                        onClick={() => {
+                          setSelectedMentor(request);
+                          setIsDeclineModalOpen(true);
+                        }}
                         className="bg-red-600 text-white px-3 py-1 rounded-md text-xs hover:bg-red-700 transition-colors"
                       >
-                        Delete
+                        Decline
                       </button>
                     </div>
                   </td>
@@ -287,30 +268,20 @@ const AdminDashboard = () => {
         </p>
       </div>
 
-      {/* Document Modal */}
-      <DocumentModal
-        isOpen={showDocumentModal}
-        onClose={() => setShowDocumentModal(false)}
-        userData={selectedUser}
-        type="user"
+      <ApproveMentorModel
+        isOpen={isApproveModalOpen}
+        onClose={() => setIsApproveModalOpen(false)}
+        mentor={selectedMentor}
+        onApprove={handleApprove}
+        isApproving={isApproving}
       />
-      <DetailsModal
-        isOpen={showDetailsModal}
-        onClose={() => setShowDetailsModal(false)}
-        userData={selectedDetailsUser}
-        type="user"
-      />
-      <ApprovalModal
-        isOpen={showApproveModal}
-        onClose={() => setShowApproveModal(false)}
-        onApprove={confirmApprove}
-        message={`Are you sure you want to approve this request?`}
-      />
-      <ConfirmationModal
-        isOpen={showDeleteConfirm}
-        onClose={() => setShowDeleteConfirm(false)}
-        onConfirm={confirmDelete}
-        message={`Are you sure you want to delete this request? This action cannot be undone.`}
+
+      <DeclineMentorModel
+        isOpen={isDeclineModalOpen}
+        onClose={() => setIsDeclineModalOpen(false)}
+        mentor={selectedMentor}
+        onDecline={handleDecline}
+        isDeclining={isDeclining}
       />
     </div>
   );

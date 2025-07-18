@@ -98,7 +98,7 @@ const SelectRoleStep = ({ formData, handleChange, onSubmit }) => {
           onClick={handleFormSubmit}
           disabled={!role || isSubmitting}
           className={`w-full p-3 rounded-lg text-white font-semibold transition-all duration-300 ${
-            role && !isSubmitting ? "bg-[#26A69A] hover:bg-[#208f84]" : "bg-gray-400 cursor-not-allowed"
+            role && !isSubmitting ? "bg-[var(--primary-color)] hover:bg-[var(--primary-dark)]" : "bg-gray-400 cursor-not-allowed"
           }`}
         >
           {isSubmitting ? "Submitting..." : "Submit Registration"}

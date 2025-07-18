@@ -7,6 +7,8 @@ import logoImage from "../assets/images/learno_logo.png";
 import backgroundImage from "../assets/images/auth_bg.png";
 import { login } from "../features/userSlice";
 import GoogleLoginButton from "../components/GoogleLoginButton";
+import axios from "axios";
+import { API_URL, getUserId } from "../config/config";
 
 const Login = ({ setCurrentUser, users }) => {
   const [formData, setFormData] = useState({
@@ -15,6 +17,7 @@ const Login = ({ setCurrentUser, users }) => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [mentor, setMentor] = useState(null);
   const [isAuthenticate, setIsAuthenticated] = useState(false);
   const [showPassword, setShowPassword] = useState(false);  // New state for password visibility
 
@@ -26,71 +29,100 @@ const Login = ({ setCurrentUser, users }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError("");
 
+  try {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    let data = {};
     try {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      data = await response.json();
+      localStorage.setItem("token", data.token);
+    } catch {
+      const text = await response.text();
+      throw new Error(text || "Login failed");
+    }
 
-      let data = {};
-      try {
-        data = await response.json();
-      } catch {
-        const text = await response.text();
-        throw new Error(text || "Login failed");
-      }
+    if (!response.ok) {
+      setError(data.error || "Invalid email or password");
+      setIsAuthenticated(false);
+      return;
+    }
 
-      if (!response.ok) {
-        setError(data.error || "Invalid email or password");
-        setIsAuthenticated(false);
-        return;
-      }
+    if (data.user && data.token) {
+      dispatch(login(data.user));
+      setIsAuthenticated(true);
 
-      if (data.user && data.token) {
-        dispatch(login(data.user));
-        setIsAuthenticated(true);
+      const decoded = jwtDecode(data.token);
+      const role = decoded.role?.toUpperCase();
+      const userId = getUserId(data.token);
 
-        const decoded = jwtDecode(data.token);
-        const role = decoded.role?.toUpperCase();
-        localStorage.setItem("token", data.token);
-
-        if (role === "ADMIN") {
-          navigate("/admin/dashboard");
-        } else if (role === "MENTOR") {
-          if(data.user.isDetailsFilled === true){
-            navigate("/mentor/dashboard");
+      // Only fetch mentor data if user is a mentor
+      if (role === "MENTOR") {
+        try {
+          const mentorResponse = await axios.get(`${API_URL}/auth/getMentor/${userId}`);
+          const mentorData = mentorResponse.data;
+          
+          if (data.user.isDetailsFilled) {
+            if (!mentorData) {
+              navigate("/mentor/registerDetails");
+              return;
+            }
+            
+            switch (mentorData.status) {
+              case "declined":
+                navigate("/mentor/declination");
+                break;
+              case "pending":
+                navigate("/mentor/confirmation");
+                break;
+              case "approved":
+                navigate("/mentor/dashboard");
+                break;
+              default:
+                navigate("/mentor/registerDetails");
+            }
           } else {
             navigate("/mentor/registerDetails");
           }
-        } else if (role === "MENTEE") {
-          if(data.user.isDetailsFilled === true){
-            navigate("/mentee/dashboard");
-          } else {
-            navigate("/mentee/registerDetails");
-          }
-        } else {
-          setError("Invalid role");
+          return;
+        } catch (err) {
+          console.error("Error fetching mentor data:", err.message);
+          // If mentor fetch fails, still proceed to register details
+          navigate("/mentor/registerDetails");
+          return;
         }
-      } else {
-        setError(data.error || "Login failed");
-        setIsAuthenticated(false);
       }
-    } catch (err) {
-      setError(err.message || "Invalid email or password");
+
+      // Handle other roles
+      if (role === "ADMIN") {
+        navigate("/admin/dashboard");
+      } else if (role === "MENTEE") {
+        navigate(data.user.isDetailsFilled ? "/mentee/dashboard" : "/mentee/registerDetails");
+      } else {
+        setError("Invalid role");
+      }
+    } else {
+      setError(data.error || "Login failed");
       setIsAuthenticated(false);
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (err) {
+    setError(err.message || "Invalid email or password");
+    setIsAuthenticated(false);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div

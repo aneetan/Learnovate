@@ -21,6 +21,7 @@ public class MentorBookingsDto {
     private String topic;
     private String notes;
     private String paymentStatus;
+    private String status;
 
     private int userId;
     private int mentorId;

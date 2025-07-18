@@ -78,7 +78,7 @@ const DocumentUpload = ({ onFinish, initialValues }) => {
 
       // Upload document
       if (document) {
-        uploadedDocUrl = await uploadToCloudinary(document, "raw");
+        uploadedDocUrl = await uploadToCloudinary(document, "image");
       }
 
       // Call the onFinish handler with the uploaded URLs
@@ -140,12 +140,12 @@ const DocumentUpload = ({ onFinish, initialValues }) => {
             <FileTextOutlined className="text-2xl text-green-500" />
             <h3 className="text-lg font-semibold text-gray-800">Upload Verification Documents</h3>
           </div>
-          <p className="text-sm text-gray-500 mb-4">Only PDF and Word documents are accepted.</p>
+          <p className="text-sm text-gray-500 mb-4">Click photo of any verifiable document and upload here.</p>
 
           <label className="cursor-pointer block w-full">
             <input
               type="file"
-              accept=".pdf,.doc,.docx"
+              accept="image/*"
               name="document"
               onChange={handleDocumentChange}
               className="hidden"

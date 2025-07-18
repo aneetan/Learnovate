@@ -4,12 +4,8 @@ import com.example.learnovate.classfile.AuthenticateEmail;
 import com.example.learnovate.dto.MentorAvailabilityDto;
 import com.example.learnovate.dto.MentorDTO;
 import com.example.learnovate.exception.UnauthorizedAccessException;
-import com.example.learnovate.model.Mentor;
-import com.example.learnovate.model.MentorAvailability;
-import com.example.learnovate.model.RegisteredUser;
-import com.example.learnovate.repository.MentorAvailabilityRepository;
-import com.example.learnovate.repository.MentorRepository;
-import com.example.learnovate.repository.RegisteredUserRespository;
+import com.example.learnovate.model.*;
+import com.example.learnovate.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +24,12 @@ public class MentorServiceImplements implements MentorService{
 
     @Autowired
     private RegisteredUserRespository rRepo;
+
+    @Autowired
+    private MentorBookingsRepository bookingRepo;
+
+    @Autowired
+    private PaymentDetailsRepository pRepo;
 
 
     Map<String, Object> response = new HashMap<>();
@@ -67,6 +69,7 @@ public class MentorServiceImplements implements MentorService{
         mentor.setUser(user);
 
         mentor.setStatus("pending");
+        mentor.setAvailability(false);
 
         rRepo.save(user);
         mRepo.save(mentor);
@@ -82,6 +85,10 @@ public class MentorServiceImplements implements MentorService{
     public Map<String, Object> saveAvailability(MentorAvailabilityDto availabilityDto) {
         RegisteredUser user = rRepo.findById(availabilityDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + availabilityDto.getUserId()));
+
+        Mentor mentor = mRepo.findByUser(user)
+                .orElseThrow(() -> new RuntimeException("Mentor not found with id: " + user.getUserId()));
+
 
         AuthenticateEmail authenticateEmail = new AuthenticateEmail();
         String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
@@ -99,6 +106,8 @@ public class MentorServiceImplements implements MentorService{
         availability.setDays(availabilityDto.getDays());
         availability.setUser(user);
 
+        mentor.setAvailability(true);
+        mRepo.save(mentor);
         availableRepo.save(availability);
 
         response.put("availability", availability);
@@ -110,6 +119,64 @@ public class MentorServiceImplements implements MentorService{
     public Mentor getMentorByUserId(int id){
         Mentor mentor = mRepo.getMentorByUser_UserId(id);
         return mentor;
+    }
+
+
+    public List<Mentor> getPendingMentors() {
+        return mRepo.findByStatus("pending");
+    }
+
+    @Override
+    public MentorAvailability getAvailabilityByUserId(int userId) {
+        RegisteredUser user = rRepo.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        MentorAvailability availability = availableRepo.findByUser(user)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        return availability;
+    }
+
+    @Override
+    public List<PaymentDetails> findPaymentByMentor(int userId) {
+        Mentor mentor = mRepo.getMentorByUser_UserId(userId);
+        List<PaymentDetails> payment = pRepo.findByMentor(mentor);
+        return  payment;
+    }
+
+    @Override
+    public MentorBookings updateStatus(int bookingId) {
+        MentorBookings bookings = bookingRepo.findById(bookingId)
+                .orElseThrow(() -> new EntityNotFoundException("Booking not found"));
+
+        bookings.setStatus("completed");
+        bookingRepo.save(bookings);
+
+        return bookings;
+    }
+
+    @Override
+    public MentorAvailability updateAvailability(int availabilityId, MentorAvailabilityDto availabilityDto) {
+        MentorAvailability availability = availableRepo.findById(availabilityId)
+                .orElseThrow(() -> new EntityNotFoundException("Availability not found"));
+
+        availability.setStartTime(availabilityDto.getStartTime());
+        availability.setEndTime(availabilityDto.getEndTime());
+        availability.setDays(availabilityDto.getDays());
+        availableRepo.save(availability);
+
+        return  availability;
+    }
+
+    public List<MentorBookings> getSessionsByMentorId(int userId){
+        RegisteredUser user = rRepo.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        Mentor mentor = mRepo.findByUser(user)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        List<MentorBookings> sessions = bookingRepo.findByMentor(mentor);
+        return  sessions;
     }
 
 

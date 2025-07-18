@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import DocumentModal from '../components/common/DocumentModal';
 import { FiUser } from 'react-icons/fi';
+import MentorProfileCard from '../components/Mentor/MentorProfileCard';
 
 const dummyMentors = [
   {
@@ -80,58 +81,7 @@ const AdminMentorProfile = () => {
           </div>
         </div>
         {/* Profile Card */}
-        <div className="bg-white rounded-b-lg shadow-lg pt-20 pb-8 px-8 mt-0">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">{mentor.name}</h2>
-          <p className="text-center text-gray-500 mb-6">{mentor.professionalTitle}</p>
-          <div className="grid grid-cols-1 gap-4 mb-4">
-            <div>
-              <span className="block text-xs text-gray-500 mb-1">Name</span>
-              <span className="text-gray-800">{mentor.name}</span>
-            </div>
-            <div>
-              <span className="block text-xs text-gray-500 mb-1">Email</span>
-              <span className="text-gray-800">{mentor.email}</span>
-            </div>
-            <div>
-              <span className="block text-xs text-gray-500 mb-1">Phone Number</span>
-              <span className="text-gray-800">{mentor.phoneNumber}</span>
-            </div>
-            <div>
-              <span className="block text-xs text-gray-500 mb-1">Bio</span>
-              <span className="text-gray-800 whitespace-pre-line">{mentor.bio}</span>
-            </div>
-            <div>
-              <span className="block text-xs text-gray-500 mb-1">Session Price (Nrs.)</span>
-              <span className="text-gray-800">Nrs. {mentor.sessionPrice}</span>
-            </div>
-            <div>
-              <span className="block text-xs text-gray-500 mb-1">Area of Expertise</span>
-              <span className="text-gray-800">{mentor.areaOfExpertise}</span>
-            </div>
-            <div>
-              <span className="block text-xs text-gray-500 mb-1">Professional Title</span>
-              <span className="text-gray-800">{mentor.professionalTitle}</span>
-            </div>
-            <div>
-              <span className="block text-xs text-gray-500 mb-1">Years of Experience</span>
-              <span className="text-gray-800">{mentor.yearsOfExperience}</span>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-3 mt-8 justify-center">
-            <button
-              onClick={() => setShowApprove(true)}
-              className="px-4 py-2 rounded bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors"
-            >
-              Approve
-            </button>
-            <button
-              onClick={() => setShowDocumentModal(true)}
-              className="px-4 py-2 rounded bg-gray-100 text-gray-700 text-sm font-medium border border-gray-200 hover:bg-gray-200 transition-colors"
-            >
-              View Document
-            </button>
-          </div>
-        </div>
+        <MentorProfileCard mentor={mentor}/>
         {showDocumentModal && (
           <DocumentModal
             isOpen={showDocumentModal}

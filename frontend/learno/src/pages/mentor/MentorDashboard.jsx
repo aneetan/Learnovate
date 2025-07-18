@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   PieChart,
@@ -12,45 +12,28 @@ import { format } from "date-fns";
 import { MdDashboard } from "react-icons/md";
 import PageTransition from "../../components/common/PageTransition";
 import AnimatedCounter from "../../components/common/AnimatedCounter";
-
-// 🔥 Dummy data
-const dummyCurrentUser = {
-  id: "mentor1",
-  name: "John Doe",
-};
-
-const dummySessionRequests = [
-  { id: "req1", mentorId: "mentor1", apprenticeId: "apprentice1", status: "completed", topic: "React Basics", date: "2025-06-01", time: "10:00 AM" },
-  { id: "req2", mentorId: "mentor1", apprenticeId: "apprentice2", status: "pending", topic: "Java Fundamentals", date: "2025-06-05", time: "2:00 PM" },
-  { id: "req3", mentorId: "mentor1", apprenticeId: "apprentice3", status: "accepted", topic: "SQL Queries", date: "2025-06-07", time: "11:00 AM" },
-  { id: "req4", mentorId: "mentor1", apprenticeId: "apprentice1", status: "completed", topic: "React Advanced", date: "2025-06-10", time: "3:00 PM" },
-];
-
-const dummyUsers = [
-  { id: "apprentice1", name: "Alice Smith" },
-  { id: "apprentice2", name: "Bob Johnson" },
-  { id: "apprentice3", name: "Charlie Lee" },
-];
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { API_URL } from "../../config/config";
+import axios from "axios";
 
 const MentorDashboard = () => {
-  const currentUser = dummyCurrentUser;
-  const sessionRequests = dummySessionRequests;
-  const users = dummyUsers;
-
-  const userRequests = (sessionRequests ?? []).filter((request) => request.mentorId === currentUser?.id);
-  const pendingRequests = userRequests.filter((request) => request.status === "pending").length;
-  const upcomingSessions = userRequests.filter((request) => request.status === "accepted");
+  const [sessions, setSessions] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const currentUser = useSelector((state) => state.user.user)
+  const pendingRequests = sessions.filter((request) => request.status === "pending").length;
+  const navigate = useNavigate();
 
   const stats = {
-    completedSessions: userRequests.filter((request) => request.status === "completed").length,
+    completedSessions: sessions.filter((request) => request.status === "completed").length,
     pendingSessions: pendingRequests,
-    upcomingSessions: upcomingSessions.length,
+    upcomingSessions: sessions.length,
   };
 
   const sessionsByStatus = [
     { name: "Completed", value: stats.completedSessions, color: "#10b981" },
     { name: "Pending", value: stats.pendingSessions, color: "#f59e0b" },
-    { name: "Upcoming", value: stats.upcomingSessions, color: "#3b82f6" },
   ];
 
   const containerVariants = {
@@ -75,6 +58,48 @@ const MentorDashboard = () => {
     },
   };
 
+  useEffect(() => {
+    const fetchSessionsByMentor = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const response = await axios.get(`${API_URL}/mentor/sessions/${currentUser.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        setSessions(response.data)
+      } catch (err) {
+        console.log(err.message)
+      } 
+    }
+
+    fetchSessionsByMentor();
+  }, [currentUser.id])
+
+  useEffect(() => {
+    const findTransactionsByUser = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const response = await axios.get(`${API_URL}/mentor/getTransactions/${currentUser.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        setTransactions(response.data)
+
+        const sum = response.data.reduce((accumulator, transaction) => {
+          return accumulator + transaction.amount;
+        }, 0);
+        
+        setTotalAmount(sum);
+      } catch (err) {
+        console.log(err.message)
+      } 
+    }
+
+    findTransactionsByUser();
+  }, [currentUser.id])
+
   return (
     <PageTransition>
       <div className="min-h-screen bg-gray-50 py-6 sm:py-10">
@@ -94,7 +119,7 @@ const MentorDashboard = () => {
                   <MdDashboard className="mr-2 w-6 h-6" style={{ color: "var(--primary-color)" }} />
                   Dashboard
                 </h2>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Welcome, {currentUser.name}!</h1>
+                <h1 className="text-2xl font-semibold text-gray-900">Welcome, {currentUser.name}!</h1>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 mt-2">
                   Mentor
                 </span>
@@ -117,7 +142,7 @@ const MentorDashboard = () => {
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-500"></div>
               <h3 className="text-sm font-medium text-gray-600 mb-4">Completed Sessions</h3>
-              <p className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">
+              <p className="text-2xl font-bold bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">
                 <AnimatedCounter end={stats.completedSessions} />
               </p>
             </motion.div>
@@ -128,7 +153,7 @@ const MentorDashboard = () => {
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-orange-500"></div>
               <h3 className="text-sm font-medium text-gray-600 mb-4">Pending Sessions</h3>
-              <p className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
+              <p className="text-2xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
                 <AnimatedCounter end={stats.pendingSessions} />
               </p>
             </motion.div>
@@ -138,9 +163,10 @@ const MentorDashboard = () => {
               variants={itemVariants}
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
-              <h3 className="text-sm font-medium text-gray-600 mb-4">Upcoming Sessions</h3>
-              <p className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">
-                <AnimatedCounter end={stats.upcomingSessions} />
+              <h3 className="text-sm font-medium text-gray-600 mb-4">Transactions Amount ({transactions.length})</h3>
+              <p className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">
+                  {/* <h3>Total Transactions: {transactions.length}</h3> */}
+                  <h3>Rs. {totalAmount.toFixed(2)}</h3>
               </p>
             </motion.div>
           </motion.div>
@@ -189,69 +215,21 @@ const MentorDashboard = () => {
                 Quick Actions
               </h2>
               <div className="flex flex-col space-y-4">
-                <Link
-                  to="/upcoming-sessions"
+                <button
+                  onClick={() => navigate(`/mentor/sessions/${currentUser.id}`) }
                   className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium text-sm shadow focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all btn-primary"
                 >
                   View Upcoming Sessions
-                </Link>
-                <Link
-                  to="/profile"
+                </button>
+                <button
+                  onClick={() => navigate(`/mentor/availability`) }
                   className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium text-sm shadow focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all btn-secondary"
                 >
                   Update Availability
-                </Link>
+                </button>
               </div>
             </motion.div>
           </div>
-
-          {upcomingSessions.length > 0 && (
-            <motion.div
-              className="mt-6 bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7, duration: 0.5 }}
-            >
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6 pb-4 border-b border-gray-200">
-                Upcoming Sessions
-              </h2>
-              <ul className="divide-y divide-gray-200">
-                {upcomingSessions.map((session, index) => {
-                  const apprentice = users.find((user) => user.id === session.apprenticeId);
-                  return (
-                    <motion.li
-                      key={session.id}
-                      className="py-4 hover:bg-gray-50 transition-colors"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 * index, duration: 0.5 }}
-                    >
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
-                        <div>
-                          <h3 className="text-base sm:text-lg font-medium text-gray-900">{session.topic}</h3>
-                          <p className="mt-1 text-sm text-gray-600">
-                            with <span className="font-medium">{apprentice?.name}</span>
-                          </p>
-                          <p className="mt-1 text-sm text-gray-500">
-                            <span className="font-medium">{session.date}</span> at{" "}
-                            <span className="text-primary font-medium">{session.time}</span>
-                          </p>
-                        </div>
-                        <div>
-                          <Link
-                            to={`/messages/${apprentice?.id}`}
-                            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium text-sm shadow focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all btn-primary"
-                          >
-                            Message
-                          </Link>
-                        </div>
-                      </div>
-                    </motion.li>
-                  );
-                })}
-              </ul>
-            </motion.div>
-          )}
         </div>
       </div>
     </PageTransition>

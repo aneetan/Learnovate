@@ -1,56 +1,45 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FiEdit2, FiCamera, FiUser, FiSave, FiX, FiTrash2 } from 'react-icons/fi';
-import { PhoneOutlined, UserOutlined, AppstoreOutlined, MailOutlined, BulbOutlined } from '@ant-design/icons';
+import { FiCamera, FiUser, FiSave, FiX, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { API_URL } from '../../config/config';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import EditProfile from '../../components/Mentor/EditProfile';
+import ViewProfile from '../../components/Mentor/ViewProfile';
+import DeleteConfirmationModal from '../../components/Mentor/DeleteProfileModal';
+import DeleteAccount from '../../components/Mentor/DeleteProfile';
 
 const MentorProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [errors, setErrors] = useState({});
-  const [profile, setProfile] = useState({
-    name: 'Jane Smith',
-    email: 'jane.smith@example.com',
-    phoneNumber: '9876543210',
-    bio: 'Experienced software engineer passionate about mentoring aspiring developers.',
-    sessionPrice: '5000',
-    areaOfExpertise: 'Technology',
-    professionalTitle: 'Software Engineer',
-    yearsOfExperience: '5+',
-    profileUrl: null,
-  });
-  const [editedProfile, setEditedProfile] = useState(profile);
+  const [profile, setProfile] = useState(null);
+  const [editedProfile, setEditedProfile] = useState(null);
   const [profilePreview, setProfilePreview] = useState(null);
-  const [fetchError, setFetchError] = useState(null);
   const fileInputRef = useRef(null);
+  const user = useSelector((state) => state.user.user);
 
-  // Fetch dummy data from JSONPlaceholder
   useEffect(() => {
-    const fetchDummyData = async () => {
+    const fetchMentorData = async () => {
       try {
-        const response = await fetch('https://jsonplaceholder.typicode.com/users/1');
-        if (!response.ok) throw new Error('Failed to fetch dummy data');
-        const data = await response.json();
-        const dummyProfile = {
-          name: data.name || 'Jane Smith',
-          email: data.email || 'jane.smith@example.com',
-          phoneNumber: data.phone?.replace(/\D/g, '').slice(0, 10) || '9876543210',
-          bio: 'Experienced software engineer passionate about mentoring aspiring developers.',
-          sessionPrice: '5000',
-          areaOfExpertise: 'Technology',
-          professionalTitle: 'Software Engineer',
-          yearsOfExperience: '5+',
-          profileUrl: null,
-        };
-        setProfile(dummyProfile);
-        setEditedProfile(dummyProfile);
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${API_URL}/mentor/getMentor/${user.id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        setProfile(response.data);
+        setEditedProfile(response.data);
+        setProfilePreview(response.data?.profileUrl);
       } catch (error) {
-        console.error('Error fetching dummy data:', error);
-        setFetchError('Failed to load profile data. Using default values.');
+        console.error("Error fetching mentor data:", error);
       }
     };
-    fetchDummyData();
-  }, []);
+    fetchMentorData();
+  }, [user.id]);
 
   const validateFields = () => {
+    if (!editedProfile) return false;
+    
     const newErrors = {};
     if (!editedProfile.bio) newErrors.bio = 'Please enter your bio';
     if (!editedProfile.phoneNumber) {
@@ -58,78 +47,77 @@ const MentorProfile = () => {
     } else if (!/^\d{10}$/.test(editedProfile.phoneNumber)) {
       newErrors.phoneNumber = 'Please enter a valid 10-digit number';
     }
-    if (!editedProfile.sessionPrice) newErrors.sessionPrice = 'Please enter session price per hour';
-    if (!editedProfile.areaOfExpertise) newErrors.areaOfExpertise = 'Please select your area of expertise';
-    if (!editedProfile.professionalTitle) newErrors.professionalTitle = 'Please select your professional title';
-    if (!editedProfile.yearsOfExperience) newErrors.yearsOfExperience = 'Please select your years of experience';
+    if (!editedProfile.price) newErrors.sessionPrice = 'Please enter session price per hour';
+    if (!editedProfile.area) newErrors.areaOfExpertise = 'Please select your area of expertise';
+    if (!editedProfile.title) newErrors.professionalTitle = 'Please select your professional title';
+    if (!editedProfile.experience) newErrors.yearsOfExperience = 'Please select your years of experience';
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleEdit = () => {
     setEditedProfile(profile);
-    setProfilePreview(profile.profileUrl);
+    setProfilePreview(profile?.profileUrl);
     setErrors({});
     setIsEditing(true);
   };
 
   const handleSave = async () => {
-    if (!validateFields()) return;
+    if (!validateFields() || !editedProfile) return;
 
-    let updatedProfile = { ...editedProfile };
+    try {
+      let updatedProfile = { ...editedProfile };
 
-    if (editedProfile.profileFile) {
-      try {
+      if (editedProfile.profileFile) {
         const uploadedUrl = await uploadToCloudinary(editedProfile.profileFile);
         updatedProfile.profileUrl = uploadedUrl;
-      } catch (error) {
-        console.error('Upload failed', error);
-        setErrors({ upload: 'Failed to upload profile picture' });
-        return;
       }
-    }
 
-    updatedProfile.sessionPrice = String(updatedProfile.sessionPrice);
-    setProfile(updatedProfile);
-    setIsEditing(false);
+      updatedProfile.price = String(updatedProfile.price);
+      
+      // Add your API call to save the profile here
+      // await axios.put(`${API_URL}/mentor/update`, updatedProfile, {
+      //   headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
+      // });
+
+      setProfile(updatedProfile);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      setErrors({ save: 'Failed to save profile. Please try again.' });
+    }
   };
 
   const handleCancel = () => {
     setEditedProfile(profile);
-    setProfilePreview(profile.profileUrl);
+    setProfilePreview(profile?.profileUrl);
     setErrors({});
     setIsEditing(false);
   };
 
-  const handleDeleteAccount = () => {
-    setShowModal(true);
-  };
-
+  const handleDeleteAccount = () => setShowModal(true);
   const confirmDelete = () => {
-    console.log('Delete account initiated for user:', profile.email);
-    // Placeholder for API call to delete account
-    // Example: await fetch(`${API_URL}/user/delete`, { method: 'DELETE', headers: { ... } });
+    console.log('Delete account initiated for user:', profile?.user?.email);
+    // Add your delete account API call here
     setShowModal(false);
   };
-
-  const cancelDelete = () => {
-    setShowModal(false);
-  };
+  const cancelDelete = () => setShowModal(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditedProfile((prev) => ({
-      ...prev,
+    setEditedProfile(prev => ({
+      ...(prev || {}),
       [name]: value,
     }));
-    setErrors((prev) => ({ ...prev, [name]: null }));
+    setErrors(prev => ({ ...prev, [name]: null }));
   };
 
   const handleProfilePictureChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setEditedProfile((prev) => ({
-        ...prev,
+      setEditedProfile(prev => ({
+        ...(prev || {}),
         profileFile: file,
       }));
       const reader = new FileReader();
@@ -137,100 +125,35 @@ const MentorProfile = () => {
         setProfilePreview(reader.result);
       };
       reader.readAsDataURL(file);
-      setErrors((prev) => ({ ...prev, upload: null }));
+      setErrors(prev => ({ ...prev, upload: null }));
     }
   };
 
-  const uploadToCloudinary = async (file, type = 'image') => {
+  const uploadToCloudinary = async (file) => {
     const data = new FormData();
     data.append('file', file);
     data.append('upload_preset', import.meta.env.VITE_CLOUDINARY_PRESET);
     const cloudname = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+    const url = `https://api.cloudinary.com/v1_1/${cloudname}/image/upload`;
 
-    const url = `https://api.cloudinary.com/v1_1/${cloudname}/${type}/upload`;
-
-    const response = await fetch(url, {
-      method: 'POST',
-      body: data,
-    });
-
+    const response = await fetch(url, { method: 'POST', body: data });
     const result = await response.json();
     return result.secure_url;
   };
 
-  const triggerFileInput = () => {
-    fileInputRef.current.click();
-  };
-
-  const renderInput = (label, name, value, icon, isSelect = false, options = [], isTextarea = false, isNumber = false) => (
-    <div className="flex flex-col gap-2 w-full border-b border-gray-200 py-4 last:border-b-0 transition-opacity duration-300">
-      <label className="text-sm font-semibold text-gray-600 flex items-center">
-        {React.cloneElement(icon, { className: 'w-5 h-5 text-[#26A69A] mr-2' })}
-        {label}
-      </label>
-      {isEditing ? (
-        <>
-          {isSelect ? (
-            <select
-              name={name}
-              value={value || ''}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#26A69A]/50 transition duration-300"
-            >
-              <option value="" disabled>
-                {name === 'yearsOfExperience' ? '---Experience in years---' : `Select ${label.toLowerCase()}`}
-              </option>
-              {options.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          ) : isTextarea ? (
-            <textarea
-              name={name}
-              value={value || ''}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#26A69A]/50 transition duration-300 resize-none min-h-[100px]"
-              placeholder={name === 'bio' ? 'A short description about yourself' : `Enter ${label.toLowerCase()}`}
-            />
-          ) : (
-            <input
-              type={isNumber ? 'number' : name === 'email' ? 'email' : name === 'phoneNumber' ? 'tel' : 'text'}
-              name={name}
-              value={value || ''}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#26A69A]/50 transition duration-300"
-              placeholder={
-                name === 'phoneNumber' ? 'Enter contact number' :
-                name === 'sessionPrice' ? 'Enter session price per hour' :
-                `Enter ${label.toLowerCase()}`
-              }
-              min={isNumber ? 0 : undefined}
-            />
-          )}
-          {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name]}</p>}
-        </>
-      ) : (
-        <p className="text-base text-gray-900 font-medium">
-          {name === 'sessionPrice' ? `Nrs. ${value}` : value || '-'}
-        </p>
-      )}
-    </div>
-  );
+  const triggerFileInput = () => fileInputRef.current?.click();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
-      {/* Main Content */}
       <div className="w-full max-w-2xl transition-opacity duration-500">
-        {/* Banner */}
+        {/* Profile Banner with Picture */}
         <div className="bg-gradient-to-r from-[#26A69A] to-[#148FA8] h-40 sm:h-48 relative rounded-t-lg shadow-sm">
           <div className="absolute bottom-[-4rem] left-4 sm:left-8">
             <div className="relative group transform hover:scale-105 transition duration-300">
               <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-white overflow-hidden bg-gray-100 shadow-lg">
-                {profilePreview || editedProfile.profileUrl ? (
+                {profilePreview ? (
                   <img
-                    src={profilePreview || editedProfile.profileUrl}
+                    src={profilePreview}
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />
@@ -261,142 +184,42 @@ const MentorProfile = () => {
           </div>
         </div>
 
-        {/* Profile Content */}
-        <div className="pt-24 sm:pt-28 px-4 sm:px-6 pb-10 space-y-6">
-          {/* Header and Action Buttons */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Profile Details</h2>
-            <div className="flex gap-3 flex-wrap">
-              {!isEditing ? (
-                <button
-                  onClick={handleEdit}
-                  className="flex items-center px-5 py-2.5 bg-[#26A69A] text-white rounded-lg shadow-md hover:bg-[#208f84] hover:scale-105 transition duration-300 text-sm font-semibold"
-                >
-                  <FiEdit2 className="mr-2 w-5 h-5" />
-                  Edit Profile
-                </button>
-              ) : (
-                <>
-                  <button
-                    onClick={handleSave}
-                    className="flex items-center px-5 py-2.5 bg-[#26A69A] text-white rounded-lg shadow-md hover:bg-[#208f84] hover:scale-105 transition duration-300 text-sm font-semibold"
-                  >
-                    <FiSave className="mr-2 w-5 h-5" />
-                    Save
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    className="flex items-center px-5 py-2.5 bg-gray-500 text-white rounded-lg shadow-md hover:bg-gray-600 hover:scale-105 transition duration-300 text-sm font-semibold"
-                  >
-                    <FiX className="mr-2 w-5 h-5" />
-                    Cancel
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Fetch Error Message */}
-          {fetchError && <p className="text-red-500 text-sm">{fetchError}</p>}
+        {/* Profile Content Area */}
+        <div className="pt-24 sm:pt-28 px-4 sm:px-6 pb-10 space-y-6 bg-white rounded-b-lg shadow-sm">
+          {errors.save && <p className="text-red-500 text-sm">{errors.save}</p>}
           {errors.upload && <p className="text-red-500 text-sm">{errors.upload}</p>}
 
-          {/* Profile Fields */}
-          <div className="flex flex-col gap-2">
-            {renderInput('Name', 'name', editedProfile.name, <UserOutlined />)}
-            {renderInput('Email', 'email', editedProfile.email, <MailOutlined />)}
-            {renderInput('Phone Number', 'phoneNumber', editedProfile.phoneNumber, <PhoneOutlined />)}
-            {renderInput('Bio', 'bio', editedProfile.bio, <BulbOutlined />, false, [], true)}
-            {renderInput('Session Price (Nrs.)', 'sessionPrice', editedProfile.sessionPrice, <BulbOutlined />, false, [], false, true)}
-            {renderInput(
-              'Area of Expertise',
-              'areaOfExpertise',
-              editedProfile.areaOfExpertise,
-              <AppstoreOutlined />,
-              true,
-              [
-                'Technology',
-                'Business & Entrepreneurship',
-                'Career & Professional Growth',
-                'Soft Skills & Leadership',
-                'Education & Academics',
-                'Design & UX'
-              ]
-            )}
-            {renderInput(
-              'Professional Title',
-              'professionalTitle',
-              editedProfile.professionalTitle,
-              <BulbOutlined />,
-              true,
-              [
-                'Software Engineer',
-                'Project Manager',
-                'Data Scientist',
-                'Designer',
-                'Consultant'
-              ]
-            )}
-            {renderInput(
-              'Years of Experience',
-              'yearsOfExperience',
-              editedProfile.yearsOfExperience,
-              <BulbOutlined />,
-              true,
-              ['0-1', '2-3', '3-4', '5+']
-            )}
-          </div>
+          {/* Conditional Rendering of View or Edit Mode */}
+          {isEditing ? (
+            <EditProfile
+              editedProfile={editedProfile}
+              errors={errors}
+              handleChange={handleChange}
+              handleSave={handleSave}
+              handleCancel={handleCancel}
+              triggerFileInput={triggerFileInput}
+              profilePreview={profilePreview}
+              fileInputRef={fileInputRef}
+              handleProfilePictureChange={handleProfilePictureChange}
+            />
+          ) : (
+            <ViewProfile
+              profile={profile}
+              handleEdit={handleEdit}
+              handleDeleteAccount={handleDeleteAccount}
+            />
+          )}
 
-          {/* Delete Account Card */}
-          <div className="mt-8">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="max-w-xs">
-                <h4 className="text-sm font-semibold text-gray-900 mb-1">Delete Account</h4>
-                <p className="text-sm text-gray-600">
-                  Permanently delete your account and all associated data. This action cannot be undone.
-                </p>
-              </div>
-              <button
-                onClick={handleDeleteAccount}
-                className="flex items-center px-5 py-2.5 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 hover:scale-105 transition duration-300 text-sm font-semibold"
-              >
-                <FiTrash2 className="mr-2 w-5 h-5" />
-                Delete Account
-              </button>
-            </div>
-          </div>
+          {/* Delete Account Section (only in view mode) */}
+          {!isEditing && <DeleteAccount handleDeleteAccount={handleDeleteAccount} />}
         </div>
 
         {/* Delete Confirmation Modal */}
-        {showModal && (
-          <div
-            className="fixed inset-0 bg-transparent bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50"
-            onClick={cancelDelete}
-          >
-            <div
-              className="bg-white rounded-lg shadow-lg w-full max-w-sm sm:max-w-md p-4 sm:p-6"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Confirm Account Deletion</h3>
-              <p className="text-sm text-gray-600 mb-6">
-                Are you sure you want to delete your account? This action cannot be undone.
-              </p>
-              <div className="flex justify-end gap-3">
-                <button
-                  onClick={cancelDelete}
-                  className="px-4 py-2 bg-gray-500 text-white rounded-lg shadow-sm hover:bg-gray-600 hover:scale-105 transition duration-300 text-sm font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmDelete}
-                  className="px-4 py-2 bg-red-500 text-white rounded-lg shadow-sm hover:bg-red-600 hover:scale-105 transition duration-300 text-sm font-semibold"
-                >
-                  Confirm Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <DeleteConfirmationModal
+          showModal={showModal}
+          cancelDelete={cancelDelete}
+          confirmDelete={confirmDelete}
+        />
       </div>
     </div>
   );
