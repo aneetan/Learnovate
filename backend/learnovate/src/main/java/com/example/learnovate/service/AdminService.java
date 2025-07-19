@@ -26,6 +26,9 @@ public class AdminService {
     @Autowired
     private MentorBookingsRepository bookingRepo;
 
+    @Autowired
+    private EmailService emailService;
+
     AuthenticateEmail authenticateEmail = new AuthenticateEmail();
 
     public void authenticateAdmin(){
@@ -46,6 +49,23 @@ public class AdminService {
                 .orElseThrow(() -> new RuntimeException("Mentor not found with id: " + mentorId));
         mentor.setStatus("approved");
         mRepo.save(mentor);
+        String text = """
+                Dear %s,
+
+                Congratulations! We are pleased to inform you that your mentor application has been approved.
+                                
+                Please log in to your account to:
+                    - Set your availability schedule
+                    
+                If you have any questions, don't hesitate to contact our support team.
+                Best regards,
+                Learnovate
+                """.formatted(mentor.getUser().getName());
+        emailService.sendSimpleEmail(
+                mentor.getUser().getEmail(),
+                "Mentor Application Declined",
+                text
+        );
         return mentor;
     }
 
@@ -55,6 +75,22 @@ public class AdminService {
                 .orElseThrow(() -> new RuntimeException("Mentor not found with id: " + mentorId));
         mentor.setStatus("declined");
         mRepo.save(mentor);
+        String text = """
+                Dear %s,
+
+                Thank you for applying to be a mentor. Unfortunately, your application has been declined because the submitted documents are insufficient.
+
+                You can reply to this email with updated documents. Please ensure all required information is provided in your next submission.
+
+                Best regards,
+                Learnovate
+                """.formatted(mentor.getUser().getName());
+        emailService.sendSimpleEmail(
+                mentor.getUser().getEmail(),
+                "Mentor Application Declined",
+                text
+        );
+
         return mentor;
     }
 }
