@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { API_URL, formatTimeTo12Hour } from '../../config/config';
+import { useSelector } from 'react-redux';
 
 const MentorSchedules = (mentorId) => {
   const [selectedDay, setSelectedDay] = useState('');
@@ -10,11 +11,14 @@ const MentorSchedules = (mentorId) => {
   const [loading, setLoading] = useState(true);
   const [daysOfWeek, setDaysOfWeek] = useState([]);
   const navigate = useNavigate();
+  const currentUser = useSelector((state) => state.user.user)
+
+
 
   useEffect(() => {
     const fetchMentorAvailability = async () => {
       try {
-        const response = await axios.get(`${API_URL}/mentor/getAvailability/9`, {
+        const response = await axios.get(`${API_URL}/mentor/getAvailability/${currentUser.id}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem("token")}`
           }

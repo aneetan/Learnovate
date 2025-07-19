@@ -12,7 +12,7 @@ const MentorSidebar = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [profile, setProfile] = useState("");
+  const [profile, setProfile] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector((state) => state.user.user);

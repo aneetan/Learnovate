@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Form, Input, Select, message } from 'antd';
 import { UploadOutlined, PictureOutlined, PhoneOutlined, UserOutlined, AppstoreOutlined } from '@ant-design/icons';
-import logoImage from '../assets/images/learno_logo.png';
-import backgroundImage from '../assets/images/auth_bg.png';
+import logoImage from '../../assets/images/learno_logo.png';
+import backgroundImage from '../../assets/images/auth_bg.png';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { API_URL, getUserId } from '../../config/config'

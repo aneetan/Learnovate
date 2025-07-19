@@ -14,7 +14,7 @@ const MenteeSidebar = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const [profile, setProfile] = useState("");
+  const [profile, setProfile] = useState(null);
   const user = useSelector((state) => state.user.user);
 
 

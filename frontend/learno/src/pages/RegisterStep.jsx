@@ -3,7 +3,7 @@ import logoImage from '../assets/images/learno_logo.png';
 import backgroundImage from '../assets/images/auth_bg.png';
 import { FcGoogle } from "react-icons/fc";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import GoogleLoginButton from "../components/GoogleLoginButton";
+import GoogleLoginButton from "../components/common/GoogleLoginButton";
 
 const RegisterStep = ({ formData, handleChange, onStepComplete }) => {
   const { name, email, password, confirmPassword } = formData;

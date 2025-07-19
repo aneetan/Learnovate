@@ -12,18 +12,6 @@ const MentorChat = () => {
     const receiverId = params.receiverId;
     const currentUser = useSelector((state) => state.user.user)
 
-    // useEffect(()=> {
-    //     const getUser = async() => {
-    //         try {
-    //             const response = await axios.get(`${API_URL}/auth/getUsers/${userId}`)
-    //             setCurrentUser(response.data)
-
-    //         } catch (err) {
-    //             console.log(err.message)
-    //         }
-    //     }
-    //     getUser();
-    // }, [userId])
 
      useEffect(()=> {
         const getMentee = async() => {

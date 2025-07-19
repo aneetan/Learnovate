@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import PageTransition from "../../components/common/PageTransition"
-import "../assets/css/MentorDirectory.css"
+import "../../assets/css/MentorDirectory.css"
 import axios from "axios"
 import { API_URL } from "../../config/config"
 
@@ -70,6 +70,7 @@ const MentorDirectory = ({ currentUser }) => {
   const filteredMentors = mentors
     .filter((mentor) => {
       const isApproved = mentor.status === "approved"; 
+      const isAvailability = mentor.availability === true;
 
       const matchesSearch = 
         mentor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -80,7 +81,7 @@ const MentorDirectory = ({ currentUser }) => {
         selectedCategory === "All" || 
         getMentorDomainScore(mentor, selectedCategory) > 0
 
-      return isApproved && matchesSearch && matchesCategory
+      return isAvailability && isApproved && matchesSearch && matchesCategory
     })
     .sort((a, b) => {
       if (selectedCategory === "All") return 0

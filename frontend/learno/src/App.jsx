@@ -3,41 +3,39 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import RegistrationForm from './pages/RegistrationForm';
 import ProtectedRoutes from './security/ProtectedRoutes';
-import MenteeLayout from './components/layout/MenteeLayout';
-import AdminLayout from './components/Layout/AdminLayout';
-import MentorStepperForm from './pages/MentorStepperForm';
+import MenteeLayout from './components/Mentee/MenteeLayout';
+import AdminLayout from './components/admin/AdminLayout';
+import MentorStepperForm from './pages/mentor/MentorStepperForm';
 import Home from './pages/Home';
-import MentorDirectory from './pages/MentorDirectory';
-import MentorLayout from './components/Layout/MentorLayout';
-import MenteeProfileStep from './pages/MenteeProfileStep';
+import MentorDirectory from './pages/Mentee/MentorDirectory';
+import MentorLayout from './components/Mentor/MentorLayout';
+import MenteeProfileStep from './pages/Mentee/MenteeProfileStep';
 import MenteeProfile from "./pages/Mentee/MenteeProfile";
 import MentorProfile from "./pages/mentor/MentorProfile";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminUsers from "./pages/AdminUsers";
-import AdminMentors from "./pages/AdminMentors";
-import AdminBookings from "./pages/AdminBookings";
-import AdminReviews from './pages/AdminReviews';
-import AvailabilitySchedule from './components/Mentor/AvailabilitySchedule';
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminMentors from "./pages/admin/AdminMentors";
+import AdminBookings from "./pages/admin/AdminBookings";
+import AdminReviews from './pages/admin/AdminReviews';
 import CalendarPreview from './pages/Mentee/CalendarPreview';
 import BookingRequest from './pages/Mentee/BookingRequest';
 import MenteeDashboard from './pages/Mentee/MenteeDashboard';
 import MentorDashboard from './pages/mentor/MentorDashboard'; 
 import CheckoutPage from './pages/Mentee/CheckoutPage';
-import EsewaSuccess from './components/EsewaSuccess';
-import EsewaFailure from './components/EsewaFailure';
+import EsewaSuccess from './components/payment/EsewaSuccess';
+import EsewaFailure from './components/payment/EsewaFailure';
 import MentorSessions from './pages/mentor/MentorSessions';
-import MentorSchedules from './pages/mentor/MentorSchedules';
-import AdminSettings from "./pages/AdminSettings";
-import AdminMentorProfile from './pages/AdminMentorProfile';
-import MenteeChat from './websocket/MenteeChat';
-import MentorChat from './websocket/MentorChat';
+import AdminSettings from "./pages/admin/AdminSettings";
+import AdminMentorProfile from './pages/admin/AdminMentorProfile';
+import MenteeChat from './pages/Mentee/MenteeChat';
+import MentorChat from './pages/mentor/MentorChat';
 import AdminNotifications from './notifications/AdminNotifications';
-import EmailConfirmationPage from './pages/EmailConfirmationPage';
-import DeclinedPage from './pages/DeclinedPage';
-import ForgotPassword from './pages/ForgotPassword';
-import ForgotPasswordEmail from './pages/ForgotPasswordEmail';
-import ForgotPasswordOtp from './pages/ForgotPasswordOtp';
-import ResetPassword from './pages/ResetPassword';
+import EmailConfirmationPage from './pages/Mentee/EmailConfirmationPage';
+import DeclinedPage from './pages/Mentee/EmailConfirmationPage';
+import ForgotPassword from './pages/forgotpw/ForgotPassword';
+import ForgotPasswordEmail from './pages/forgotpw/ForgotPasswordEmail';
+import ForgotPasswordOtp from './pages/forgotpw/ForgotPasswordOtp';
+import ResetPassword from './pages/forgotpw/ResetPassword';
 import Availability from './pages/mentor/Availability';
 import EditAvailability from './components/Mentor/EditAvailability';
 import MenteeSessions from './pages/Mentee/MenteeSessions';
@@ -88,7 +86,8 @@ function App() {
             <Route path="checkout/:mentorId/:bookingId" element={<CheckoutPage />} />
             <Route path="payment-success" element={<EsewaSuccess />} />
             <Route path='menteeProfile' element={<MenteeProfile />} />
-            <Route path='chat?receiverId=:receiverId' element={<MenteeChat />} />
+            <Route path='chat/:receiverId' element={<MenteeChat />} />
+            <Route path='chat' element={<MenteeChat />} />
           </Route>
           <Route path='/mentee/registerDetails' element={<MenteeProfileStep />} />
         </Route>

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaLock, FaEye, FaEyeSlash, FaCheckCircle } from "react-icons/fa";
-import logoImage from "../assets/images/learno_logo.png";
-import backgroundImage from "../assets/images/auth_bg.png";
+import logoImage from "../../assets/images/learno_logo.png";
+import backgroundImage from "../../assets/images/auth_bg.png";
 
 
 const ResetPassword = () => {

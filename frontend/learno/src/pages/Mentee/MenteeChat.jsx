@@ -13,20 +13,6 @@ const MenteeChat = () => {
      let params = useParams();
     const receiverId = params.receiverId;
 
-    // useEffect(()=> {
-    //     const getUser = async() => {
-    //         try {
-    //             const response = await axios.get(`${API_URL}/auth/getUsers/${user.id}`)
-    //             setCurrentUser(response.data)
-    //             console.log(response.data)
-
-    //         } catch (err) {
-    //             console.log(err.message)
-    //         }
-    //     }
-    //     getUser();
-    // }, [user.id])
-
      useEffect(()=> {
         const getMentee = async() => {
             try {

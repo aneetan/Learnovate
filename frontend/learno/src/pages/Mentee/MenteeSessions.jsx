@@ -34,39 +34,9 @@ const MenteeSessions = () => {
 
   const [filterStatus, setFilterStatus] = useState('all');
 
-  const handleMarkComplete = async(sessionId) => {
-    try {
-        const token = localStorage.getItem("token")
-        const response = await axios.put(`${API_URL}/mentor/updateStatus/${sessionId}`,{}, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-        })
-
-        setSessions(prevSessions => 
-          prevSessions.map(session => 
-            session.bookingId === sessionId
-            ?{...session, status: "completed"}
-            :session
-          )
-        )
-
-        console.log(response.data)
-        
-      } catch (err) {
-        console.error('Error marking session complete:', {
-          message: err.message,
-          response: err.response?.data,
-          status: err.response?.status
-        });
-      } 
-
-  };
-
   const handleMessage = (session) => {
     if(sessions){
-      navigate(`/mentor/chat/${session.user.userId}`)
+      navigate(`/mentee/chat/${session.mentor.user.userId}`)
     }
   };
 
@@ -175,7 +145,6 @@ const MenteeSessions = () => {
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-gray-900 mb-1">{session.topic}</h3>
-                <p className="text-sm text-gray-600 mb-2">{session.notes}</p>
                 <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(session.status)}`}>
                   {getStatusText(session.status)}
                 </span>
@@ -189,7 +158,7 @@ const MenteeSessions = () => {
             <div className="space-y-2 mb-4">
               <div className="flex items-center text-sm text-gray-600">
                 <FaUser className="w-4 h-4 mr-2 text-gray-400" />
-                <span className="font-medium">{session.user.name}</span>
+                <span className="font-medium">{session.mentor.user.name}</span>
               </div>
               <div className="flex items-center text-sm text-gray-600">
                 <FaCalendar className="w-4 h-4 mr-2 text-gray-400" />
@@ -213,19 +182,19 @@ const MenteeSessions = () => {
                 <div>
                  <button
                 onClick={() => handleMessage(session)}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 mr-6 rounded-lg transition-colors text-sm font-medium"
                 style={{ backgroundColor: 'var(--primary-color)', color: 'white' }}
               >
                 <FaCommentDots className="w-4 h-4" />
-                Request Again
+                Chat with Mentor
               </button>
-                <button
+                {/* <button
                   onClick={() => handleMarkComplete(session.bookingId)}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
                 >
                   <FaCheck className="w-4 h-4" />
                   Mark Complete
-                </button>
+                </button> */}
                 </div>
               )}
             </div>
