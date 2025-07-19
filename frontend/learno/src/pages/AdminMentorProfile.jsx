@@ -1,65 +1,54 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import DocumentModal from '../components/common/DocumentModal';
 import { FiUser } from 'react-icons/fi';
 import MentorProfileCard from '../components/Mentor/MentorProfileCard';
+import axios from 'axios';
+import { API_URL } from '../config/config';
 
-const dummyMentors = [
-  {
-    id: 'MNT001',
-    name: 'Jane Smith',
-    email: 'jane.smith@example.com',
-    phoneNumber: '9876543210',
-    bio: 'Experienced software engineer passionate about mentoring aspiring developers.',
-    sessionPrice: '5000',
-    areaOfExpertise: 'Technology',
-    professionalTitle: 'Software Engineer',
-    yearsOfExperience: '5+',
-    profileUrl: null,
-  },
-  {
-    id: 'MNT002',
-    name: 'Prof. Michael Chen',
-    email: 'michael.chen@example.com',
-    phoneNumber: '9876543211',
-    bio: 'UI/UX expert and mentor.',
-    sessionPrice: '6000',
-    areaOfExpertise: 'Design',
-    professionalTitle: 'Professor',
-    yearsOfExperience: '10+',
-    profileUrl: null,
-  },
-  {
-    id: 'MNT003',
-    name: 'Alex Rodriguez',
-    email: 'alex.rodriguez@example.com',
-    phoneNumber: '9876543212',
-    bio: 'Python developer and mentor.',
-    sessionPrice: '4000',
-    areaOfExpertise: 'Programming',
-    professionalTitle: 'Developer',
-    yearsOfExperience: '3+',
-    profileUrl: null,
-  },
-];
 
-const AdminMentorProfile = () => {
+const AdminMentorProfile = ({isAdmin}) => {
   const { mentorId } = useParams();
-  const mentor = dummyMentors.find((m) => m.id === mentorId);
+  const [mentor, setMentor] = useState(null);
   const [showDocumentModal, setShowDocumentModal] = useState(false);
   const [showApprove, setShowApprove] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  if (!mentor) {
-    return (
-      <div className="max-w-2xl mx-auto mt-16 text-center text-gray-500">
-        Mentor not found.
-      </div>
-    );
-  }
+  useEffect(() => {
+    const fetchMentorProfile = async () => {
+      setLoading(true)
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${API_URL}/mentee/getMentors/${mentorId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        console.log(response.data)
+        setMentor(response.data)
+      } catch (err) {
+        setError(err.message)
+      } finally{
+        setLoading(false)
+      }
+    }
+
+    fetchMentorProfile()
+  }, [mentorId]);
 
   return (
+    loading ? (
+      <div> Loading.... </div>
+    ) : error ? (
+        <div className="text-red-500">{error}</div>
+      ) : !mentor ? (
+    <div> Mentor data not available </div>
+  ) : (
+    
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
       <div className="w-full max-w-2xl transition-opacity duration-500">
+
         {/* Banner */}
         <div className="bg-gradient-to-r from-[#26A69A] to-[#148FA8] h-40 sm:h-48 relative rounded-t-lg shadow-sm">
           <div className="absolute bottom-[-4rem] left-4 sm:left-8">
@@ -81,15 +70,54 @@ const AdminMentorProfile = () => {
           </div>
         </div>
         {/* Profile Card */}
-        <MentorProfileCard mentor={mentor}/>
-        {showDocumentModal && (
-          <DocumentModal
-            isOpen={showDocumentModal}
-            onClose={() => setShowDocumentModal(false)}
-            userData={mentor}
-            type="mentor"
-          />
-        )}
+         <div className="bg-white rounded-b-lg shadow-lg pt-20 pb-8 px-8 mt-0">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{mentor.user.name}</h2>
+          <p className=" text-gray-500 mb-6">{mentor.title}</p>
+          <div className="grid grid-cols-1 gap-4 mb-4">
+            <div>
+              <span className="block text-xs text-gray-500 mb-1">Name</span>
+              <span className="text-gray-800">{mentor.user.name}</span>
+            </div>
+            <div>
+              <span className="block text-xs text-gray-500 mb-1">Email</span>
+              <span className="text-gray-800">{mentor.user.email}</span>
+            </div>
+            <div>
+              <span className="block text-xs text-gray-500 mb-1">Phone Number</span>
+              <span className="text-gray-800">{mentor.phoneNumber}</span>
+            </div>
+            <div>
+              <span className="block text-xs text-gray-500 mb-1">Bio</span>
+              <span className="text-gray-800 whitespace-pre-line">{mentor.bio}</span>
+            </div>
+            <div>
+              <span className="block text-xs text-gray-500 mb-1">Session Price (Nrs.)</span>
+              <span className="text-gray-800">Nrs. {mentor.price}</span>
+            </div>
+            <div>
+              <span className="block text-xs text-gray-500 mb-1">Area of Expertise</span>
+              <span className="text-gray-800">{mentor.area}</span>
+            </div>
+            <div>
+              <span className="block text-xs text-gray-500 mb-1">Professional Title</span>
+              <span className="text-gray-800">{mentor.title}</span>
+            </div>
+            <div>
+              <span className="block text-xs text-gray-500 mb-1">Years of Experience</span>
+              <span className="text-gray-800">{mentor.experience}</span>
+            </div>
+          </div>
+        </div>
+        {isAdmin  && (
+          <div>
+          {showDocumentModal && (
+            <DocumentModal
+              isOpen={showDocumentModal}
+              onClose={() => setShowDocumentModal(false)}
+              userData={mentor}
+              type="mentor"
+            />
+          )}
         {showApprove && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
             <div className="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full">
@@ -112,8 +140,11 @@ const AdminMentorProfile = () => {
             </div>
           </div>
         )}
+         </div>
+        )}
       </div>
     </div>
+    )
   );
 };
 

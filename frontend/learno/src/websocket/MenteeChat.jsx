@@ -3,25 +3,29 @@ import WebSocketClient from './ChatRoom'
 import ChatRoom from './ChatRoom'
 import axios from 'axios';
 import { API_URL, getUserId } from '../config/config';
+import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 const MenteeChat = () => {
-    const [currentUser, setCurrentUser] = useState(null);
     const [mentee, setMentee] = useState(null);
     const userId = getUserId(localStorage.getItem("token"));
+    const currentUser = useSelector((state) => state.user.user);
+     let params = useParams();
+    const receiverId = params.receiverId;
 
-    useEffect(()=> {
-        const getUser = async() => {
-            try {
-                const response = await axios.get(`${API_URL}/auth/getUsers/${userId}`)
-                setCurrentUser(response.data)
-                console.log(response.data)
+    // useEffect(()=> {
+    //     const getUser = async() => {
+    //         try {
+    //             const response = await axios.get(`${API_URL}/auth/getUsers/${user.id}`)
+    //             setCurrentUser(response.data)
+    //             console.log(response.data)
 
-            } catch (err) {
-                console.log(err.message)
-            }
-        }
-        getUser();
-    }, [userId])
+    //         } catch (err) {
+    //             console.log(err.message)
+    //         }
+    //     }
+    //     getUser();
+    // }, [user.id])
 
      useEffect(()=> {
         const getMentee = async() => {
@@ -39,7 +43,7 @@ const MenteeChat = () => {
   return (
     <div>
          {currentUser ? (
-            <ChatRoom currentUser={currentUser} roleDetails={mentee} />
+            <ChatRoom currentUser={currentUser} roleDetails={mentee} receiverId={receiverId} />
             ) : (
             <p>Loading chat...</p> 
             )}

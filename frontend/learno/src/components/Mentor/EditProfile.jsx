@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiUser, FiMail, FiPhone, FiAward, FiLayers } from 'react-icons/fi';
+import { FiUser, FiMail, FiPhone, FiAward, FiLayers, FiCamera } from 'react-icons/fi';
 import { FiSave, FiX } from 'react-icons/fi';
 
 const EditProfile = ({
@@ -8,10 +8,6 @@ const EditProfile = ({
   handleChange,
   handleSave,
   handleCancel,
-  triggerFileInput,
-  profilePreview,
-  fileInputRef,
-  handleProfilePictureChange
 }) => {
   const renderInput = (label, name, value, icon, isSelect = false, options = [], isTextarea = false, isNumber = false) => (
     <div className="flex flex-col gap-2 w-full border-b border-gray-200 py-4 last:border-b-0 transition-opacity duration-300">
@@ -83,36 +79,7 @@ const EditProfile = ({
           </button>
         </div>
       </div>
-
-      <div className="relative group transform hover:scale-105 transition duration-300 mt-4">
-        <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-white overflow-hidden bg-gray-100 shadow-lg mx-auto">
-          {profilePreview ? (
-            <img
-              src={profilePreview}
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-200">
-              <FiUser className="w-16 h-16 sm:w-20 sm:h-20 text-gray-400" />
-            </div>
-          )}
-        </div>
-        <button
-          onClick={triggerFileInput}
-          className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition duration-300 w-32 h-32 sm:w-40 sm:h-40 mx-auto"
-        >
-          <FiCamera className="text-white w-8 h-8 sm:w-10 sm:h-10" />
-        </button>
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleProfilePictureChange}
-          accept="image/*"
-          className="hidden"
-        />
-      </div>
-
+ 
       <div className="flex flex-col gap-2 mt-6">
         {renderInput('Name', 'name', editedProfile?.user?.name, <FiUser />)}
         {renderInput('Email', 'email', editedProfile?.user?.email, <FiMail />)}

@@ -3,8 +3,8 @@ import React from 'react'
 const MentorProfileCard = (mentor) => {
   return (
      <div className="bg-white rounded-b-lg shadow-lg pt-20 pb-8 px-8 mt-0">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">{mentor.name}</h2>
-          <p className="text-center text-gray-500 mb-6">{mentor.professionalTitle}</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">{mentor.user.name}</h2>
+          <p className="text-center text-gray-500 mb-6">{mentor.title}</p>
           <div className="grid grid-cols-1 gap-4 mb-4">
             <div>
               <span className="block text-xs text-gray-500 mb-1">Name</span>

@@ -24,5 +24,7 @@ public interface MenteeService {
 
     Mentee getMenteeByUserId(int id);
 
+    List<MentorBookings> getSessionsByUser(int userId);
+
 
 }

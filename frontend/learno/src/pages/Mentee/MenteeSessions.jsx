@@ -5,7 +5,7 @@ import axios from 'axios';
 import { API_URL, formatTimeTo12Hour } from '../../config/config';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const MentorSessions = () => {
+const MenteeSessions = () => {
   const [sessions, setSessions] = useState([]);
   const [selectedSession, setSelectedSession] = useState(null);
   let params = useParams();
@@ -15,8 +15,8 @@ const MentorSessions = () => {
     const fetchSessionsByMentor = async () => {
       try {
         const token = localStorage.getItem("token")
-        const response = await axios.get(`${API_URL}/mentor/sessions/${params.userId}`, {
-          headers: {
+        const response = await axios.get(`${API_URL}/mentee/getSessions/${params.userId}`, {
+          headers: { 
             Authorization: `Bearer ${token}`,
           },
         })
@@ -69,6 +69,12 @@ const MentorSessions = () => {
       navigate(`/mentor/chat/${session.user.userId}`)
     }
   };
+
+  const handleRequestAgain = (mentorId) => {
+    if(sessions){
+        navigate(`/mentee/calendar/${mentorId}`)
+    }
+  }
 
   const filteredSessions = sessions.filter(session => {
       const statusMatch = filterStatus === 'all' || session.status === filterStatus;
@@ -193,15 +199,26 @@ const MentorSessions = () => {
 
             {/* Action Buttons */}
             <div className="flex gap-3">
-              <button
+                {session.status === 'completed' && (
+                 <button
+                onClick={() => handleRequestAgain(session.mentor.mentorId)}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium"
+                style={{ backgroundColor: 'var(--primary-color)', color: 'white' }}
+              >
+                Request Again
+              </button>
+              )}
+             
+              {session.status === 'pending' && (
+                <div>
+                 <button
                 onClick={() => handleMessage(session)}
                 className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium"
                 style={{ backgroundColor: 'var(--primary-color)', color: 'white' }}
               >
                 <FaCommentDots className="w-4 h-4" />
-                Message
+                Request Again
               </button>
-              {session.status === 'pending' && (
                 <button
                   onClick={() => handleMarkComplete(session.bookingId)}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
@@ -209,6 +226,7 @@ const MentorSessions = () => {
                   <FaCheck className="w-4 h-4" />
                   Mark Complete
                 </button>
+                </div>
               )}
             </div>
           </motion.div>
@@ -238,4 +256,4 @@ const MentorSessions = () => {
   );
 };
 
-export default MentorSessions; 
+export default MenteeSessions; 

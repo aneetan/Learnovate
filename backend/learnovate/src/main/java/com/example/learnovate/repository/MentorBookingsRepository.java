@@ -13,6 +13,8 @@ public interface MentorBookingsRepository extends JpaRepository<MentorBookings, 
     Optional<MentorBookings> findByUser(Mentor mentor);
     List<MentorBookings> findByMentor(Mentor mentor);
 
+    List<MentorBookings> findByUser(RegisteredUser user);
+
     Optional<MentorBookings> findByUserAndMentor(RegisteredUser user, Mentor mentor);
 
 }

@@ -86,8 +86,9 @@ const ChatRoom = ({ currentUser, roleDetails,  receiverId = null }) => {
       setError(null);
 
       // Fetch partner details if not already available
-      if (!partner.details) {
-        const details = await fetchPartnerDetails(partner.userId);
+      let details = partner.details;
+      if (!details) {
+        details = await fetchPartnerDetails(partner.userId);
         // Update the chat history with the fetched details
         setChatHistory(prev => prev.map(chat => 
           chat.roomId === selectedRoomId 

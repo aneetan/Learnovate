@@ -40,6 +40,7 @@ import ForgotPasswordOtp from './pages/ForgotPasswordOtp';
 import ResetPassword from './pages/ResetPassword';
 import Availability from './pages/mentor/Availability';
 import EditAvailability from './components/Mentor/EditAvailability';
+import MenteeSessions from './pages/Mentee/MenteeSessions';
 
 function App() {
   return (
@@ -80,7 +81,9 @@ function App() {
           <Route path='/mentee' element={<MenteeLayout />}>
             <Route path='dashboard' element={<MenteeDashboard />} />
             <Route path='booking-request/:mentorId' element={<BookingRequest />} />
+            <Route path='sessions/:userId' element={<MenteeSessions />} />
             <Route path='viewMentors' element={<MentorDirectory />} />
+            <Route path='mentorProfile/:mentorId' element={<AdminMentorProfile isAdmin={false} />} />
             <Route path='calendar/:mentorId' element={<CalendarPreview />} />
             <Route path="checkout/:mentorId/:bookingId" element={<CheckoutPage />} />
             <Route path="payment-success" element={<EsewaSuccess />} />

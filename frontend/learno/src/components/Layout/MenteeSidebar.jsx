@@ -4,6 +4,9 @@ import { FaRegCalendarAlt, FaAddressBook, FaRegCommentDots, FaUserCircle, FaSign
 import { MdDashboard, MdPerson, MdTask, MdToday } from "react-icons/md";
 import logoImage from "../../assets/images/learno_logo_long.png";
 import logoImage2 from "../../assets/images/learno_logo_only.png";
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { API_URL } from '../../config/config';
 
 const MenteeSidebar = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -11,6 +14,9 @@ const MenteeSidebar = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [profile, setProfile] = useState("");
+  const user = useSelector((state) => state.user.user);
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -25,12 +31,25 @@ const MenteeSidebar = ({ children }) => {
     setSidebarOpen(!isMobile);
   }, [isMobile]);
 
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/auth/getMentee/${user.id}`);
+      const data = response.data;
+      setProfile(data.profileUrl);
+    } catch (e) {
+      console.log("error", e);
+    }
+  };
+
+  fetchData();
+}, [user.id]);
+
   const menuItems = [
     { name: 'Dashboard', icon: <MdDashboard />, path: '/mentee/dashboard' },
     { name: 'Mentors', icon: <MdPerson />, path: '/mentee/viewMentors' },
-    { name: 'Sessions', icon: <FaAddressBook />, path: '/mentee/sessions' },
+    { name: 'Sessions', icon: <FaAddressBook />, path: `/mentee/sessions/${user.id}`},
     { name: 'Chat', icon: <FaRegCommentDots />, path: '/mentee/chat' },
-    { name: 'Challenges', icon: <MdTask />, path: '/mentee/challenges' },
   ];
 
   return (
@@ -131,8 +150,12 @@ const MenteeSidebar = ({ children }) => {
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
             >
-              <FaUserCircle className="text-2xl text-gray-600" />
-              <span className="hidden md:block text-base font-semibold">Mentee</span>
+              <img 
+              src={profile} 
+              alt="profile" 
+              className="rounded-full w-12 h-12 object-cover border-2 border-gray-200"
+            />
+              <span className="hidden md:block text-base font-semibold"> {user.name}</span>
             </button>
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
@@ -145,7 +168,7 @@ const MenteeSidebar = ({ children }) => {
                 >
                   My Profile
                 </button>
-                <a href="#" className="block px-4 py-2 hover:bg-gray-100 transition flex items-center space-x-2 text-sm">
+                <a href="#" className="px-4 py-2 hover:bg-gray-100 transition flex items-center space-x-2 text-sm">
                   <FaSignOutAlt /> <span>Logout</span>
                 </a>
               </div>

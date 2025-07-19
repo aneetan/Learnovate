@@ -133,6 +133,20 @@ public class MentorController {
         }
     }
 
+    @PutMapping(value = "/updateProfile")
+    public ResponseEntity<?> updateProfile(@RequestBody MentorDTO mentorDTO) {
+        try {
+            Map<String, Object> response = mentorService.updateProfile(mentorDTO);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response);
+        } catch (UnauthorizedAccessException e) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("You are unauthorized to access the system!");
+        }
+    }
+
 
 
 }

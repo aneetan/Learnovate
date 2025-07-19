@@ -44,6 +44,7 @@ const MentorDirectory = ({ currentUser }) => {
             Authorization: `Bearer ${token}`,
           },
         })
+        
         setMentors(response.data)
       } catch (err) {
         setError(err.message)
@@ -68,6 +69,8 @@ const MentorDirectory = ({ currentUser }) => {
 
   const filteredMentors = mentors
     .filter((mentor) => {
+      const isApproved = mentor.status === "approved"; 
+
       const matchesSearch = 
         mentor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         mentor.bio?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -77,7 +80,7 @@ const MentorDirectory = ({ currentUser }) => {
         selectedCategory === "All" || 
         getMentorDomainScore(mentor, selectedCategory) > 0
 
-      return matchesSearch && matchesCategory
+      return isApproved && matchesSearch && matchesCategory
     })
     .sort((a, b) => {
       if (selectedCategory === "All") return 0
@@ -91,7 +94,7 @@ const MentorDirectory = ({ currentUser }) => {
     })
 
   const handleViewProfile = (mentor) => {
-    navigate(`/mentor/${mentor.mentorId}`)
+    navigate(`/mentee/mentorProfile/${mentor.mentorId}`)
   }
 
   const handleViewSchedule = (mentor) => {

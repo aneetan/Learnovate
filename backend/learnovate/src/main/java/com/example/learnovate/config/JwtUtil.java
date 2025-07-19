@@ -54,6 +54,7 @@ public class JwtUtil {
         return extractAllClaims(token).get("role", String.class);
     }
 
+
     // Convert the role into Spring Security authorities
     public List<GrantedAuthority> getAuthoritiesFromJwtToken(String token) {
         String role = extractRole(token);  // Get the single role
