@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaRegCalendarAlt, FaAddressBook, FaRegCommentDots, FaUserCircle, FaSignOutAlt, FaBars, FaSearch } from 'react-icons/fa';
+import { FaRegCalendarAlt, FaAddressBook, FaRegCommentDots, FaUserCircle, FaSignOutAlt, FaBars, FaSearch, FaAngleDown } from 'react-icons/fa';
 import { MdDashboard, MdPerson, MdTask, MdToday } from "react-icons/md";
 import logoImage from "../../assets/images/learno_logo_long.png";
 import logoImage2 from "../../assets/images/learno_logo_only.png";
@@ -44,6 +44,18 @@ const MenteeSidebar = ({ children }) => {
 
   fetchData();
 }, [user.id]);
+
+const handleLogout = async() => {
+    const response = await axios.post(`${API_URL}/auth/logout`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      navigate('/login')
+  }
 
   const menuItems = [
     { name: 'Dashboard', icon: <MdDashboard />, path: '/mentee/dashboard' },
@@ -156,6 +168,8 @@ const MenteeSidebar = ({ children }) => {
               className="rounded-full w-12 h-12 object-cover border-2 border-gray-200"
             />
               <span className="hidden md:block text-base font-semibold"> {user.name}</span>
+              <FaAngleDown/>
+              
             </button>
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
@@ -168,9 +182,10 @@ const MenteeSidebar = ({ children }) => {
                 >
                   My Profile
                 </button>
-                <a href="#" className="px-4 py-2 hover:bg-gray-100 transition flex items-center space-x-2 text-sm">
+                <button onClick={handleLogout}
+                  className="px-4 py-2 hover:bg-gray-100 transition flex items-center text-red-500 space-x-2 text-sm">
                   <FaSignOutAlt /> <span>Logout</span>
-                </a>
+                </button>
               </div>
             )}
           </div>

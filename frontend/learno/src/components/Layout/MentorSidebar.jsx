@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaRegCalendarAlt, FaAddressBook, FaRegCommentDots, FaUserCircle, FaSignOutAlt, FaBars, FaSearch } from 'react-icons/fa';
+import { FaRegCalendarAlt, FaAddressBook, FaRegCommentDots, FaUserCircle, FaSignOutAlt, FaBars, FaSearch, FaAngleDown } from 'react-icons/fa';
 import { MdDashboard, MdToday } from "react-icons/md";
 import logoImage from "../../assets/images/learno_logo_long.png";
 import logoImage2 from "../../assets/images/learno_logo_only.png";
@@ -12,6 +12,7 @@ const MentorSidebar = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [profile, setProfile] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector((state) => state.user.user);
@@ -30,6 +31,20 @@ const MentorSidebar = ({ children }) => {
   useEffect(() => {
     setSidebarOpen(!isMobile);
   }, [isMobile]);
+
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/auth/getMentor/${user.id}`);
+      const data = response.data;
+      setProfile(data.profileUrl);
+    } catch (e) {
+      console.log("error", e);
+    }
+  };
+
+  fetchData();
+}, [user.id]);
 
   const handleLogout = async() => {
     const response = await axios.post(`${API_URL}/auth/logout`, {
@@ -148,8 +163,13 @@ const MentorSidebar = ({ children }) => {
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
             >
-              <FaUserCircle className="text-2xl text-gray-600" />
+               <img 
+              src={profile} 
+              alt="profile" 
+              className="rounded-full w-12 h-12 object-cover border-2 border-gray-200"
+            />
               <span className="hidden md:block text-base font-semibold">{user.name} </span>
+              <FaAngleDown/>
             </button>
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
