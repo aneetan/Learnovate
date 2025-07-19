@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import axios from 'axios';
-import { API_URL } from '../config/config';
+import { API_URL } from '../../config/config';
 
 const ChatRoom = ({ currentUser, roleDetails,  receiverId = null }) => {
   const [messages, setMessages] = useState([]);

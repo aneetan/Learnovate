@@ -1,29 +1,25 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaSearch, FaEdit, FaTrash, FaEye, FaUserTie, FaFileAlt } from 'react-icons/fa';
-import { PagePreloader } from '../components/common/Preloader';
-import DocumentModal from '../components/common/DocumentModal';
-import DetailsModal from '../components/common/DetailsModal';
-import ConfirmationModal from '../components/common/ConfirmationModal';
-import EditModal from '../components/common/EditModal';
-import { useNavigate } from 'react-router-dom';
+import { FaSearch, FaEdit, FaTrash, FaEye, FaUsers, FaFileAlt } from 'react-icons/fa';
+import { PagePreloader } from '../../components/common/Preloader';
+import DocumentModal from '../../components/common/DocumentModal';
+import DetailsModal from '../../components/common/DetailsModal';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
+import EditModal from '../../components/common/EditModal';
 
-const AdminMentors = () => {
+const AdminUsers = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [showDocumentModal, setShowDocumentModal] = useState(false);
-  const [selectedMentor, setSelectedMentor] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [selectedDetailsMentor, setSelectedDetailsMentor] = useState(null);
+  const [selectedDetailsUser, setSelectedDetailsUser] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [mentorToDelete, setMentorToDelete] = useState(null);
+  const [userToDelete, setUserToDelete] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [mentorToEdit, setMentorToEdit] = useState(null);
-  const [statusSortOrder, setStatusSortOrder] = useState(null); // null, 'asc', 'desc'
-
-  const navigate = useNavigate();
+  const [userToEdit, setUserToEdit] = useState(null);
 
   useEffect(() => {
     // Simulate loading time
@@ -34,106 +30,85 @@ const AdminMentors = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Dummy data for mentors
-  const dummyMentors = [
-    { id: 'MNT001', name: 'Dr. Sarah Johnson', email: 'sarah.johnson@example.com', contact: '+1 234-567-8900', interestArea: 'React Development', status: 'Accepted' },
-    { id: 'MNT002', name: 'Prof. Michael Chen', email: 'michael.chen@example.com', contact: '+1 234-567-8901', interestArea: 'UI/UX Design', status: 'Accepted' },
-    { id: 'MNT003', name: 'Alex Rodriguez', email: 'alex.rodriguez@example.com', contact: '+1 234-567-8902', interestArea: 'Python Programming', status: 'Pending' },
-    { id: 'MNT004', name: 'Dr. Emily Davis', email: 'emily.davis@example.com', contact: '+1 234-567-8903', interestArea: 'Data Science', status: 'Accepted' },
-    { id: 'MNT005', name: 'James Wilson', email: 'james.wilson@example.com', contact: '+1 234-567-8904', interestArea: 'Mobile Development', status: 'Rejected' },
-    { id: 'MNT006', name: 'Lisa Anderson', email: 'lisa.anderson@example.com', contact: '+1 234-567-8905', interestArea: 'Web Development', status: 'Accepted' },
-    { id: 'MNT007', name: 'David Thompson', email: 'david.thompson@example.com', contact: '+1 234-567-8906', interestArea: 'DevOps', status: 'Pending' },
-    { id: 'MNT008', name: 'Maria Garcia', email: 'maria.garcia@example.com', contact: '+1 234-567-8907', interestArea: 'Product Management', status: 'Accepted' },
-    { id: 'MNT009', name: 'Robert Taylor', email: 'robert.taylor@example.com', contact: '+1 234-567-8908', interestArea: 'Machine Learning', status: 'Accepted' },
-    { id: 'MNT010', name: 'Jennifer Brown', email: 'jennifer.brown@example.com', contact: '+1 234-567-8909', interestArea: 'Cybersecurity', status: 'Pending' },
-    { id: 'MNT011', name: 'Christopher Lee', email: 'christopher.lee@example.com', contact: '+1 234-567-8910', interestArea: 'Blockchain', status: 'Accepted' },
-    { id: 'MNT012', name: 'Amanda White', email: 'amanda.white@example.com', contact: '+1 234-567-8911', interestArea: 'Cloud Computing', status: 'Rejected' },
-    { id: 'MNT013', name: 'Daniel Martinez', email: 'daniel.martinez@example.com', contact: '+1 234-567-8912', interestArea: 'Game Development', status: 'Accepted' },
-    { id: 'MNT014', name: 'Michelle Clark', email: 'michelle.clark@example.com', contact: '+1 234-567-8913', interestArea: 'Digital Marketing', status: 'Pending' },
-    { id: 'MNT015', name: 'Kevin Lewis', email: 'kevin.lewis@example.com', contact: '+1 234-567-8914', interestArea: 'Artificial Intelligence', status: 'Accepted' },
+  // Dummy data for users
+  const dummyUsers = [
+    { id: 'USR001', name: 'John Doe', email: 'john.doe@example.com', contact: '+1 234-567-8900', interestArea: 'React Development', status: 'Student' },
+    { id: 'USR002', name: 'Jane Smith', email: 'jane.smith@example.com', contact: '+1 234-567-8901', interestArea: 'UI/UX Design', status: 'Early Professional' },
+    { id: 'USR003', name: 'Mike Johnson', email: 'mike.johnson@example.com', contact: '+1 234-567-8902', interestArea: 'Python Programming', status: 'Job Seeker' },
+    { id: 'USR004', name: 'Sarah Wilson', email: 'sarah.wilson@example.com', contact: '+1 234-567-8903', interestArea: 'Data Science', status: 'Student' },
+    { id: 'USR005', name: 'David Brown', email: 'david.brown@example.com', contact: '+1 234-567-8904', interestArea: 'Mobile Development', status: 'Early Professional' },
+    { id: 'USR006', name: 'Emily Davis', email: 'emily.davis@example.com', contact: '+1 234-567-8905', interestArea: 'Web Development', status: 'Job Seeker' },
+    { id: 'USR007', name: 'Michael Wilson', email: 'michael.wilson@example.com', contact: '+1 234-567-8906', interestArea: 'DevOps', status: 'Early Professional' },
+    { id: 'USR008', name: 'Lisa Anderson', email: 'lisa.anderson@example.com', contact: '+1 234-567-8907', interestArea: 'Product Management', status: 'Student' },
+    { id: 'USR009', name: 'Robert Taylor', email: 'robert.taylor@example.com', contact: '+1 234-567-8908', interestArea: 'Machine Learning', status: 'Early Professional' },
+    { id: 'USR010', name: 'Jennifer Garcia', email: 'jennifer.garcia@example.com', contact: '+1 234-567-8909', interestArea: 'Cybersecurity', status: 'Job Seeker' },
+    { id: 'USR011', name: 'Christopher Martinez', email: 'christopher.martinez@example.com', contact: '+1 234-567-8910', interestArea: 'Blockchain', status: 'Student' },
+    { id: 'USR012', name: 'Amanda Rodriguez', email: 'amanda.rodriguez@example.com', contact: '+1 234-567-8911', interestArea: 'Cloud Computing', status: 'Early Professional' },
+    { id: 'USR013', name: 'Daniel Lee', email: 'daniel.lee@example.com', contact: '+1 234-567-8912', interestArea: 'Game Development', status: 'Student' },
+    { id: 'USR014', name: 'Michelle White', email: 'michelle.white@example.com', contact: '+1 234-567-8913', interestArea: 'Digital Marketing', status: 'Job Seeker' },
+    { id: 'USR015', name: 'Kevin Thompson', email: 'kevin.thompson@example.com', contact: '+1 234-567-8914', interestArea: 'Artificial Intelligence', status: 'Early Professional' },
   ];
 
-  // Filter mentors based on search term
-  const filteredMentors = useMemo(() => {
-    return dummyMentors.filter(mentor =>
-      mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mentor.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mentor.interestArea.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mentor.id.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filter users based on search term
+  const filteredUsers = useMemo(() => {
+    return dummyUsers.filter(user =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.interestArea.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.id.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [searchTerm]);
 
-  // Sort mentors by status if statusSortOrder is set
-  const sortedMentors = useMemo(() => {
-    if (!statusSortOrder) return filteredMentors;
-    return [...filteredMentors].sort((a, b) => {
-      if (a.status < b.status) return statusSortOrder === 'asc' ? -1 : 1;
-      if (a.status > b.status) return statusSortOrder === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }, [filteredMentors, statusSortOrder]);
-
   // Calculate pagination
-  const totalPages = Math.ceil(sortedMentors.length / entriesPerPage);
+  const totalPages = Math.ceil(filteredUsers.length / entriesPerPage);
   const startIndex = (currentPage - 1) * entriesPerPage;
   const endIndex = startIndex + entriesPerPage;
-  const currentMentors = sortedMentors.slice(startIndex, endIndex);
+  const currentUsers = filteredUsers.slice(startIndex, endIndex);
 
-  const handleEdit = (mentorId) => {
-    const mentor = currentMentors.find(m => m.id === mentorId);
-    setMentorToEdit(mentor);
+  const handleEdit = (userId) => {
+    const user = currentUsers.find(u => u.id === userId);
+    setUserToEdit(user);
     setShowEditModal(true);
   };
-  const handleEditSave = (updatedMentor) => {
+  const handleEditSave = (updatedUser) => {
     setShowEditModal(false);
-    setMentorToEdit(null);
-    // Optionally: update mentor in state
+    setUserToEdit(null);
+    // Optionally: update user in state
   };
 
-  const handleDelete = (mentorId) => {
-    const mentor = currentMentors.find(m => m.id === mentorId);
-    setMentorToDelete(mentor);
+  const handleDelete = (userId) => {
+    const user = currentUsers.find(u => u.id === userId);
+    setUserToDelete(user);
     setShowDeleteConfirm(true);
   };
   const confirmDelete = () => {
+    // Remove user from dummyUsers (in real app, call API)
     setShowDeleteConfirm(false);
-    setMentorToDelete(null);
-    // Optionally: setMentors(mentors => mentors.filter(m => m.id !== mentorToDelete.id));
+    setUserToDelete(null);
+    // Optionally: setUsers(users => users.filter(u => u.id !== userToDelete.id));
   };
 
-  const handleViewDocument = (mentor) => {
-    setSelectedMentor(mentor);
+  const handleViewDocument = (user) => {
+    setSelectedUser(user);
     setShowDocumentModal(true);
   };
 
-  const handleViewDetails = (mentor) => {
-    setSelectedDetailsMentor(mentor);
+  const handleViewDetails = (user) => {
+    setSelectedDetailsUser(user);
     setShowDetailsModal(true);
   };
 
-  const handleNameClick = (mentor) => {
-    navigate(`/test-adminDashboard/mentors/${mentor.id}`);
+  const handleNameClick = (user) => {
+    setSelectedDetailsUser(user);
+    setShowDetailsModal(true);
   };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Accepted':
-        return 'bg-green-100 text-green-800';
-      case 'Pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'Rejected':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   if (isLoading) {
-    return <PagePreloader text="Loading Mentors..." />;
+    return <PagePreloader text="Loading Users..." />;
   }
 
   return (
@@ -141,10 +116,10 @@ const AdminMentors = () => {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold flex items-center gap-3" style={{ color: 'var(--primary-color)' }}>
-          <FaUserTie className="w-6 h-6" />
-          Mentors Management
+          <FaUsers className="w-6 h-6" />
+          Users Management
         </h1>
-        <p className="text-gray-600 mt-2">Manage all registered mentors and their application status.</p>
+        <p className="text-gray-600 mt-2">Manage all registered users on the platform.</p>
       </div>
 
       {/* Search and Entries */}
@@ -153,7 +128,7 @@ const AdminMentors = () => {
           <FaSearch className="absolute left-3 top-3 text-gray-400" />
           <input
             type="text"
-            placeholder="Search mentors..."
+            placeholder="Search users..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -195,19 +170,15 @@ const AdminMentors = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest Area</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" onClick={() => setStatusSortOrder(statusSortOrder === 'asc' ? 'desc' : 'asc')}>
-                  Status
-                  {statusSortOrder === 'asc' && <span>▲</span>}
-                  {statusSortOrder === 'desc' && <span>▼</span>}
-                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Status</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documents</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {currentMentors.map((mentor, index) => (
+              {currentUsers.map((user, index) => (
                 <motion.tr
-                  key={mentor.id}
+                  key={user.id}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
@@ -217,30 +188,28 @@ const AdminMentors = () => {
                     <div className="flex-shrink-0 h-10 w-10">
                       <img
                         className="h-10 w-10 rounded-full object-cover"
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(mentor.name)}&background=6366f1&color=fff&size=40`}
-                        alt={mentor.name}
+                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=fff&size=40`}
+                        alt={user.name}
                       />
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     <button
-                      onClick={() => handleNameClick(mentor)}
+                      onClick={() => handleNameClick(user)}
                       className="text-blue-600 hover:text-blue-900 hover:underline cursor-pointer"
                     >
-                      {mentor.name}
+                      {user.name}
                     </button>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{mentor.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{mentor.contact}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{mentor.interestArea}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.contact}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.interestArea}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(mentor.status)}`}>
-                      {mentor.status}
-                    </span>
+                    <span className="text-sm text-gray-900">{user.status}</span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
-                      onClick={() => handleViewDocument(mentor)}
+                      onClick={() => handleViewDocument(user)}
                       className="text-sm font-medium flex items-center space-x-1"
                       style={{ color: 'var(--primary-color)' }}
                     >
@@ -250,9 +219,16 @@ const AdminMentors = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
-                      {/* Remove Edit button, keep only Delete */}
                       <button
-                        onClick={() => handleDelete(mentor.id)}
+                        onClick={() => handleEdit(user.id)}
+                        className="p-1 rounded"
+                        style={{ color: 'var(--primary-color)' }}
+                        title="Edit"
+                      >
+                        <FaEdit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user.id)}
                         className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
                         title="Delete"
                       >
@@ -286,7 +262,7 @@ const AdminMentors = () => {
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{Math.min(endIndex, sortedMentors.length)}</span> of <span className="font-medium">{sortedMentors.length}</span> results
+                Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{Math.min(endIndex, filteredUsers.length)}</span> of <span className="font-medium">{filteredUsers.length}</span> results
               </p>
             </div>
             <div>
@@ -335,30 +311,30 @@ const AdminMentors = () => {
       <DocumentModal
         isOpen={showDocumentModal}
         onClose={() => setShowDocumentModal(false)}
-        userData={selectedMentor}
-        type="mentor"
+        userData={selectedUser}
+        type="user"
       />
       <DetailsModal
         isOpen={showDetailsModal}
         onClose={() => setShowDetailsModal(false)}
-        userData={selectedDetailsMentor}
-        type="mentor"
+        userData={selectedDetailsUser}
+        type="user"
       />
       <EditModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
         onSave={handleEditSave}
-        data={mentorToEdit}
-        type="mentor"
+        data={userToEdit}
+        type="user"
       />
       <ConfirmationModal
         isOpen={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}
         onConfirm={confirmDelete}
-        message={`Are you sure you want to delete this mentor? This action cannot be undone.`}
+        message={`Are you sure you want to delete this user? This action cannot be undone.`}
       />
     </div>
   );
 };
 
-export default AdminMentors;
+export default AdminUsers; 

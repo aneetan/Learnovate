@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import DocumentModal from '../components/common/DocumentModal';
+import DocumentModal from '../../components/common/DocumentModal';
 import { FiUser } from 'react-icons/fi';
-import MentorProfileCard from '../components/Mentor/MentorProfileCard';
+import MentorProfileCard from '../../components/Mentor/MentorProfileCard';
 import axios from 'axios';
-import { API_URL } from '../config/config';
+import { API_URL } from '../../config/config';
 
 
 const AdminMentorProfile = ({isAdmin}) => {

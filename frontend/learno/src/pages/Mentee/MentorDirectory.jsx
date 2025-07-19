@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
-import PageTransition from "../components/common/PageTransition"
+import PageTransition from "../../components/common/PageTransition"
 import "../assets/css/MentorDirectory.css"
 import axios from "axios"
-import { API_URL } from "../config/config"
+import { API_URL } from "../../config/config"
 
 const MentorDirectory = ({ currentUser }) => {
   const [searchTerm, setSearchTerm] = useState("")

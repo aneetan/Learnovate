@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CryptoJS from "crypto-js";
-import { API_URL, getUserId } from "../config/config";
+import { API_URL, getUserId } from "../../config/config";
 import { useParams } from "react-router-dom";
 
 const ESewaPaymentButton = () => {

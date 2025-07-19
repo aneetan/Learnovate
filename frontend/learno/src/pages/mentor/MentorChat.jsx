@@ -1,36 +1,34 @@
 import React, { useEffect, useState } from 'react'
-import WebSocketClient from './ChatRoom'
-import ChatRoom from './ChatRoom'
+import ChatRoom from '../../components/websocket/ChatRoom'
 import axios from 'axios';
-import { API_URL, getUserId } from '../config/config';
-import { useSelector } from 'react-redux';
+import { API_URL, getUserId } from '../../config/config';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-const MenteeChat = () => {
+const MentorChat = () => {
     const [mentee, setMentee] = useState(null);
     const userId = getUserId(localStorage.getItem("token"));
-    const currentUser = useSelector((state) => state.user.user);
-     let params = useParams();
+    let params = useParams();
     const receiverId = params.receiverId;
+    const currentUser = useSelector((state) => state.user.user)
 
     // useEffect(()=> {
     //     const getUser = async() => {
     //         try {
-    //             const response = await axios.get(`${API_URL}/auth/getUsers/${user.id}`)
+    //             const response = await axios.get(`${API_URL}/auth/getUsers/${userId}`)
     //             setCurrentUser(response.data)
-    //             console.log(response.data)
 
     //         } catch (err) {
     //             console.log(err.message)
     //         }
     //     }
     //     getUser();
-    // }, [user.id])
+    // }, [userId])
 
      useEffect(()=> {
         const getMentee = async() => {
             try {
-                const response = await axios.get(`${API_URL}/auth/getMentee/${userId}`,{})
+                const response = await axios.get(`${API_URL}/auth/getMentor/${userId}`,{})
                 setMentee(response.data)
 
             } catch (err) {
@@ -43,7 +41,11 @@ const MenteeChat = () => {
   return (
     <div>
          {currentUser ? (
-            <ChatRoom currentUser={currentUser} roleDetails={mentee} receiverId={receiverId} />
+            <ChatRoom 
+                    currentUser={currentUser} 
+                    roleDetails={mentee} 
+                    receiverId={receiverId} 
+                />
             ) : (
             <p>Loading chat...</p> 
             )}
@@ -51,4 +53,4 @@ const MenteeChat = () => {
   )
 }
 
-export default MenteeChat
+export default MentorChat

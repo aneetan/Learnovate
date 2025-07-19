@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MdDashboard, MdPeople, MdAttachMoney } from 'react-icons/md';
-import { PagePreloader } from '../components/common/Preloader';
+import { PagePreloader } from '../../components/common/Preloader';
 import axios from 'axios';
-import { API_URL } from '../config/config';
-import ApproveMentorModel from '../components/admin/ApproveMentorModel';
-import DeclineMentorModel from '../components/admin/DeclineMentorModal';
+import { API_URL } from '../../config/config';
+import ApproveMentorModel from '../../components/admin/ApproveMentorModel';
+import DeclineMentorModel from '../../components/admin/DeclineMentorModal';
 
 const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);

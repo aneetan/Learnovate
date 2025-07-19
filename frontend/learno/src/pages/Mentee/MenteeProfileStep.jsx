@@ -5,7 +5,7 @@ import logoImage from '../assets/images/learno_logo.png';
 import backgroundImage from '../assets/images/auth_bg.png';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
-import { API_URL, getUserId } from '../config/config'
+import { API_URL, getUserId } from '../../config/config'
 import { jwtDecode } from 'jwt-decode';
 
 const { Option } = Select;

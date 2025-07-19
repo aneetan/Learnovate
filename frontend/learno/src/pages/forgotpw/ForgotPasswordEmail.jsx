@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaEnvelope } from "react-icons/fa";
 import logoImage from "../assets/images/learno_logo.png";
 import backgroundImage from "../assets/images/auth_bg.png";
-import Preloader from "../components/common/Preloader";
+import Preloader from "../../components/common/Preloader";
 
 const ForgotPasswordEmail = () => {
   const [email, setEmail] = useState("");

@@ -3,8 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import logoImage from "../assets/images/learno_logo.png";
 import backgroundImage from "../assets/images/auth_bg.png";
-import Toast from "../components/common/Toast";
-import Preloader from "../components/common/Preloader";
+import Toast from "../../components/common/Toast";
+import Preloader from "../../components/common/Preloader";
 
 const ForgotPasswordOtp = () => {
   const navigate = useNavigate();

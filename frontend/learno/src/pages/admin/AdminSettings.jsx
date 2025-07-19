@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCog, FaLock, FaSignOutAlt, FaCheck } from 'react-icons/fa';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { PagePreloader } from '../components/common/Preloader';
+import { PagePreloader } from '../../components/common/Preloader';
 
 const AdminSettings = () => {
   const [isLoading, setIsLoading] = useState(true);

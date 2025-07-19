@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaSearch, FaEdit, FaTrash, FaEye, FaCalendarAlt } from 'react-icons/fa';
-import { PagePreloader } from '../components/common/Preloader';
-import DetailsModal from '../components/common/DetailsModal';
-import ConfirmationModal from '../components/common/ConfirmationModal';
-import EditModal from '../components/common/EditModal';
+import { PagePreloader } from '../../components/common/Preloader';
+import DetailsModal from '../../components/common/DetailsModal';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
+import EditModal from '../../components/common/EditModal';
 
 const AdminBookings = () => {
   const [isLoading, setIsLoading] = useState(true);

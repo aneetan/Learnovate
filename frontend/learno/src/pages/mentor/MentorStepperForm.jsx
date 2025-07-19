@@ -2,13 +2,13 @@ import { FileOutlined, GroupOutlined, ProfileOutlined } from '@ant-design/icons'
 import { Steps } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import AdditionalInfo from '../components/Mentor/AdditionalInfo';
-import ProfessionalInfo from '../components/Mentor/ProfessionalInfo';
-import DocumentUpload from '../components/Mentor/DocumentUpload';
+import AdditionalInfo from '../../components/Mentor/AdditionalInfo';
+import ProfessionalInfo from '../../components/Mentor/ProfessionalInfo';
+import DocumentUpload from '../../components/Mentor/DocumentUpload';
 import logoImage from "../assets/images/learno_logo.png";
 import backgroundImage from "../assets/images/auth_bg.png";
 import { useSelector } from 'react-redux';
-import { API_URL } from '../config/config';
+import { API_URL } from '../../config/config';
 import { jwtDecode } from 'jwt-decode';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';

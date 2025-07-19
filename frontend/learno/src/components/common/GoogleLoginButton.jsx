@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { auth, googleProvider } from '../firebase/firebase';
+import { auth, googleProvider } from '../../firebase/firebase';
 import { getAuth, signInWithPopup} from 'firebase/auth';
 import { FcGoogle } from 'react-icons/fc';
-import { API_URL, getUserId } from '../config/config';
+import { API_URL, getUserId } from '../../config/config';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 

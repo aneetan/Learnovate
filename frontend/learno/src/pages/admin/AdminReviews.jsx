@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaStar, FaUser, FaEnvelope, FaEye, FaSearch, FaComment, FaThumbsUp, FaLightbulb, FaBug, FaHeart, FaTrash, FaEdit } from 'react-icons/fa';
-import { PagePreloader } from '../components/common/Preloader';
-import DetailsModal from '../components/common/DetailsModal';
-import ConfirmationModal from '../components/common/ConfirmationModal';
-import EditModal from '../components/common/EditModal';
+import { PagePreloader } from '../../components/common/Preloader';
+import DetailsModal from '../../components/common/DetailsModal';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
+import EditModal from '../../components/common/EditModal';
 
 const AdminReviews = () => {
   const [currentPage, setCurrentPage] = useState(1);
