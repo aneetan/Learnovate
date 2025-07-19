@@ -62,8 +62,8 @@ const MenteeDashboard = () => {
     const fetchSessionsByMentor = async () => {
       try {
         const token = localStorage.getItem("token")
-        const response = await axios.get(`${API_URL}/mentor/sessions/${currentUser.id}`, {
-          headers: {
+        const response = await axios.get(`${API_URL}/mentee/getSessions/${currentUser.id}`, {
+          headers: { 
             Authorization: `Bearer ${token}`,
           },
         })
@@ -74,31 +74,7 @@ const MenteeDashboard = () => {
     }
 
     fetchSessionsByMentor();
-  }, [currentUser.id])
-
-  useEffect(() => {
-    const findTransactionsByUser = async () => {
-      try {
-        const token = localStorage.getItem("token")
-        const response = await axios.get(`${API_URL}/mentor/getTransactions/${currentUser.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        setTransactions(response.data)
-
-        const sum = response.data.reduce((accumulator, transaction) => {
-          return accumulator + transaction.amount;
-        }, 0);
-        
-        setTotalAmount(sum);
-      } catch (err) {
-        console.log(err.message)
-      } 
-    }
-
-    findTransactionsByUser();
-  }, [currentUser.id])
+  }, [currentUser.id]);
 
   return (
     <PageTransition>
@@ -163,10 +139,9 @@ const MenteeDashboard = () => {
               variants={itemVariants}
             >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
-              <h3 className="text-sm font-medium text-gray-600 mb-4">Transactions Amount ({transactions.length})</h3>
+              <h3 className="text-sm font-medium text-gray-600 mb-4"> Upcoming sessions </h3>
               <p className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">
-                  {/* <h3>Total Transactions: {transactions.length}</h3> */}
-                  <h3>Rs. {totalAmount.toFixed(2)}</h3>
+                <AnimatedCounter end={stats.pendingSessions} />
               </p>
             </motion.div>
           </motion.div>
@@ -216,16 +191,16 @@ const MenteeDashboard = () => {
               </h2>
               <div className="flex flex-col space-y-4">
                 <button
-                  onClick={() => navigate(`/mentor/sessions/${currentUser.id}`) }
+                  onClick={() => navigate(`/mentee/sessions/${currentUser.id}`) }
                   className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium text-sm shadow focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all btn-primary"
                 >
                   View Upcoming Sessions
                 </button>
                 <button
-                  onClick={() => navigate(`/mentor/availability`) }
+                  onClick={() => navigate(`/mentee/viewMentors`) }
                   className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium text-sm shadow focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all btn-secondary"
                 >
-                  Update Availability
+                  View Mentors
                 </button>
               </div>
             </motion.div>

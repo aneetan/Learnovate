@@ -30,7 +30,7 @@ const MenteeSessions = () => {
     }
 
     fetchSessionsByMentor();
-  }, [params.userId])
+  }, [params.userId]);
 
   const [filterStatus, setFilterStatus] = useState('all');
 

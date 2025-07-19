@@ -138,7 +138,7 @@ const MentorDirectory = ({ currentUser }) => {
             transition={{ delay: 0.2 }}
             className="mb-8"
           >
-            <div className="flex flex-col items-center justify-center md:flex-row w-[60%] gap-4 mb-6">
+            <div className="flex  md:ml-40 items-center justify-center md:flex-row md:w-[60%] gap-4 mb-6">
               <div className="relative flex-grow">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg className="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
