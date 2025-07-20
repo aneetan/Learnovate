@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
+import { API_URL } from "../../config/config";
 
 const FeedbackForm = () => {
   const [formData, setFormData] = useState({
@@ -52,24 +53,21 @@ const FeedbackForm = () => {
     setSubmitError(null);
 
     try {
-      const response = await new Promise((resolve) =>
-        setTimeout(() => {
-          const success = Math.random() > 0.1;
-          resolve(success ? { ok: true } : { ok: false, status: 500, statusText: "Internal Server Error" });
-        }, 1500)
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
-      }
-
-      setSubmitted(true);
-      setFormData({ name: "", email: "", rating: 0, category: "", message: "" });
-    } catch (error) {
-      setSubmitError(`Failed to submit feedback: ${error.message}`);
-    } finally {
-      setIsLoading(false);
+    const response = await fetch(`${API_URL}/feedback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
     }
+    setSubmitted(true);
+    setFormData({ name: "", email: "", rating: 0, category: "", message: "" });
+  } catch (error) {
+    setSubmitError(`Failed to submit feedback: ${error.message}`);
+  } finally {
+    setIsLoading(false);
+  }
   };
 
   const resetForm = useCallback(() => {

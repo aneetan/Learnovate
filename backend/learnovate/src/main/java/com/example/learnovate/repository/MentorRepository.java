@@ -18,5 +18,8 @@ public interface MentorRepository extends JpaRepository<Mentor, Integer> {
 
     List<Mentor> findByStatus(String status);
 
+    @Query("SELECT COUNT(m) FROM Mentor m")
+    int countTotalMentors();
+
 
 }

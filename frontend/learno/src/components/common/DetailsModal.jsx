@@ -79,10 +79,7 @@ const DetailsModal = ({ isOpen, onClose, userData, type = 'user', onDelete }) =>
             <div className="text-gray-900 whitespace-pre-line">{userData.message}</div>
           )}
         </div>
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">Date</label>
-          <div className="text-gray-900">{userData.date}</div>
-        </div>
+       
       </div>
     );
   } else if (type === 'booking') {
@@ -212,13 +209,6 @@ const DetailsModal = ({ isOpen, onClose, userData, type = 'user', onDelete }) =>
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-full overflow-hidden">
-                <img
-                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userData?.name || modalTitle)}&background=6366f1&color=fff&size=48`}
-                  alt={userData?.name || modalTitle}
-                  className="w-full h-full object-cover"
-                />
-              </div>
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">{modalTitle}</h2>
                 <p className="text-sm text-gray-600">
@@ -242,7 +232,7 @@ const DetailsModal = ({ isOpen, onClose, userData, type = 'user', onDelete }) =>
           {/* Footer */}
           <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
             <div className="flex space-x-3">
-              {(type === 'mentor' || type === 'booking' || type === 'feedback') && !isEditing && (
+              {(type === 'mentor' || type === 'booking') && !isEditing && (
                 <button
                   onClick={handleEdit}
                   className="px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors flex items-center space-x-2"
@@ -270,13 +260,16 @@ const DetailsModal = ({ isOpen, onClose, userData, type = 'user', onDelete }) =>
                   </button>
                 </>
               )}
-              <button
+              {(type === 'mentor' || type === 'booking') && (
+                 <button
                 onClick={handleDelete}
                 className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors flex items-center space-x-2"
               >
                 <FaTrash className="w-4 h-4" />
                 <span>Delete</span>
               </button>
+              )}
+             
             </div>
           </div>
         </div>

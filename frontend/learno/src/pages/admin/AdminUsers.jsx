@@ -24,6 +24,7 @@ const AdminUsers = () => {
   const [userToEdit, setUserToEdit] = useState(null);
   const [mentee, setMentee] = useState([]);
   const token = localStorage.getItem("token");
+  const [filterUser, setFilteredUser] = useState([]);
 
   useEffect(() => {
     // Simulate loading time
@@ -44,6 +45,7 @@ const AdminUsers = () => {
           },
         });
         setMentee(users.data);
+        setFilteredUser(users.data);
       } catch (e){
         console.log(e)
       }
@@ -52,22 +54,31 @@ const AdminUsers = () => {
     fetchMenteeData();
   }, []);
 
+   // Filter function with safe optional chaining
+  const applyFilters = useMemo(() => {
+    if (!searchTerm) return mentee; // Return all if no search term
 
-  // Filter users based on search term
-  const filteredUsers = useMemo(() => {
-    return mentee.filter(user =>
-      user.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.area.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.id.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [searchTerm]);
+    const searchLower = searchTerm.toLowerCase();
+    return mentee.filter(mentee => {
+      return (
+        (mentee.user?.name?.toLowerCase()?.includes(searchLower)) ||
+        (mentee.user?.email?.toLowerCase()?.includes(searchLower)) ||
+        (mentee.area?.toLowerCase()?.includes(searchLower)) ||
+        (mentee.id?.toString()?.toLowerCase()?.includes(searchLower))
+      );
+    });
+  }, [mentee, searchTerm]);
+
+  // Update filtered mentees when filters change
+  useEffect(() => {
+    setFilteredUser(applyFilters);
+  }, [applyFilters]);
 
   // Calculate pagination
-  const totalPages = Math.ceil(filteredUsers.length / entriesPerPage);
+  const totalPages = Math.ceil(filterUser.length / entriesPerPage);
   const startIndex = (currentPage - 1) * entriesPerPage;
   const endIndex = startIndex + entriesPerPage;
-  const currentUsers = filteredUsers.slice(startIndex, endIndex);
+  const currentUsers = filterUser.slice(startIndex, endIndex);
 
   const handleEdit = (userId) => {
     const user = currentUsers.find(u => u.id === userId);
@@ -128,14 +139,14 @@ const AdminUsers = () => {
 
       {/* Search and Entries */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-        <div className="relative w-full sm:w-auto">
+        <div className="relative w-full sm:w-[50%]">
           <FaSearch className="absolute left-3 top-3 text-gray-400" />
           <input
             type="text"
-            placeholder="Search users..."
+            placeholder="Search users by name or area..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             style={{ '--tw-ring-color': 'var(--primary-color)' }}
           />
         </div>
@@ -178,7 +189,7 @@ const AdminUsers = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {mentee.map((user, index) => (
+              {filterUser.map((user, index) => (
                 <motion.tr
                   key={user.id}
                   initial={{ opacity: 0, x: -20 }}
@@ -254,7 +265,7 @@ const AdminUsers = () => {
           <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-gray-700">
-                Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{Math.min(endIndex, filteredUsers.length)}</span> of <span className="font-medium">{filteredUsers.length}</span> results
+                Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{Math.min(endIndex, filterUser.length)}</span> of <span className="font-medium">{filterUser.length}</span> results
               </p>
             </div>
             <div>

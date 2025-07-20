@@ -5,6 +5,8 @@ import { PagePreloader } from '../../components/common/Preloader';
 import DetailsModal from '../../components/common/DetailsModal';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
 import EditModal from '../../components/common/EditModal';
+import axios from 'axios';
+import { API_URL } from '../../config/config';
 
 const AdminReviews = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,89 +16,34 @@ const AdminReviews = () => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState(null);
 
-  const [feedback, setFeedback] = useState([
-    {
-      id: 'FB001',
-      name: 'John Smith',
-      email: 'john.smith@example.com',
-      category: 'General Feedback',
-      rating: 5,
-      message: 'The mentorship program exceeded my expectations. My mentor was incredibly knowledgeable and patient. I learned React concepts that I was struggling with for months. The hands-on approach and real-world examples made everything click. The platform is intuitive and the booking system works seamlessly.',
-      date: '2024-01-15'
-    },
-    {
-      id: 'FB002',
-      name: 'Emily Davis',
-      email: 'emily.davis@example.com',
-      category: 'Feature Request',
-      rating: 5,
-      message: 'I love the platform! It would be great to have more video call options and maybe a feature to record sessions for later review. The current interface is clean and easy to navigate. My mentor was excellent and helped me understand complex UI/UX concepts.',
-      date: '2024-01-14'
-    },
-    {
-      id: 'FB003',
-      name: 'David Wilson',
-      email: 'david.wilson@example.com',
-      category: 'Bug Report',
-      rating: 4,
-      message: 'Great platform overall, but I noticed some issues with the chat feature on mobile devices. Sometimes messages don\'t send properly. Otherwise, the Python programming session was very helpful and my mentor was great.',
-      date: '2024-01-13'
-    },
-    {
-      id: 'FB004',
-      name: 'Lisa Anderson',
-      email: 'lisa.anderson@example.com',
-      category: 'General Feedback',
-      rating: 5,
-      message: 'Amazing experience with the data science mentorship. Dr. Emily is incredibly knowledgeable and the session was very informative. I learned a lot about machine learning algorithms. The practical project guidance was excellent.',
-      date: '2024-01-12'
-    },
-    {
-      id: 'FB005',
-      name: 'Robert Taylor',
-      email: 'robert.taylor@example.com',
-      category: 'Feature Request',
-      rating: 4,
-      message: 'The mobile development session was good but I wish it was a bit longer to cover more topics. It would be helpful to have more advanced React Native tutorials. The React Native setup guide was very helpful though.',
-      date: '2024-01-11'
-    },
-    {
-      id: 'FB006',
-      name: 'Maria Garcia',
-      email: 'maria.garcia@example.com',
-      category: 'General Feedback',
-      rating: 5,
-      message: 'Lisa is a fantastic mentor for web development. She explained complex concepts in simple terms and provided hands-on examples. The code review session was particularly valuable. The platform makes learning so much easier.',
-      date: '2024-01-10'
-    },
-    {
-      id: 'FB007',
-      name: 'Thomas Brown',
-      email: 'thomas.brown@example.com',
-      category: 'General Feedback',
-      rating: 5,
-      message: 'Amazing experience with the mentor. Very knowledgeable and patient with explanations. The project-based learning approach helped me understand concepts better than traditional methods. Highly recommend this platform!',
-      date: '2024-01-09'
-    },
-    {
-      id: 'FB008',
-      name: 'Sarah Miller',
-      email: 'sarah.miller@example.com',
-      category: 'Bug Report',
-      rating: 4,
-      message: 'Great session! The mentor provided valuable insights and practical tips for my project. However, I noticed some issues with the file upload feature. The architecture review helped me improve my code structure significantly.',
-      date: '2024-01-08'
-    }
-  ]);
+  const [feedback, setFeedback] = useState([]);
 
   useEffect(() => {
     // Simulate loading time
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+      const fetchFeedbackData = async () => {
+        try {
+          // Fetch total users
+          const feedback = await axios.get(`${API_URL}/admin/getAllFeedback`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          setFeedback(feedback.data);
+        } catch (e){
+          console.log(e)
+        }
+      };
+  
+      fetchFeedbackData();
+    }, []);
 
   // Filter feedback based on search term (name only)
   const filteredFeedback = useMemo(() => {

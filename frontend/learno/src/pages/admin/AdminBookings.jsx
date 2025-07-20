@@ -23,6 +23,7 @@ const AdminBookings = () => {
   const [statusSortOrder, setStatusSortOrder] = useState(null); // null, 'asc', 'desc'
   const [bookings, setBookings] = useState([]);
   const navigate = useNavigate();
+  const [filteredBookings, setFilteredBooking] = useState([]);
 
   useEffect(() => {
     // Simulate loading time
@@ -43,6 +44,7 @@ const AdminBookings = () => {
           },
         });
         setBookings(users.data);
+        setFilteredBooking(users.data);
       } catch (e){
         console.log(e)
       }
@@ -50,16 +52,24 @@ const AdminBookings = () => {
 
     fetchMentorsData();
   }, []);
- 
-  // Filter bookings based on search term
-  const filteredBookings = useMemo(() => {
-    return bookings.filter(booking =>
-      booking.mentor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.bookedBy.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.status.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [searchTerm]);
+
+  const applyFilters = useMemo(() => {
+    if (!searchTerm) return bookings; // Return all if no search term
+
+    const searchLower = searchTerm.toLowerCase();
+    return bookings.filter(booking => {
+      return (
+        (booking.mentor.user.name?.toLowerCase()?.includes(searchLower) || '') ||
+        (booking.user.name?.toLowerCase()?.includes(searchLower) || '') ||
+        (booking.status?.toLowerCase()?.includes(searchLower) || '')
+      );
+    });
+  }, [bookings, searchTerm]);
+
+  // Update filtered bookings when filters change
+  useEffect(() => {
+    setFilteredBooking(applyFilters);
+  }, [applyFilters]);
 
   // Sort bookings by status if statusSortOrder is set
   const sortedBookings = useMemo(() => {
@@ -142,14 +152,14 @@ const AdminBookings = () => {
 
       {/* Search and Entries */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-        <div className="relative w-full sm:w-auto">
+        <div className="relative w-full sm:w-[50%]">
           <FaSearch className="absolute left-3 top-3 text-gray-400" />
           <input
             type="text"
-            placeholder="Search bookings..."
+            placeholder="Search bookings by name or status..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             style={{ '--tw-ring-color': 'var(--primary-color)' }}
           />
         </div>
@@ -199,7 +209,7 @@ const AdminBookings = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {bookings.map((booking, index) => (
+              {filteredBookings.map((booking, index) => (
                 <motion.tr
                   key={booking.bookingId}
                   initial={{ opacity: 0, x: -20 }}
@@ -228,7 +238,7 @@ const AdminBookings = () => {
                           ? 'bg-amber-100 text-amber-800'
                           : 'bg-gray-100 text-gray-800'   
                       }`}>
-                        {booking.status}
+                        {booking.status.toUpperCase()}
                       </span>
                     </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-wrap">

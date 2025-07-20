@@ -2,12 +2,14 @@ package com.example.learnovate.service;
 
 import com.example.learnovate.classfile.AuthenticateEmail;
 import com.example.learnovate.exception.UnauthorizedAccessException;
+import com.example.learnovate.model.Feedback;
+import com.example.learnovate.model.Mentee;
 import com.example.learnovate.model.Mentor;
-import com.example.learnovate.repository.MentorAvailabilityRepository;
-import com.example.learnovate.repository.MentorBookingsRepository;
-import com.example.learnovate.repository.MentorRepository;
-import com.example.learnovate.repository.RegisteredUserRespository;
+import com.example.learnovate.model.MentorBookings;
+import com.example.learnovate.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +18,9 @@ import java.util.List;
 public class AdminService {
     @Autowired
     private MentorRepository mRepo;
+
+    @Autowired
+    private MenteeRepository menteeRepository;
 
     @Autowired
     private MentorAvailabilityRepository availableRepo;
@@ -29,6 +34,12 @@ public class AdminService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private PaymentDetailsRepository pRepo;
+
+    @Autowired
+    private FeedbackRepository fRepo;
+
     AuthenticateEmail authenticateEmail = new AuthenticateEmail();
 
     public void authenticateAdmin(){
@@ -41,6 +52,34 @@ public class AdminService {
     public List<Mentor> getPendingMentors() {
         authenticateAdmin();
         return mRepo.findByStatus("pending");
+    }
+
+    public  List<Mentor> getAllMentors(){
+        authenticateAdmin();
+        return mRepo.findAll();
+    }
+
+    public  Mentor getMentorById(int id){
+        authenticateAdmin();
+        Mentor mentor = mRepo.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("Mentor not found with id: " + id));
+
+        return mentor;
+    }
+
+    public List<Mentee> getAllMentee(){
+        authenticateAdmin();;
+        return menteeRepository.findAll();
+    }
+
+    public List<Feedback> getAllFeedback(){
+        authenticateAdmin();;
+        return fRepo.findAll();
+    }
+
+    public List<MentorBookings> getAllBookings(){
+        authenticateAdmin();
+        return bookingRepo.findByPaymentStatus("PAID");
     }
 
     public Mentor approveMentor(int mentorId){
@@ -93,4 +132,20 @@ public class AdminService {
 
         return mentor;
     }
+
+    public int getTotalMentorCount() {
+        authenticateAdmin();
+        return mRepo.countTotalMentors();
+    }
+
+    public int getTotalUserCount() {
+        authenticateAdmin();
+        return menteeRepository.countTotalUsers();
+    }
+
+    public double getTotalTransactionAmount(){
+        authenticateAdmin();
+        return pRepo.getTotalTransactionAmount();
+    }
+
 }

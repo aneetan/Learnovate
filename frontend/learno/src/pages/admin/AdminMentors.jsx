@@ -26,6 +26,7 @@ const AdminMentors = () => {
   const [mentorToEdit, setMentorToEdit] = useState(null);
   const [statusSortOrder, setStatusSortOrder] = useState(null);
   const [mentors, setMentors] = useState([]);
+  const [filteredMentors, setFilteredMentors] = useState([]);
 
   const navigate = useNavigate();
 
@@ -48,6 +49,7 @@ const AdminMentors = () => {
           },
         });
         setMentors(users.data);
+        setFilteredMentors(users.data);
       } catch (e){
         console.log(e)
       }
@@ -57,14 +59,24 @@ const AdminMentors = () => {
   }, []);
 
   // Filter mentors based on search term
-  const filteredMentors = useMemo(() => {
-    return mentors.filter(mentor =>
-      mentor.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mentor.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mentor.area.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mentor.mentorId.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [searchTerm]);
+  const applyFilters = useMemo(() => {
+    return mentors.filter(mentor => {
+      const searchLower = searchTerm.toLowerCase();
+      return (
+        mentor.user?.name?.toLowerCase().includes(searchLower) ||
+        mentor.user?.email?.toLowerCase().includes(searchLower) ||
+        mentor.area?.toLowerCase().includes(searchLower) ||
+        (mentor.skills?.some(skill => 
+          skill.toLowerCase().includes(searchLower)
+        ))
+      );
+    });
+  }, [mentors, searchTerm]);
+
+  // Update filtered mentors when search term changes
+  useEffect(() => {
+    setFilteredMentors(applyFilters);
+  }, [applyFilters]);
 
   // Sort mentors by status if statusSortOrder is set
   const sortedMentors = useMemo(() => {
@@ -148,14 +160,14 @@ const AdminMentors = () => {
 
       {/* Search and Entries */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-        <div className="relative w-full sm:w-auto">
+        <div className="relative w-full sm:w-[50%]">
           <FaSearch className="absolute left-3 top-3 text-gray-400" />
           <input
             type="text"
-            placeholder="Search mentors..."
+            placeholder="Search mentors by name or area..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             style={{ '--tw-ring-color': 'var(--primary-color)' }}
           />
         </div>
@@ -193,7 +205,7 @@ const AdminMentors = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest Area</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Area</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none" onClick={() => setStatusSortOrder(statusSortOrder === 'asc' ? 'desc' : 'asc')}>
                   Status
                   {statusSortOrder === 'asc' && <span>▲</span>}
@@ -204,7 +216,7 @@ const AdminMentors = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {mentors.map((mentor, index) => (
+              {filteredMentors.map((mentor, index) => (
                 <motion.tr
                   key={mentor.id}
                   initial={{ opacity: 0, x: -20 }}
@@ -232,11 +244,19 @@ const AdminMentors = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{mentor.user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{mentor.phoneNumber}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{mentor.area}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(mentor.status)}`}>
-                      {mentor.status}
-                    </span>
-                  </td>
+                     <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        mentor.status === 'approved'
+                          ? 'bg-green-100 text-green-800'  
+                          : mentor.status === 'pending'
+                          ? 'bg-amber-100 text-amber-800'
+                          : mentor.status === 'declined'
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-gray-100 text-gray-800'   
+                      }`}>
+                        {mentor.status.toUpperCase()}
+                      </span>
+                    </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                       {mentor.documentUrl ? (
                       <a
