@@ -6,6 +6,8 @@ import DocumentModal from '../../components/common/DocumentModal';
 import DetailsModal from '../../components/common/DetailsModal';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
 import EditModal from '../../components/common/EditModal';
+import axios from 'axios';
+import { API_URL } from '../../config/config';
 
 const AdminUsers = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,6 +22,8 @@ const AdminUsers = () => {
   const [userToDelete, setUserToDelete] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [userToEdit, setUserToEdit] = useState(null);
+  const [mentee, setMentee] = useState([]);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     // Simulate loading time
@@ -30,31 +34,31 @@ const AdminUsers = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Dummy data for users
-  const dummyUsers = [
-    { id: 'USR001', name: 'John Doe', email: 'john.doe@example.com', contact: '+1 234-567-8900', interestArea: 'React Development', status: 'Student' },
-    { id: 'USR002', name: 'Jane Smith', email: 'jane.smith@example.com', contact: '+1 234-567-8901', interestArea: 'UI/UX Design', status: 'Early Professional' },
-    { id: 'USR003', name: 'Mike Johnson', email: 'mike.johnson@example.com', contact: '+1 234-567-8902', interestArea: 'Python Programming', status: 'Job Seeker' },
-    { id: 'USR004', name: 'Sarah Wilson', email: 'sarah.wilson@example.com', contact: '+1 234-567-8903', interestArea: 'Data Science', status: 'Student' },
-    { id: 'USR005', name: 'David Brown', email: 'david.brown@example.com', contact: '+1 234-567-8904', interestArea: 'Mobile Development', status: 'Early Professional' },
-    { id: 'USR006', name: 'Emily Davis', email: 'emily.davis@example.com', contact: '+1 234-567-8905', interestArea: 'Web Development', status: 'Job Seeker' },
-    { id: 'USR007', name: 'Michael Wilson', email: 'michael.wilson@example.com', contact: '+1 234-567-8906', interestArea: 'DevOps', status: 'Early Professional' },
-    { id: 'USR008', name: 'Lisa Anderson', email: 'lisa.anderson@example.com', contact: '+1 234-567-8907', interestArea: 'Product Management', status: 'Student' },
-    { id: 'USR009', name: 'Robert Taylor', email: 'robert.taylor@example.com', contact: '+1 234-567-8908', interestArea: 'Machine Learning', status: 'Early Professional' },
-    { id: 'USR010', name: 'Jennifer Garcia', email: 'jennifer.garcia@example.com', contact: '+1 234-567-8909', interestArea: 'Cybersecurity', status: 'Job Seeker' },
-    { id: 'USR011', name: 'Christopher Martinez', email: 'christopher.martinez@example.com', contact: '+1 234-567-8910', interestArea: 'Blockchain', status: 'Student' },
-    { id: 'USR012', name: 'Amanda Rodriguez', email: 'amanda.rodriguez@example.com', contact: '+1 234-567-8911', interestArea: 'Cloud Computing', status: 'Early Professional' },
-    { id: 'USR013', name: 'Daniel Lee', email: 'daniel.lee@example.com', contact: '+1 234-567-8912', interestArea: 'Game Development', status: 'Student' },
-    { id: 'USR014', name: 'Michelle White', email: 'michelle.white@example.com', contact: '+1 234-567-8913', interestArea: 'Digital Marketing', status: 'Job Seeker' },
-    { id: 'USR015', name: 'Kevin Thompson', email: 'kevin.thompson@example.com', contact: '+1 234-567-8914', interestArea: 'Artificial Intelligence', status: 'Early Professional' },
-  ];
+  useEffect(() => {
+    const fetchMenteeData = async () => {
+      try {
+        // Fetch total users
+        const users = await axios.get(`${API_URL}/admin/getAllMentee`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setMentee(users.data);
+      } catch (e){
+        console.log(e)
+      }
+    };
+
+    fetchMenteeData();
+  }, []);
+
 
   // Filter users based on search term
   const filteredUsers = useMemo(() => {
-    return dummyUsers.filter(user =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.interestArea.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    return mentee.filter(user =>
+      user.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.area.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.id.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [searchTerm]);
@@ -165,18 +169,16 @@ const AdminUsers = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile Picture</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest Area</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documents</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest Area</th>
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Status</th>
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {currentUsers.map((user, index) => (
+              {mentee.map((user, index) => (
                 <motion.tr
                   key={user.id}
                   initial={{ opacity: 0, x: -20 }}
@@ -184,43 +186,33 @@ const AdminUsers = () => {
                   transition={{ delay: index * 0.05 }}
                   className="hover:bg-gray-50"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 py-4 whitespace-nowrap">
+                    <div className='flex items-center justify-start'>
                     <div className="flex-shrink-0 h-10 w-10">
                       <img
                         className="h-10 w-10 rounded-full object-cover"
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6366f1&color=fff&size=40`}
-                        alt={user.name}
+                        src={user.profileUrl}
+                        alt={user.user.name}
                       />
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     <button
                       onClick={() => handleNameClick(user)}
                       className="text-blue-600 hover:text-blue-900 hover:underline cursor-pointer"
                     >
-                      {user.name}
+                      {user.user.name}
                     </button>
+                  </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.contact}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{user.interestArea}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-900">{user.status}</span>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-600">{user.user.email}</td>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-600">{user.phone}</td>
+                  <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-600">{user.area}</td>
+                  <td className="px-3 py-4 whitespace-nowrap">
+                    <span className="text-sm text-gray-900">{user.currentStatus}</span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleViewDocument(user)}
-                      className="text-sm font-medium flex items-center space-x-1"
-                      style={{ color: 'var(--primary-color)' }}
-                    >
-                      <FaFileAlt className="w-3 h-3" />
-                      <span>View Document</span>
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <td className="px-3 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
                       <button
-                        onClick={() => handleEdit(user.id)}
+                        onClick={() => handleEdit(user.user.userId)}
                         className="p-1 rounded"
                         style={{ color: 'var(--primary-color)' }}
                         title="Edit"
@@ -228,7 +220,7 @@ const AdminUsers = () => {
                         <FaEdit className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(user.id)}
+                        onClick={() => handleDelete(user.user.userId)}
                         className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
                         title="Delete"
                       >

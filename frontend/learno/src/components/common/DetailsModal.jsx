@@ -137,7 +137,7 @@ const DetailsModal = ({ isOpen, onClose, userData, type = 'user', onDelete }) =>
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           ) : (
-            <div className="text-gray-900 font-medium">{userData.name}</div>
+            <div className="text-gray-900 font-medium">{userData.user.name}</div>
           )}
         </div>
         <div>
@@ -150,7 +150,7 @@ const DetailsModal = ({ isOpen, onClose, userData, type = 'user', onDelete }) =>
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           ) : (
-            <div className="text-gray-900">{userData.email}</div>
+            <div className="text-gray-900">{userData.user.email}</div>
           )}
         </div>
         <div>
@@ -163,7 +163,7 @@ const DetailsModal = ({ isOpen, onClose, userData, type = 'user', onDelete }) =>
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           ) : (
-            <div className="text-gray-900">{userData.contact}</div>
+            <div className="text-gray-900">{userData.phone}</div>
           )}
         </div>
         <div>
@@ -176,7 +176,7 @@ const DetailsModal = ({ isOpen, onClose, userData, type = 'user', onDelete }) =>
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           ) : (
-            <div className="text-gray-900">{userData.interestArea}</div>
+            <div className="text-gray-900">{userData.area}</div>
           )}
         </div>
         {userData.status && (
