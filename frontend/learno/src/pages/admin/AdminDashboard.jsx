@@ -4,17 +4,10 @@ import { MdDashboard, MdPeople, MdAttachMoney } from 'react-icons/md';
 import { PagePreloader } from '../../components/common/Preloader';
 import axios from 'axios';
 import { API_URL } from '../../config/config';
-import ApproveMentorModel from '../../components/admin/ApproveMentorModel';
-import DeclineMentorModel from '../../components/admin/DeclineMentorModal';
 
 const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [requests, setRequests] = useState([]);
-  const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
-  const [isDeclineModalOpen, setIsDeclineModalOpen] = useState(false);
-  const [selectedMentor, setSelectedMentor] = useState(null);
-  const [isApproving, setIsApproving] = useState(false);
-  const [isDeclining, setIsDeclining] = useState(false);
   const [totalUser, setTotalUser] = useState(0);
   const [totalMentor, setTotalMentor] = useState(0);
   const [totalAmount, setTotalAmount] = useState();
@@ -239,21 +232,7 @@ const AdminDashboard = () => {
         </p>
       </div>
 
-      <ApproveMentorModel
-        isOpen={isApproveModalOpen}
-        onClose={() => setIsApproveModalOpen(false)}
-        mentor={selectedMentor}
-        onApprove={handleApprove}
-        isApproving={isApproving}
-      />
-
-      <DeclineMentorModel
-        isOpen={isDeclineModalOpen}
-        onClose={() => setIsDeclineModalOpen(false)}
-        mentor={selectedMentor}
-        onDecline={handleDecline}
-        isDeclining={isDeclining}
-      />
+      
     </div>
   );
 };

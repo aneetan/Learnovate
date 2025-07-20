@@ -5,6 +5,9 @@ import { PagePreloader } from '../../components/common/Preloader';
 import DetailsModal from '../../components/common/DetailsModal';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
 import EditModal from '../../components/common/EditModal';
+import axios from 'axios';
+import { API_URL } from '../../config/config';
+import { useNavigate } from 'react-router-dom';
 
 const AdminBookings = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -18,38 +21,39 @@ const AdminBookings = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [bookingToEdit, setBookingToEdit] = useState(null);
   const [statusSortOrder, setStatusSortOrder] = useState(null); // null, 'asc', 'desc'
+  const [bookings, setBookings] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Simulate loading time
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
 
-  // Dummy data for bookings
-  const dummyBookings = [
-    { id: 'BK001', mentor: 'Dr. Sarah Johnson', bookedBy: 'John Doe', date: '2024-01-15', time: '10:00 AM', status: 'Confirmed' },
-    { id: 'BK002', mentor: 'Prof. Michael Chen', bookedBy: 'Jane Smith', date: '2024-01-16', time: '2:00 PM', status: 'Pending' },
-    { id: 'BK003', mentor: 'Alex Rodriguez', bookedBy: 'Mike Johnson', date: '2024-01-17', time: '11:30 AM', status: 'Confirmed' },
-    { id: 'BK004', mentor: 'Dr. Emily Davis', bookedBy: 'Sarah Wilson', date: '2024-01-18', time: '3:00 PM', status: 'Cancelled' },
-    { id: 'BK005', mentor: 'James Wilson', bookedBy: 'David Brown', date: '2024-01-19', time: '9:00 AM', status: 'Confirmed' },
-    { id: 'BK006', mentor: 'Lisa Anderson', bookedBy: 'Emily Davis', date: '2024-01-20', time: '1:00 PM', status: 'Pending' },
-    { id: 'BK007', mentor: 'David Thompson', bookedBy: 'Michael Wilson', date: '2024-01-21', time: '4:30 PM', status: 'Confirmed' },
-    { id: 'BK008', mentor: 'Maria Garcia', bookedBy: 'Lisa Anderson', date: '2024-01-22', time: '12:00 PM', status: 'Confirmed' },
-    { id: 'BK009', mentor: 'Robert Taylor', bookedBy: 'Robert Taylor', date: '2024-01-23', time: '2:30 PM', status: 'Pending' },
-    { id: 'BK010', mentor: 'Jennifer Brown', bookedBy: 'Jennifer Garcia', date: '2024-01-24', time: '10:30 AM', status: 'Cancelled' },
-    { id: 'BK011', mentor: 'Christopher Lee', bookedBy: 'Christopher Martinez', date: '2024-01-25', time: '3:30 PM', status: 'Confirmed' },
-    { id: 'BK012', mentor: 'Amanda White', bookedBy: 'Amanda Rodriguez', date: '2024-01-26', time: '11:00 AM', status: 'Confirmed' },
-    { id: 'BK013', mentor: 'Daniel Martinez', bookedBy: 'Daniel Lee', date: '2024-01-27', time: '1:30 PM', status: 'Pending' },
-    { id: 'BK014', mentor: 'Michelle Clark', bookedBy: 'Michelle White', date: '2024-01-28', time: '4:00 PM', status: 'Confirmed' },
-    { id: 'BK015', mentor: 'Kevin Lewis', bookedBy: 'Kevin Thompson', date: '2024-01-29', time: '9:30 AM', status: 'Confirmed' },
-  ];
+  useEffect(() => {
+    const fetchMentorsData = async () => {
+      try {
+        // Fetch total users
+        const users = await axios.get(`${API_URL}/admin/getAllBookings`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setBookings(users.data);
+      } catch (e){
+        console.log(e)
+      }
+    };
 
+    fetchMentorsData();
+  }, []);
+ 
   // Filter bookings based on search term
   const filteredBookings = useMemo(() => {
-    return dummyBookings.filter(booking =>
+    return bookings.filter(booking =>
       booking.mentor.toLowerCase().includes(searchTerm.toLowerCase()) ||
       booking.bookedBy.toLowerCase().includes(searchTerm.toLowerCase()) ||
       booking.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -76,6 +80,10 @@ const AdminBookings = () => {
   const handleViewDetails = (booking) => {
     setSelectedBooking(booking);
     setShowDetailsModal(true);
+  };
+
+  const handleNameClick = (mentorId) => {
+    navigate(`/admin/mentors/${mentorId}`);
   };
 
   const handlePageChange = (page) => {
@@ -175,8 +183,7 @@ const AdminBookings = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile Picture</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mentee Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mentor</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
@@ -185,35 +192,59 @@ const AdminBookings = () => {
                   {statusSortOrder === 'asc' && <span>▲</span>}
                   {statusSortOrder === 'desc' && <span>▼</span>}
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Topic</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
+                
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {currentBookings.map((booking, index) => (
+              {bookings.map((booking, index) => (
                 <motion.tr
-                  key={booking.id}
+                  key={booking.bookingId}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
                   className="hover:bg-gray-50"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex-shrink-0 h-10 w-10">
-                      <img
-                        className="h-10 w-10 rounded-full object-cover"
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(booking.bookedBy)}&background=6366f1&color=fff&size=40`}
-                        alt={booking.bookedBy}
-                      />
-                    </div>
+                  <td className="px-6 py-4 font-medium text-blue-600 whitespace-nowrap text-sm">{booking.user.name}</td>
+                
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <button
+                      onClick={() => handleNameClick(booking.mentor.mentorId)}
+                      className="text-blue-600 hover:text-blue-900 hover:underline cursor-pointer"
+                    >
+                      {booking.mentor.user.name}
+                    </button>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{booking.bookedBy}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{booking.mentor}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{booking.date}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{booking.time}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{booking.bookingDate}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{booking.timeSlot}</td>
+                  
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(booking.status)}`}>
-                      {booking.status}
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        booking.status === 'completed'
+                          ? 'bg-green-100 text-green-800'  
+                          : booking.status === 'pending'
+                          ? 'bg-amber-100 text-amber-800'
+                          : 'bg-gray-100 text-gray-800'   
+                      }`}>
+                        {booking.status}
+                      </span>
+                    </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-wrap">
+                    <p className='text-wrap'>{booking.topic} </p>
+                    </td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{booking.notes}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      booking.paymentStatus === 'PAID' 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {booking.paymentStatus}
                     </span>
                   </td>
+
                 </motion.tr>
               ))}
             </tbody>
@@ -284,12 +315,7 @@ const AdminBookings = () => {
           Copyright © 2025. Learnovate. All rights reserved.
         </p>
       </div>
-      <DetailsModal
-        isOpen={showDetailsModal}
-        onClose={() => setShowDetailsModal(false)}
-        userData={selectedBooking}
-        type="booking"
-      />
+
       <EditModal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}

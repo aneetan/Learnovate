@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaRegCalendarAlt, FaAddressBook, FaRegCommentDots, FaUserCircle, FaSignOutAlt, FaBars, FaSearch, FaCog, FaComment } from 'react-icons/fa';
+import { FaRegCalendarAlt, FaAddressBook, FaRegCommentDots, FaUserCircle, FaSignOutAlt, FaBars, FaSearch, FaCog, FaComment, FaAngleDown } from 'react-icons/fa';
 import { MdDashboard, MdPeople, MdBookOnline, MdStarRate } from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
 import logoImage from "../../assets/images/learno_logo_long.png";
 import logoImage2 from "../../assets/images/learno_logo_only.png";
 import AdminNotifications from '../../notifications/AdminNotifications';
+import axios from 'axios';
+import { API_URL } from '../../config/config';
 
 const AdminSidebar = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -26,6 +28,18 @@ const AdminSidebar = ({ children }) => {
   useEffect(() => {
     setSidebarOpen(!isMobile);
   }, [isMobile]);
+
+  const handleLogout = async() => {
+    const response = await axios.post(`${API_URL}/auth/logout`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      navigate('/login')
+  }
 
   const menuItems = [
     { name: 'Dashboard', icon: <MdDashboard />, path: '/admin/dashboard' },
@@ -136,10 +150,11 @@ const AdminSidebar = ({ children }) => {
             >
               <FaUserCircle className="text-2xl text-gray-600" />
               <span className="hidden md:block text-base font-semibold">Admin</span>
+              <FaAngleDown/>
             </button>
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-                 <button
+                 {/* <button
                   onClick={() => {
                     navigate('/test-adminDashboard/settings');
                     setDropdownOpen(false);
@@ -147,10 +162,11 @@ const AdminSidebar = ({ children }) => {
                   className="block w-full text-left hover:bg-gray-100 transition text-sm"
                 >
                   Settings
-                </button>
-                 <a href="#" className=" px-4 py-2 hover:bg-gray-100 transition flex items-center space-x-2 text-sm">
+                </button> */}
+                 <button onClick={handleLogout}
+                  className="px-4 py-2 hover:bg-gray-100 transition flex items-center text-red-500 space-x-2 text-sm">
                   <FaSignOutAlt /> <span>Logout</span>
-                </a>
+                </button>
               </div>
             )}
           </div>

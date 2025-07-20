@@ -110,16 +110,6 @@ const AdminMentors = () => {
     // Optionally: setMentors(mentors => mentors.filter(m => m.id !== mentorToDelete.id));
   };
 
-  const handleViewDocument = (mentor) => {
-    setSelectedMentor(mentor);
-    setShowDocumentModal(true);
-  };
-
-  const handleViewDetails = (mentor) => {
-    setSelectedDetailsMentor(mentor);
-    setShowDetailsModal(true);
-  };
-
   const handleNameClick = (mentorId) => {
     navigate(`/admin/mentors/${mentorId}`);
   };
