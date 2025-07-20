@@ -15,34 +15,60 @@ const AdminDashboard = () => {
   const [selectedMentor, setSelectedMentor] = useState(null);
   const [isApproving, setIsApproving] = useState(false);
   const [isDeclining, setIsDeclining] = useState(false);
-
+  const [totalUser, setTotalUser] = useState(0);
+  const [totalMentor, setTotalMentor] = useState(0);
+  const [totalAmount, setTotalAmount] = useState();
+  const token = localStorage.getItem("token")
 
   useEffect(() => { 
-    // Simulate loading time
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
-    const fetchPendingMentor = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const token = localStorage.getItem("token")
-        const response = await axios.get(`${API_URL}/admin/pending`, {
+        // Fetch total users
+        const usersResponse = await axios.get(`${API_URL}/admin/getTotalUsers`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        })
-        setRequests(response.data)
-      } catch (err) {
-        console.log(err.message)
-      } 
-    }
+        });
+        setTotalUser(usersResponse.data);
 
-    fetchPendingMentor();
-  }, []);
+        // Fetch total mentors
+        const mentorsResponse = await axios.get(`${API_URL}/admin/getTotalMentors`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setTotalMentor(mentorsResponse.data);
+
+        // Fetch total transactions
+        const transactionsResponse = await axios.get(`${API_URL}/admin/getTotalTransaction`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setTotalAmount(transactionsResponse.data);
+
+        // Fetch pending mentors
+        const pendingResponse = await axios.get(`${API_URL}/admin/pending`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setRequests(pendingResponse.data);
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      }
+    };
+
+    fetchDashboardData();
+  }, [token]);
 
   const handleApprove = async (id) => {
     setIsApproving(true);
@@ -91,7 +117,7 @@ const AdminDashboard = () => {
   const stats = [
     {
       title: 'Total Users',
-      value: '2,847',
+      value: totalUser,
       change: '+12%',
       changeType: 'positive',
       icon: (
@@ -100,7 +126,7 @@ const AdminDashboard = () => {
     },
     {
       title: 'Registered Mentors',
-      value: '156',
+      value: totalMentor,
       change: '+8%',
       changeType: 'positive',
       icon: (
@@ -109,7 +135,7 @@ const AdminDashboard = () => {
     },
     {
       title: 'Transactions',
-      value: '$45,231',
+      value: totalAmount?.toFixed(2),
       change: '+23%',
       changeType: 'positive',
       icon: (
