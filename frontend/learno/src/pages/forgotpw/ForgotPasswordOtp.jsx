@@ -5,6 +5,7 @@ import logoImage from "../../assets/images/learno_logo.png";
 import backgroundImage from "../../assets/images/auth_bg.png";
 import Toast from "../../components/common/Toast";
 import Preloader from "../../components/common/Preloader";
+import { API_URL } from "../../config/config";
 
 const ForgotPasswordOtp = () => {
   const navigate = useNavigate();
@@ -113,32 +114,63 @@ const ForgotPasswordOtp = () => {
     if (otpExpired) return;
     setLoading(true);
     setError("");
+
     const otpValue = otp.join("");
-    setTimeout(() => {
-      if (otpValue === "123456") {
+     try {
+      const response = await fetch(`${API_URL}/auth/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email: email, 
+          otp: otpValue 
+        })
+      });
+    
+      const data = await response.json();
+
+       if (data.success) {
         setShowSuccessToast(true);
         setTimeout(() => {
-          setShowSuccessToast(false);
-          navigate("/reset-password?token=demo123");
+          navigate(`/reset-password?token=${data.resetToken}&email=${encodeURIComponent(email)}`, {
+            state: { email }
+          });
         }, 750);
       } else {
-        setError("Invalid OTP. Please try again.");
+        setError(data.message || "Invalid OTP. Please try again.");
       }
-      setLoading(false);
-    }, 1000);
+    } catch (err) {
+    setError("Network error. Please try again.");
+  } finally {
+    setLoading(false);
+  }
   };
 
-  const handleResendOtp = () => {
+  const handleResendOtp = async() => {
     setLoading(true);
     setError("");
     
-    setTimeout(() => {
+    try {
+    const response = await fetch(`${API_URL}/auth/resend-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
       setOtp(["", "", "", "", "", ""]);
-      setError("");
-      setLoading(false);
       setOtpTimer(120);
       setOtpExpired(false);
-    }, 1000);
+      otpRefs[0].current.focus();
+    } else {
+      setError(data.message || "Failed to resend OTP");
+    }
+  } catch (err) {
+    setError("Network error. Please try again.");
+  } finally {
+    setLoading(false);
+  }
   };
 
   const handleBackToEmail = () => {

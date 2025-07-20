@@ -39,6 +39,8 @@ import ResetPassword from './pages/forgotpw/ResetPassword';
 import Availability from './pages/mentor/Availability';
 import EditAvailability from './components/Mentor/EditAvailability';
 import MenteeSessions from './pages/Mentee/MenteeSessions';
+import UnauthorizedPage from './pages/UnauthorizedPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
@@ -51,28 +53,13 @@ function App() {
         <Route path="/forgot-password-email" element={<ForgotPasswordEmail />} />
         <Route path="/forgot-password-otp" element={<ForgotPasswordOtp />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/" element={<Home />} />
 
-        <Route path="/unauthorized" element={<div>You are unauthorized! Get lost</div>} />
+        <Route path="/unauthorized" element={<UnauthorizedPage/>} />
+        <Route path="/*" element={<NotFoundPage/>} />
 
-        <Route path="/payment-failure" element={<EsewaFailure />} />
-        <Route path="/edit" element={<EditAvailability/>} />
 
-        {/* ✅ Mentee protected routes */}
-        <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/payment/success/:transaction_uuid?" element={<EsewaSuccess />} />
         <Route path="/payment/failure" element={<EsewaFailure />} />
-
-        {/* ✅ Admin routes */}
-        <Route path='/test-adminDashboard' element={<AdminLayout />}>
-          <Route path='' element={<AdminDashboard />} />
-          <Route path='users' element={<AdminUsers />} />
-          <Route path='mentors' element={<AdminMentors />} />
-          <Route path='mentors/:mentorId' element={<AdminMentorProfile />} />
-          <Route path='bookings' element={<AdminBookings />} />
-          <Route path='reviews' element={<AdminReviews />} />
-          <Route path='settings' element={<AdminSettings />} />
-        </Route>
 
         {/* ✅ Mentee protected routes */}
         <Route element={<ProtectedRoutes allowedRoles={["MENTEE"]} />}>

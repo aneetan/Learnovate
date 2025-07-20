@@ -19,5 +19,8 @@ public interface MentorBookingsRepository extends JpaRepository<MentorBookings, 
 
     List<MentorBookings> findByPaymentStatus(String status);
 
+    // Fetch the most recent booking for a user and mentor
+    Optional<MentorBookings> findTopByUser_UserIdAndMentor_MentorIdOrderByBookingIdDesc(int userId, int mentorId);
+
 
 }

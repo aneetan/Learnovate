@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Form, Input, Select, message } from 'antd';
+import { Button, Form, Input, Select, Spin, message } from 'antd';
 import { UploadOutlined, PictureOutlined, PhoneOutlined, UserOutlined, AppstoreOutlined } from '@ant-design/icons';
 import logoImage from '../../assets/images/learno_logo.png';
 import backgroundImage from '../../assets/images/auth_bg.png';
@@ -60,6 +60,7 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
   };
 
   const handleFinish = async (values) => {
+    setLoading(true);
     try {
       let uploadedProfileUrl = null;
 
@@ -91,6 +92,8 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
       console.log(formData);
     } catch (error) {
       console.error("Upload failed", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -107,6 +110,8 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
       className="min-h-screen bg-cover bg-center relative flex items-center justify-center px-6"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
+      <Spin spinning={loading} tip="Uploading files..."></Spin>
+
       <div className="absolute inset-0 bg-[#148FA8]/90 z-0"></div>
 
       <div className="relative z-10 w-full max-w-5xl bg-white rounded-xl shadow-lg p-10">
