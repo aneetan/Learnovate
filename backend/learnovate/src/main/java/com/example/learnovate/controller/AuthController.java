@@ -9,10 +9,8 @@ import com.example.learnovate.exception.UnauthorizedAccessException;
 import com.example.learnovate.model.Mentee;
 import com.example.learnovate.model.Mentor;
 import com.example.learnovate.model.RegisteredUser;
-import com.example.learnovate.service.AuthService;
-import com.example.learnovate.service.MenteeService;
-import com.example.learnovate.service.MentorService;
-import com.example.learnovate.service.TokenBlacklistService;
+import com.example.learnovate.repository.RegisteredUserRespository;
+import com.example.learnovate.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -22,9 +20,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.UUID;
 
 
 @RestController
@@ -48,6 +48,18 @@ public class AuthController {
 
     @Autowired
     private TokenBlacklistService tokenBlacklistService;
+
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private ForgotPasswordService forgotPasswordService;
+
+    @Autowired
+    private RegisteredUserRespository rRepo;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     public AuthController(AuthService authService, MentorService mentorService, MenteeService menteeService) {
         this.authService = authService;
@@ -164,6 +176,191 @@ public class AuthController {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> requestBody) {
+        String email = requestBody.get("email");
+
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "Email is required"
+            ));
+        }
+
+        // Basic email format validation
+        if (!email.matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "Invalid email format"
+            ));
+        }
+
+        try {
+            // Check if user exists in database
+            if (!rRepo.existsByEmail(email)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                        "success", false,
+                        "message", "Email not registered with our system"
+                ));
+            }
+
+            String otp = forgotPasswordService.generateOtp();
+            forgotPasswordService.storeOtp(email, otp);
+
+            // Send OTP via email
+            String subject = "Password Reset OTP";
+            String text = String.format(
+                    "Your OTP for password reset is: %s\n\n" +
+                            "This OTP is valid for 2 minutes.\n\n" +
+                            "If you didn't request this, please ignore this email.",
+                    otp
+            );
+
+            emailService.sendSimpleEmail(email, subject, text);
+
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "OTP sent to your email"
+            ));
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "success", false,
+                    "message", "Failed to process your request"
+            ));
+        }
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOtp(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String otp = request.get("otp");
+
+        if (email == null || email.isEmpty() || otp == null || otp.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "Email and OTP are required"
+            ));
+        }
+
+        try {
+            if (!forgotPasswordService.verifyOtp(email, otp)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                        "success", false,
+                        "message", "Invalid or expired OTP"
+                ));
+            }
+
+            String resetToken = forgotPasswordService.getResetToken(email);
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "OTP verified successfully",
+                    "resetToken", resetToken
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "success", false,
+                    "message", "Error verifying OTP"
+            ));
+        }
+    }
+
+    @PostMapping("/resend-otp")
+    public ResponseEntity<?> resendOtp(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+
+        if (email == null || email.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "Email is required"
+            ));
+        }
+
+        try {
+            if (!rRepo.existsByEmail(email)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                        "success", false,
+                        "message", "Email not registered"
+                ));
+            }
+
+            String newOtp = forgotPasswordService.generateOtp();
+            forgotPasswordService.storeOtp(email, newOtp);
+
+            // Send new OTP via email
+            String subject = "Your New Password Reset OTP";
+            String text = String.format(
+                    "Your new OTP for password reset is: %s\n\n" +
+                            "This OTP is valid for 2 minutes.\n\n" +
+                            "If you didn't request this, please ignore this email.",
+                    newOtp
+            );
+
+            emailService.sendSimpleEmail(email, subject, text);
+
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "New OTP sent to your email"
+            ));
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "success", false,
+                    "message", "Failed to resend OTP"
+            ));
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String resetToken = request.get("resetToken");
+        String newPassword = request.get("newPassword");
+
+        if (email == null || resetToken == null || newPassword == null) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "Email, reset token, and new password are required"
+            ));
+        }
+
+        try {
+            // Validate reset token
+            if (!forgotPasswordService.validateResetToken(email, resetToken)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                        "success", false,
+                        "message", "Invalid or expired reset token"
+                ));
+            }
+
+            // Check if user exists
+            RegisteredUser user = rRepo.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found for email: " + email));
+
+            // Update password
+            user.setPassword(passwordEncoder.encode(newPassword));
+            rRepo.save(user);
+
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Password reset successfully"
+            ));
+        } catch (RuntimeException e) {
+            logger.error("Error resetting password for email {}: {}", email, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "success", false,
+                    "message", e.getMessage()
+            ));
+        } catch (Exception e) {
+            logger.error("Error resetting password for email {}: {}", email, e.getMessage(), e);
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "success", false,
+                    "message", "Error resetting password: " + e.getMessage()
+            ));
+        }
     }
 
 }

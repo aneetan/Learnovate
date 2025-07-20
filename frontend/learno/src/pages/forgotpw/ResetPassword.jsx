@@ -3,12 +3,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { FaLock, FaEye, FaEyeSlash, FaCheckCircle } from "react-icons/fa";
 import logoImage from "../../assets/images/learno_logo.png";
 import backgroundImage from "../../assets/images/auth_bg.png";
-
+import { API_URL } from "../../config/config";
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    email: "",
     password: "",
     confirmPassword: "",
   });
@@ -21,11 +22,12 @@ const ResetPassword = () => {
 
   useEffect(() => {
     const tokenParam = searchParams.get("token");
-    // For demo purposes, accept any token or no token
-    if (tokenParam) {
+    const emailParam = searchParams.get("email");
+    if (tokenParam && emailParam) {
       setToken(tokenParam);
+      setFormData((prev) => ({ ...prev, email: emailParam }));
     } else {
-      setToken("demo-token");
+      setError("Invalid or missing reset token or email.");
     }
   }, [searchParams]);
 
@@ -64,12 +66,35 @@ const ResetPassword = () => {
       return;
     }
 
-    // Simulate API call delay
-    setTimeout(() => {
-      // For demo purposes, always succeed
-      setSuccess(true);
+    try {
+      const response = await fetch(`${API_URL}/auth/reset-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          resetToken: token,
+          newPassword: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to reset password.");
+      }
+
+      if (data.success) {
+        setSuccess(true);
+      } else {
+        setError(data.message || "Failed to reset password.");
+      }
+    } catch (err) {
+      setError(err.message || "An unexpected error occurred.");
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const handleBackToLogin = () => {
@@ -135,7 +160,7 @@ const ResetPassword = () => {
         </div>
 
         <h2 className="text-center -mt-10 mb-8 text-gray-900 font-bold text-2xl relative after:content-[''] after:absolute after:bottom-[-8px] after:left-1/2 after:transform after:-translate-x-1/2 after:w-12 after:h-1 after:bg-[#26A69A] after:rounded-lg">
-          Reset Your Password
+          THIS IS WHERE I WANT TO CHANGE PASSWORD
         </h2>
 
         <p className="text-center text-gray-600 mb-8 -mt-4">
@@ -211,11 +236,9 @@ const ResetPassword = () => {
             {loading ? "Resetting..." : "Reset Password"}
           </button>
         </form>
-
-
       </div>
     </div>
   );
 };
 
-export default ResetPassword; 
+export default ResetPassword;

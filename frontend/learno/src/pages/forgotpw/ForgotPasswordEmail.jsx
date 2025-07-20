@@ -4,32 +4,64 @@ import { FaEnvelope } from "react-icons/fa";
 import logoImage from "../../assets/images/learno_logo.png";
 import backgroundImage from "../../assets/images/auth_bg.png";
 import Preloader from "../../components/common/Preloader";
+import axios from "axios";
+import { API_URL} from "../../config/config";
 
 const ForgotPasswordEmail = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
 
-    // Simulate API call delay
-    setTimeout(() => {
-      // Basic email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        setError("Please enter a valid email address.");
-        setLoading(false);
-        return;
-      }
-
-      // Simulate successful email send and navigate to OTP page
-      navigate("/forgot-password-otp", { state: { email } });
+    // Basic client-side validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
       setLoading(false);
-    }, 1500);
+      return;
+    }
+
+    try {
+      // Call your backend API endpoint
+      const response = await axios.post(`${API_URL}/auth/forgot-password`, { email });
+      
+      if (response.data.success) {
+        setSuccess("OTP has been sent to your email address");
+        // Navigate to OTP page after a short delay to show success message
+        setTimeout(() => {
+          navigate("/forgot-password-otp", { state: { email } });
+        }, 1500);
+      } else {
+        setError(response.data.message || "Failed to send OTP");
+      }
+    } catch (err) {
+      // Handle different types of errors
+      if (err.response) {
+        // The request was made and the server responded with a status code
+        if (err.response.status === 404) {
+          setError("Email not found. Please check your email address.");
+        } else if (err.response.status === 429) {
+          setError("Too many requests. Please try again later.");
+        } else {
+          setError(err.response.data.message || "An error occurred");
+        }
+      } else if (err.request) {
+        // The request was made but no response was received
+        setError("Network error. Please check your connection.");
+      } else {
+        // Something happened in setting up the request
+        setError("An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,20 +102,32 @@ const ForgotPasswordEmail = () => {
             </div>
           )}
           
+          {success && (
+            <div className="text-green-600 text-sm mb-4 text-center">
+              {success}
+            </div>
+          )}
+          
           <div className="flex flex-col gap-4 mb-7">
             <label htmlFor="email" className="text-gray-700 text-base font-medium text-left">
               Email Address
             </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 pl-4 pr-4 border border-gray-300 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:border-[#26A69A] focus:ring-2 focus:ring-[#26A69A]/10 transition-all duration-300"
-              placeholder="Enter your email address"
-              required
-            />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FaEnvelope className="text-gray-400" />
+              </div>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full p-3 pl-10 pr-4 border border-gray-300 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:border-[#26A69A] focus:ring-2 focus:ring-[#26A69A]/10 transition-all duration-300"
+                placeholder="Enter your email address"
+                required
+                disabled={loading}
+              />
+            </div>
           </div>
           
           <button
@@ -109,4 +153,4 @@ const ForgotPasswordEmail = () => {
   );
 };
 
-export default ForgotPasswordEmail; 
+export default ForgotPasswordEmail;
