@@ -39,11 +39,12 @@ public class EsewaService {
         RegisteredUser user = uRepo.findById(dto.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("Booking not found"));
 
-        MentorBookings bookings = bookingRepo.findById(bookingId)
-                .orElseThrow(() -> new EntityNotFoundException("Booking not found"));
-
         Mentor mentor = mRepo.findById(mentorId)
                 .orElseThrow(() -> new EntityNotFoundException("Mentor not found"));
+
+        MentorBookings bookings = bookingRepo
+                .findTopByUser_UserIdAndMentor_MentorIdOrderByBookingIdDesc(user.getUserId(), mentor.getMentorId())
+                .orElseThrow(() -> new EntityNotFoundException("No bookings found for this user and mentor"));
 
         PaymentDetails payment = new PaymentDetails();
         payment.setTransactionUuid(dto.getTransactionUuid());
