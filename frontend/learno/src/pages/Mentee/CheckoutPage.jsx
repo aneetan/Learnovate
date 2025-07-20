@@ -1,5 +1,5 @@
 import React from 'react';
-import ESewaPaymentButton from '../../components/ESewaPaymentButton';
+import ESewaPaymentButton from '../../components/payment/ESewaPaymentButton';
 
 const CheckoutPage = () => {
   return (

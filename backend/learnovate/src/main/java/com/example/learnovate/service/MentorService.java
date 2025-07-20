@@ -29,7 +29,7 @@ public interface MentorService {
 
     MentorAvailability updateAvailability(int availabilityId, MentorAvailabilityDto availabilityDto);
 
-
+    Map<String, Object> updateProfile(MentorDTO mentorDTO);
 
 
 }

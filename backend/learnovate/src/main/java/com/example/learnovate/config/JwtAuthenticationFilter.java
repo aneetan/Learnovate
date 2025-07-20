@@ -2,6 +2,7 @@ package com.example.learnovate.config;
 
 import com.example.learnovate.service.GoogleTokenVerifier;
 import com.example.learnovate.service.RegisteredUserService;
+import com.example.learnovate.service.TokenBlacklistService;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import jakarta.servlet.FilterChain;
@@ -30,6 +31,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private RegisteredUserService userDetailsService;
 
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -40,6 +44,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
+
+            if (token != null && tokenBlacklistService.isTokenBlacklisted(token)) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has been blacklisted");
+                return;
+            }
+
 
             try {
                 // Try to verify as a custom JWT

@@ -6,6 +6,7 @@ import com.example.learnovate.dto.MentorBookingsDto;
 import com.example.learnovate.exception.UnauthorizedAccessException;
 import com.example.learnovate.model.*;
 import com.example.learnovate.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -171,6 +172,15 @@ public class MenteeServiceImplements implements MenteeService{
     public Mentee getMenteeByUserId(int id){
         Mentee mentee = menteeRepository.getMenteeByUser_UserId(id);
         return mentee;
+    }
+
+    @Override
+    public List<MentorBookings> getSessionsByUser(int userId) {
+        RegisteredUser user = uRepo.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        List<MentorBookings> sessions = bookingRepo.findByUser(user);
+        return sessions;
     }
 
 }

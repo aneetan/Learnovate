@@ -1,5 +1,6 @@
 package com.example.learnovate.controller;
 
+import com.example.learnovate.config.JwtUtil;
 import com.example.learnovate.dto.AuthResponse;
 import com.example.learnovate.dto.LoginDto;
 import com.example.learnovate.dto.RegistrationDto;
@@ -11,6 +12,8 @@ import com.example.learnovate.model.RegisteredUser;
 import com.example.learnovate.service.AuthService;
 import com.example.learnovate.service.MenteeService;
 import com.example.learnovate.service.MentorService;
+import com.example.learnovate.service.TokenBlacklistService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +42,12 @@ public class AuthController {
 
     @Autowired
     private final MenteeService menteeService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
 
     public AuthController(AuthService authService, MentorService mentorService, MenteeService menteeService) {
         this.authService = authService;
@@ -133,14 +142,28 @@ public class AuthController {
         }
     }
 
-
-
     @Data
     private static class ErrorResponse {
         public String error;
         public ErrorResponse(String error) {
             this.error = error;
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+
+            // Add token to blacklist
+            tokenBlacklistService.blacklistToken(token);
+
+            // Return 200 OK with no body
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -112,6 +112,11 @@ public class MenteeController {
         }
     }
 
+    @GetMapping("/getSessions/{userId}")
+    public List<MentorBookings> getAllSessions(@PathVariable int userId){
+        return menteeService.getSessionsByUser(userId);
+    }
+
 
 
 

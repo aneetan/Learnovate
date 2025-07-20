@@ -70,9 +70,15 @@ const MentorSessions = () => {
     }
   };
 
-  const filteredSessions = filterStatus === 'all' 
-    ? sessions 
-    : sessions.filter(session => session.status === filterStatus);
+  const filteredSessions = sessions.filter(session => {
+      const statusMatch = filterStatus === 'all' || session.status === filterStatus;
+      const paymentMatch = session.paymentStatus === 'PAID'; 
+      return statusMatch && paymentMatch;
+  });
+
+  // const filteredSessions = filterStatus === 'all' 
+  //   ? sessions 
+  //   : sessions.filter(session => session.status === filterStatus);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -203,6 +209,7 @@ const MentorSessions = () => {
                   <FaCheck className="w-4 h-4" />
                   Mark Complete
                 </button>
+
               )}
             </div>
           </motion.div>

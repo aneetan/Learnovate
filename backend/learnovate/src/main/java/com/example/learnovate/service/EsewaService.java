@@ -15,6 +15,7 @@ import com.example.learnovate.repository.RegisteredUserRespository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,9 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class EsewaService {
+
+    @Autowired
+    private EmailService emailService;
     private final PaymentDetailsRepository paymentRepository;
 
     private final MentorBookingsRepository bookingRepo;
@@ -81,6 +85,34 @@ public class EsewaService {
         payment.setStatus("SUCCESS");
         payment.setUpdatedAt(LocalDateTime.now());
         bookings.setPaymentStatus("PAID");
+
+        String text = """
+            Dear %s,
+        
+            Your booking request has been successfully confirmed! We're excited to connect you with your mentor for the scheduled session.
+        
+            Booking Details:
+            - Mentor: %s
+            - Date: %s
+            - Time: %s
+            - Duration: 1 hr
+        
+            Thank you for using Learnovate!
+        
+            Best regards,
+            Learnovate
+            """.formatted(
+                        bookings.getUser().getName(),
+                        mentor.getUser().getName(),
+                        bookings.getBookingDate(),
+                        bookings.getTimeSlot()
+                );
+
+                emailService.sendSimpleEmail(
+                        bookings.getUser().getEmail(),
+                        "Booking Confirmation",
+                        text
+                );
 
         return payment;
     }

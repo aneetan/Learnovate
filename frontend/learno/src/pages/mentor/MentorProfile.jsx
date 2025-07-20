@@ -57,10 +57,10 @@ const MentorProfile = () => {
   };
 
   const handleEdit = () => {
+    setIsEditing(true);
     setEditedProfile(profile);
     setProfilePreview(profile?.profileUrl);
     setErrors({});
-    setIsEditing(true);
   };
 
   const handleSave = async () => {
@@ -75,11 +75,18 @@ const MentorProfile = () => {
       }
 
       updatedProfile.price = String(updatedProfile.price);
+
+       try {
+          await axios.put(`${API_URL}/mentor/updateProfile`, editedProfile,  {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
+          });
+          setProfile(editedProfile);
+          setIsEditing(false);
+        } catch (error) {
+          setErrors({ save: 'Update failed' }, error);
+        }
       
-      // Add your API call to save the profile here
-      // await axios.put(`${API_URL}/mentor/update`, updatedProfile, {
-      //   headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
-      // });
+
 
       setProfile(updatedProfile);
       setIsEditing(false);
@@ -104,12 +111,24 @@ const MentorProfile = () => {
   };
   const cancelDelete = () => setShowModal(false);
 
+
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
+
+  const processedValue = type === 'number' ? Number(value) : value;
+
     setEditedProfile(prev => ({
       ...(prev || {}),
-      [name]: value,
+      user: {
+          ...prev.user,
+          [name]: processedValue
+        }
+
     }));
+
+    
+
     setErrors(prev => ({ ...prev, [name]: null }));
   };
 
@@ -167,9 +186,9 @@ const MentorProfile = () => {
                 <>
                   <button
                     onClick={triggerFileInput}
-                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition duration-300"
+                    className="absolute flex items-center justify-center bg-gray-500  bg-opacity-40 rounded-full opacity-100 transition duration-300"
                   >
-                    <FiCamera className="text-white w-8 h-8 sm:w-10 sm:h-10" />
+                    <FiCamera className="text-white w-2 h-2 sm:w-8 sm:h-8" />
                   </button>
                   <input
                     type="file"

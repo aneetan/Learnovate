@@ -179,6 +179,67 @@ public class MentorServiceImplements implements MentorService{
         return  sessions;
     }
 
+    public Map<String, Object> updateProfile(MentorDTO mentorDTO) {
+        AuthenticateEmail authenticateEmail = new AuthenticateEmail();
+        String authenticatedEmail = authenticateEmail.getAuthenticatedUserEmail();
+
+        // Find the existing user
+        RegisteredUser user = rRepo.findById(mentorDTO.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        // Validate email matches
+        if (!authenticatedEmail.equals(user.getEmail())) {
+            throw new UnauthorizedAccessException("Email in request does not match authenticated user");
+        }
+
+        // Find existing mentor profile
+        Mentor mentor = mRepo.findByUser(user)
+                .orElseThrow(() -> new EntityNotFoundException("Mentor profile not found"));
+
+        // Update fields only if they are provided in the DTO
+        if (mentorDTO.getBio() != null) {
+            mentor.setBio(mentorDTO.getBio());
+        }
+        if (mentorDTO.getNumber() != null) {
+            mentor.setPhoneNumber(mentorDTO.getNumber());
+        }
+        if (mentorDTO.getPrice() != null) {
+            mentor.setPrice(mentorDTO.getPrice());
+        }
+        if (mentorDTO.getArea() != null) {
+            mentor.setArea(mentorDTO.getArea());
+        }
+        if (mentorDTO.getTitle() != null) {
+            mentor.setTitle(mentorDTO.getTitle());
+        }
+        if (mentorDTO.getExperience() != null) {
+            mentor.setExperience(mentorDTO.getExperience());
+        }
+        if (mentorDTO.getSkills() != null) {
+            String skillsJson = mentorDTO.getSkills();
+            List<String> skills = Arrays.asList(skillsJson
+                    .replace("[", "")
+                    .replace("]", "")
+                    .split(",\\s*"));
+            mentor.setSkills(skills);
+        }
+        if (mentorDTO.getProfileUrl() != null) {
+            mentor.setProfileUrl(mentorDTO.getProfileUrl());
+        }
+        if (mentorDTO.getDocumentUrl() != null) {
+            mentor.setDocumentUrl(mentorDTO.getDocumentUrl());
+        }
+
+        // Save the updated entities
+        mRepo.save(mentor);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("mentor", mentor);
+        response.put("status", HttpStatus.OK);
+
+        return response;
+    }
+
 
 
 

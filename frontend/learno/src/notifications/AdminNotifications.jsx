@@ -57,13 +57,10 @@ const AdminNotifications = () => {
 
     const socket = new SockJS(`${API_URL}/ws`);
     const client = Stomp.over(socket);
-    
-    client.debug = (msg) => console.log('STOMP:', msg);
-    
+        
     client.connect(
       { Authorization: `Bearer ${token}` },
       () => {
-        console.log('WebSocket connected for admin');
         setStompClient(client);
       },
       (error) => {
@@ -73,7 +70,6 @@ const AdminNotifications = () => {
 
     return () => {
       if (client.connected) {
-        console.log('Disconnecting WebSocket');
         client.disconnect();
       }
     };

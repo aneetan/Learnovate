@@ -6,7 +6,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import logoImage from "../assets/images/learno_logo.png";
 import backgroundImage from "../assets/images/auth_bg.png";
 import { login } from "../features/userSlice";
-import GoogleLoginButton from "../components/GoogleLoginButton";
+import GoogleLoginButton from "../components/common/GoogleLoginButton";
 import axios from "axios";
 import { API_URL, getUserId } from "../config/config";
 

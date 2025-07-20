@@ -35,7 +35,7 @@ const DeclineMentorModel = ({ isOpen, onClose, mentor, onDecline, isDeclining })
           </div>
           
           <div className="mb-6">
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-wrap">
               Are you sure you want to decline <span className="font-semibold">{mentor?.user?.name}</span> as a mentor?
             </p>
           </div>
