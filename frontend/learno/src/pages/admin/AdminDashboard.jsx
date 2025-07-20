@@ -70,50 +70,6 @@ const AdminDashboard = () => {
     fetchDashboardData();
   }, [token]);
 
-  const handleApprove = async (id) => {
-    setIsApproving(true);
-    try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `${API_URL}/admin/approve/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setRequests(requests.filter(req => req.mentorId !== id));
-    } catch (err) {
-      console.error("Approval failed:", err.message);
-    } finally {
-      setIsApproving(false);
-      setIsApproveModalOpen(false);
-    }
-  };
-
-  const handleDecline = async (id) => {
-    setIsDeclining(true);
-    try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `${API_URL}/admin/decline/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setRequests(requests.filter(req => req.mentorId !== id));
-    } catch (err) {
-      console.error("Decline failed:", err.message);
-    } finally {
-      setIsDeclining(false);
-      setIsDeclineModalOpen(false);
-    }
-  };
-
   const stats = [
     {
       title: 'Total Users',
@@ -259,25 +215,14 @@ const AdminDashboard = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
-                      <button
-                        onClick={() => {
-                          setSelectedMentor(request);
-                          setIsApproveModalOpen(true);
-                        }}
-                        className="text-white px-3 py-1 rounded-md text-xs transition-colors"
-                        style={{ backgroundColor: 'var(--primary-color)' }}
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedMentor(request);
-                          setIsDeclineModalOpen(true);
-                        }}
-                        className="bg-red-600 text-white px-3 py-1 rounded-md text-xs hover:bg-red-700 transition-colors"
-                      >
-                        Decline
-                      </button>
+                        <ApproveButton 
+                          mentor={request} 
+                          onSuccess={(id) => setRequests(requests.filter(req => req.mentorId !== id))} 
+                        />
+                        <DeclineButton 
+                          mentor={request} 
+                          onSuccess={(id) => setRequests(requests.filter(req => req.mentorId !== id))} 
+                        />
                     </div>
                   </td>
                 </motion.tr>

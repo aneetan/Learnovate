@@ -7,6 +7,9 @@ import DetailsModal from '../../components/common/DetailsModal';
 import ConfirmationModal from '../../components/common/ConfirmationModal';
 import EditModal from '../../components/common/EditModal';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../../config/config';
+import axios from 'axios';
+import MentorStatusButton from '../../components/admin/MentorStatusButton';
 
 const AdminMentors = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -21,7 +24,8 @@ const AdminMentors = () => {
   const [mentorToDelete, setMentorToDelete] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [mentorToEdit, setMentorToEdit] = useState(null);
-  const [statusSortOrder, setStatusSortOrder] = useState(null); // null, 'asc', 'desc'
+  const [statusSortOrder, setStatusSortOrder] = useState(null);
+  const [mentors, setMentors] = useState([]);
 
   const navigate = useNavigate();
 
@@ -34,32 +38,31 @@ const AdminMentors = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Dummy data for mentors
-  const dummyMentors = [
-    { id: 'MNT001', name: 'Dr. Sarah Johnson', email: 'sarah.johnson@example.com', contact: '+1 234-567-8900', interestArea: 'React Development', status: 'Accepted' },
-    { id: 'MNT002', name: 'Prof. Michael Chen', email: 'michael.chen@example.com', contact: '+1 234-567-8901', interestArea: 'UI/UX Design', status: 'Accepted' },
-    { id: 'MNT003', name: 'Alex Rodriguez', email: 'alex.rodriguez@example.com', contact: '+1 234-567-8902', interestArea: 'Python Programming', status: 'Pending' },
-    { id: 'MNT004', name: 'Dr. Emily Davis', email: 'emily.davis@example.com', contact: '+1 234-567-8903', interestArea: 'Data Science', status: 'Accepted' },
-    { id: 'MNT005', name: 'James Wilson', email: 'james.wilson@example.com', contact: '+1 234-567-8904', interestArea: 'Mobile Development', status: 'Rejected' },
-    { id: 'MNT006', name: 'Lisa Anderson', email: 'lisa.anderson@example.com', contact: '+1 234-567-8905', interestArea: 'Web Development', status: 'Accepted' },
-    { id: 'MNT007', name: 'David Thompson', email: 'david.thompson@example.com', contact: '+1 234-567-8906', interestArea: 'DevOps', status: 'Pending' },
-    { id: 'MNT008', name: 'Maria Garcia', email: 'maria.garcia@example.com', contact: '+1 234-567-8907', interestArea: 'Product Management', status: 'Accepted' },
-    { id: 'MNT009', name: 'Robert Taylor', email: 'robert.taylor@example.com', contact: '+1 234-567-8908', interestArea: 'Machine Learning', status: 'Accepted' },
-    { id: 'MNT010', name: 'Jennifer Brown', email: 'jennifer.brown@example.com', contact: '+1 234-567-8909', interestArea: 'Cybersecurity', status: 'Pending' },
-    { id: 'MNT011', name: 'Christopher Lee', email: 'christopher.lee@example.com', contact: '+1 234-567-8910', interestArea: 'Blockchain', status: 'Accepted' },
-    { id: 'MNT012', name: 'Amanda White', email: 'amanda.white@example.com', contact: '+1 234-567-8911', interestArea: 'Cloud Computing', status: 'Rejected' },
-    { id: 'MNT013', name: 'Daniel Martinez', email: 'daniel.martinez@example.com', contact: '+1 234-567-8912', interestArea: 'Game Development', status: 'Accepted' },
-    { id: 'MNT014', name: 'Michelle Clark', email: 'michelle.clark@example.com', contact: '+1 234-567-8913', interestArea: 'Digital Marketing', status: 'Pending' },
-    { id: 'MNT015', name: 'Kevin Lewis', email: 'kevin.lewis@example.com', contact: '+1 234-567-8914', interestArea: 'Artificial Intelligence', status: 'Accepted' },
-  ];
+  useEffect(() => {
+    const fetchMentorsData = async () => {
+      try {
+        // Fetch total users
+        const users = await axios.get(`${API_URL}/admin/getAllMentors`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setMentors(users.data);
+      } catch (e){
+        console.log(e)
+      }
+    };
+
+    fetchMentorsData();
+  }, []);
 
   // Filter mentors based on search term
   const filteredMentors = useMemo(() => {
-    return dummyMentors.filter(mentor =>
-      mentor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mentor.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mentor.interestArea.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mentor.id.toLowerCase().includes(searchTerm.toLowerCase())
+    return mentors.filter(mentor =>
+      mentor.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      mentor.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      mentor.area.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      mentor.mentorId.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [searchTerm]);
 
@@ -90,6 +93,12 @@ const AdminMentors = () => {
     // Optionally: update mentor in state
   };
 
+  const handleStatusChange = (mentorId, newStatus) => {
+  setMentors(mentors.map(mentor => 
+    mentor.mentorId === mentorId ? { ...mentor, status: newStatus } : mentor
+  ));
+};
+
   const handleDelete = (mentorId) => {
     const mentor = currentMentors.find(m => m.id === mentorId);
     setMentorToDelete(mentor);
@@ -111,8 +120,8 @@ const AdminMentors = () => {
     setShowDetailsModal(true);
   };
 
-  const handleNameClick = (mentor) => {
-    navigate(`/test-adminDashboard/mentors/${mentor.id}`);
+  const handleNameClick = (mentorId) => {
+    navigate(`/admin/mentors/${mentorId}`);
   };
 
   const handlePageChange = (page) => {
@@ -205,7 +214,7 @@ const AdminMentors = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {currentMentors.map((mentor, index) => (
+              {mentors.map((mentor, index) => (
                 <motion.tr
                   key={mentor.id}
                   initial={{ opacity: 0, x: -20 }}
@@ -217,49 +226,56 @@ const AdminMentors = () => {
                     <div className="flex-shrink-0 h-10 w-10">
                       <img
                         className="h-10 w-10 rounded-full object-cover"
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(mentor.name)}&background=6366f1&color=fff&size=40`}
-                        alt={mentor.name}
+                        src={mentor.profileUrl}
+                        alt={mentor.user.name}
                       />
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     <button
-                      onClick={() => handleNameClick(mentor)}
+                      onClick={() => handleNameClick(mentor.mentorId)}
                       className="text-blue-600 hover:text-blue-900 hover:underline cursor-pointer"
                     >
-                      {mentor.name}
+                      {mentor.user.name}
                     </button>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{mentor.email}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{mentor.contact}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{mentor.interestArea}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{mentor.user.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{mentor.phoneNumber}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{mentor.area}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(mentor.status)}`}>
                       {mentor.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleViewDocument(mentor)}
-                      className="text-sm font-medium flex items-center space-x-1"
-                      style={{ color: 'var(--primary-color)' }}
-                    >
-                      <FaFileAlt className="w-3 h-3" />
-                      <span>View Document</span>
-                    </button>
+                      {mentor.documentUrl ? (
+                      <a
+                        href={mentor.documentUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-900 text-sm font-medium"
+                      >
+                        View Document
+                      </a>
+                    ) : (
+                      <span className="text-gray-400 text-sm">No document</span>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
-                      {/* Remove Edit button, keep only Delete */}
-                      <button
-                        onClick={() => handleDelete(mentor.id)}
+                      <div className="flex justify-between">
+                        <MentorStatusButton
+                        mentor={mentor} 
+                        onStatusChange={handleStatusChange} 
+                        />
+                        <button
+                        onClick={() => handleDelete(mentor.user.userId)}
                         className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
                         title="Delete"
-                      >
+                        >
                         <FaTrash className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
+                        </button>
+                      </div>
+                      </td>
                 </motion.tr>
               ))}
             </tbody>

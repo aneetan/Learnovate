@@ -35,9 +35,11 @@ const ApproveMentorModel = ({ isOpen, onClose, mentor, onApprove, isApproving })
           </div>
           
           <div className="mb-6">
-            <p className="text-gray-600">
-              Are you sure you want to approve <span className="font-semibold">{mentor?.user?.name}</span> as a mentor?
+            <p className="text-gray-600 w-[90%] text-wrap">
+              Are you sure you want to approve 
+              <span className="font-semibold"> {mentor?.user?.name} </span>  as a mentor?
             </p>
+            <p className='text-gray-500 font-normal mt-2'> This will grant all mentor access!</p>
           </div>
           
           <div className="flex justify-end space-x-3">

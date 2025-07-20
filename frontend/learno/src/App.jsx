@@ -112,6 +112,7 @@ function App() {
             <Route path='dashboard' element={<AdminDashboard />} />
             <Route path='viewUsers' element={<AdminUsers />} />
             <Route path='viewMentors' element={<AdminMentors />} />
+            <Route path='mentors/:mentorId' element={<AdminMentorProfile isAdmin={true} />} />
             <Route path='viewBookings' element={<AdminBookings />} />
             <Route path='reviews' element={<AdminReviews />} />
             <Route path='settings' element={<AdminSettings />} />
