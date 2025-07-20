@@ -36,9 +36,7 @@ const NotFoundPage = () => {
         <p className="mt-6 text-lg text-teal-900">
           Oops! The page you're looking for doesn't exist or has been moved.
         </p>
-
-
-        {/* Action Button */}
+ 
         <Link
           to="/"
           className="inline-block px-6 py-3 text-gray-100 bg-teal-400 hover:bg-teal-500  font-medium rounded-lg shadow-md transition duration-300 transform hover:scale-105"
