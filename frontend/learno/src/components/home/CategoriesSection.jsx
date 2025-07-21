@@ -73,7 +73,7 @@ const CategoriesSection = forwardRef(
 
                   <div className="flex justify-between items-center">
                     <Link
-                      to="/mentors"
+                      to="/login"
                       className="btn btn-primary"
                       role="button"
                     >
@@ -115,7 +115,7 @@ const CategoriesSection = forwardRef(
                         ))}
                       </div>
                       <Link
-                        to="/mentors"
+                        to="/login"
                         className="btn btn-primary"
                         role="button"
                       >
@@ -126,16 +126,6 @@ const CategoriesSection = forwardRef(
                 </AnimatePresence>
               </motion.div>
             ))}
-          </div>
-
-          <div className="text-center">
-            <Link
-              to="/mentors"
-              className="btn btn-primary btn-lg"
-              role="button"
-            >
-              Explore All Categories
-            </Link>
           </div>
         </div>
       </section>

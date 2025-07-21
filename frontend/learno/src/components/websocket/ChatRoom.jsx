@@ -324,11 +324,11 @@ const ChatRoom = ({ currentUser, roleDetails, receiverId = null }) => {
         <div className="flex-1 w-[full]">
           {chatHistory.map((chat) => (
             <div
-              key={chat.roomId}
+              key={chat.id}
               className={`flex items-center p-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
                 chat.id === roomId ? 'bg-indigo-50' : ''
               }`}
-              onClick={() => handleSelectChat(chat.roomId, chat.partner)}
+              onClick={() => handleSelectChat(chat.id, chat.partner)}
             >
               <div className="w-[20%] h-10 border-none flex items-center justify-center mr-3">
                 {chat.partner?.profileUrl && chat.partner.profileUrl.trim()

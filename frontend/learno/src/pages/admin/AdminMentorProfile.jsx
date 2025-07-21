@@ -21,7 +21,7 @@ const AdminMentorProfile = ({isAdmin}) => {
         const token = localStorage.getItem("token");
          const endpoint = isAdmin
           ? `${API_URL}/admin/mentors/${mentorId}`
-          : `${API_URL}/mentee/mentors/${mentorId}`;
+          : `${API_URL}/mentee/getMentors/${mentorId}`;
 
         const response = await axios.get(endpoint, {
           headers: { Authorization: `Bearer ${token}` }

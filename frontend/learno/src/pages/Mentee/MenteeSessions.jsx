@@ -104,7 +104,7 @@ const MenteeSessions = () => {
             }`}
             style={filterStatus === 'all' ? { backgroundColor: 'var(--primary-color)', color: 'white' } : {}}
           >
-            All Sessions ({sessions.length})
+            All Sessions ({filteredSessions.length})
           </button>
           <button
             onClick={() => setFilterStatus('pending')}
@@ -115,7 +115,7 @@ const MenteeSessions = () => {
             }`}
             style={filterStatus === 'pending' ? { backgroundColor: 'var(--primary-color)', color: 'white' } : {}}
           >
-            Pending ({sessions.filter(s => s.status === 'pending').length})
+            Pending ({filteredSessions.filter(s => s.status === 'pending').length})
           </button>
           <button
             onClick={() => setFilterStatus('completed')}
@@ -126,7 +126,7 @@ const MenteeSessions = () => {
             }`}
             style={filterStatus === 'completed' ? { backgroundColor: 'var(--primary-color)', color: 'white' } : {}}
           >
-            Completed ({sessions.filter(s => s.status === 'completed').length})
+            Completed ({filteredSessions.filter(s => s.status === 'completed').length})
           </button>
         </div>
       </div>
