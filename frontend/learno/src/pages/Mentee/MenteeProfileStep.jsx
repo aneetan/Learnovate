@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Form, Input, Select, Spin, message } from 'antd';
+import { Button, Form, Input, Select, Spin, message, Modal } from 'antd';
 import { UploadOutlined, PictureOutlined, PhoneOutlined, UserOutlined, AppstoreOutlined } from '@ant-design/icons';
 import logoImage from '../../assets/images/learno_logo.png';
 import backgroundImage from '../../assets/images/auth_bg.png';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
-import { API_URL, getUserId } from '../../config/config'
+import { API_URL } from '../../config/config';
 import { jwtDecode } from 'jwt-decode';
 
 const { Option } = Select;
@@ -14,34 +14,33 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
   const [profile, setProfile] = useState(null);
   const [profilePreview, setProfilePreview] = useState(null);
   const [loading, setLoading] = useState(false);
-  const user = useSelector((state) => state.user.user)
+  const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
 
-    const token = localStorage.getItem("token");
-    const decoded = jwtDecode(token);
+  const token = localStorage.getItem("token");
+  const decoded = jwtDecode(token);
 
   const handleProfileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const allowedExtensions = ['jpg', 'jpeg', 'png'];
-      const fileExtension = file.name.split('.').pop().toLowerCase();
-      
-      if (!allowedExtensions.includes(fileExtension)) {
-        message.error('Only JPG, JPEG, and PNG formats are allowed.');
-        setProfile(null);
-        setProfilePreview(null);
-        return;
-      }
+    if (!file) return;
 
-      setProfile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => setProfilePreview(reader.result);
-      reader.readAsDataURL(file);
+    const allowedExtensions = ['jpg', 'jpeg', 'png'];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    
+    if (!allowedExtensions.includes(fileExtension)) {
+      message.error('Only JPG, JPEG, and PNG formats are allowed.');
+      setProfile(null);
+      setProfilePreview(null);
+      return;
     }
+
+    setProfile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setProfilePreview(reader.result);
+    reader.readAsDataURL(file);
   };
 
   const uploadToCloudinary = async (file, type = "image") => {
-    setLoading(true);
     const data = new FormData();
     data.append("file", file);
     data.append("upload_preset", import.meta.env.VITE_CLOUDINARY_PRESET);
@@ -54,8 +53,11 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
       body: data
     });
 
+    if (!response.ok) {
+      throw new Error('Upload failed');
+    }
+
     const result = await response.json();
-    setLoading(false);
     return result.secure_url;
   };
 
@@ -74,30 +76,28 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
         userId: decoded?.userId,
       };
       
-      fetch(`${API_URL}/mentee/register`, {
+      const response = await fetch(`${API_URL}/mentee/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` 
         },
         body: JSON.stringify(formData)
-      })
-      .then(res => res.json())
-      .then(() => {
-        navigate("/mentee/dashboard");
-      })
-      .catch(error => {
-        console.log(error);
-      }); 
-      console.log(formData);
+      });
+
+      if (!response.ok) {
+        throw new Error('Registration failed');
+      }
+
+      navigate("/mentee/dashboard");
     } catch (error) {
-      console.error("Upload failed", error);
+      console.error("Error:", error);
+      message.error(error.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Handler to allow only numeric input
   const handlePhoneKeyPress = (e) => {
     const charCode = e.charCode;
     if (charCode < 48 || charCode > 57) {
@@ -106,13 +106,27 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
   };
 
   return (
-    <> 
-    <Spin spinning={loading} tip="Uploading files..."></Spin>
     <div
       className="min-h-screen bg-cover bg-center relative flex items-center justify-center px-6"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <div className="absolute inset-0 bg-[#148FA8]/90 z-0"></div>
+
+      <Modal
+        open={loading}
+        footer={null}
+        closable={false}
+        centered
+        maskClosable={false}
+        width={20}
+        className="text-center"
+      >
+        <Spin 
+          size="large" 
+          tip="Processing..." 
+          className="p-4"
+        />
+      </Modal>
 
       <div className="relative z-10 w-full max-w-5xl bg-white rounded-xl shadow-lg p-10">
         <div className="flex justify-center mb-0">
@@ -124,6 +138,7 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
           initialValues={initialValues}
           layout="vertical"
           className="space-y-10"
+          disabled={loading}
         >
           <div className="bg-white border border-gray-200 rounded-xl shadow-inner p-8">
             <div className="flex items-center gap-4 mb-6">
@@ -150,6 +165,7 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
                   accept="image/jpeg,image/png"
                   onChange={handleProfileChange}
                   className="hidden"
+                  disabled={loading}
                 />
                 <div className="inline-flex items-center gap-3 bg-blue-100 text-blue-700 px-5 py-3 rounded-lg text-base font-semibold border border-blue-300 hover:bg-blue-200 transition duration-200">
                   <UploadOutlined className="text-lg" /> Choose Profile Image
@@ -172,6 +188,7 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
                 maxLength={10} 
                 size="large"
                 onKeyPress={handlePhoneKeyPress}
+                disabled={loading}
               />
             </Form.Item>
 
@@ -180,7 +197,11 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
               name="currentStatus"
               rules={[{ required: true, message: 'Please select your status!' }]}
             >
-              <Select placeholder="Select your status" size="large">
+              <Select 
+                placeholder="Select your status" 
+                size="large"
+                disabled={loading}
+              >
                 <Option value="Student">Student</Option>
                 <Option value="Job Seeker">Job Seeker</Option>
                 <Option value="Early Professional">Early Professional</Option>
@@ -192,7 +213,11 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
               name="area"
               rules={[{ required: true, message: 'Please select your interest area!' }]}
             >
-              <Select placeholder="Select your interest area" size="large">
+              <Select 
+                placeholder="Select your interest area" 
+                size="large"
+                disabled={loading}
+              >
                 <Option value="Technology">Technology</Option>
                 <Option value="Business">Business</Option>
                 <Option value="Design">Design</Option>
@@ -206,6 +231,7 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
               type="primary"
               htmlType="submit"
               className="px-10 py-4 text-lg font-semibold rounded-md shadow hover:scale-105 hover:shadow-lg transition-all duration-200"
+              loading={loading}
             >
               Submit
             </Button>
@@ -213,7 +239,6 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
         </Form>
       </div>
     </div>
-    </>
   );
 };
 
