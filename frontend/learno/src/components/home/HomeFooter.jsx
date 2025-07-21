@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaTwitter, FaLinkedin, FaGithub, FaInstagram } from "react-icons/fa";
+import { FaTwitter, FaLinkedin, FaGithub, FaInstagram, FaFacebook } from "react-icons/fa";
 import logoImage from "../../assets/images/learno_logo_long.png";
 
 const HomeFooter = () => {
@@ -8,22 +8,17 @@ const HomeFooter = () => {
 
   const footerLinks = {
     platform: [
-      { name: "Home", href: "#home" },
+      { name: "Home", href: "/" },
       { name: "Features", href: "#features" },
-      { name: "Categories", href: "#categories" },
-      { name: "How It Works", href: "#how-it-works" },
-      { name: "Testimonials", href: "#testimonials" },
       { name: "FAQ", href: "#faq" },
     ],
     support: [
+      { name: "How It Works", href: "#how-it-works" },
       { name: "Help Center", href: "#faq" },
-      { name: "Contact Us", href: "#contact" },
     ],
     company: [
-      { name: "About Us", href: "#about" },
-      { name: "Careers", href: "#careers" },
-      { name: "Blog", href: "#blog" },
-      { name: "Press", href: "#press" },
+      { name: "Phone: 9812345678", href: "" },
+      { name: "Email: supportcenter@gmail.com", href: "" },
     ],
   };
 
@@ -35,10 +30,9 @@ const HomeFooter = () => {
   };
 
   const socialLinks = [
-    { name: "Twitter", href: "#", icon: <FaTwitter className="w-5 h-5" /> },
-    { name: "LinkedIn", href: "#", icon: <FaLinkedin className="w-5 h-5" /> },
-    { name: "GitHub", href: "#", icon: <FaGithub className="w-5 h-5" /> },
-    { name: "Instagram", href: "#", icon: <FaInstagram className="w-5 h-5" /> },
+    { name: "LinkedIn", href: "www.linkedin.com", icon: <FaLinkedin className="w-5 h-5" /> },
+    { name: "Facebook", href: "www.facebook.com", icon: <FaFacebook className="w-5 h-5" /> },
+    { name: "Instagram", href: "www.instagram.com", icon: <FaInstagram className="w-5 h-5" /> },
   ];
 
   return (
@@ -66,7 +60,7 @@ const HomeFooter = () => {
             >
               Connecting mentors and apprentices to accelerate learning and
               career growth. Join our community of learners and experts.
-            </p>
+            </p>  
             <div className="flex space-x-4">
               {socialLinks.map((social) => (
                 <motion.a
@@ -143,18 +137,13 @@ const HomeFooter = () => {
               className="text-sm font-semibold mb-4 uppercase tracking-wider"
               style={{ color: "var(--gray-900)" }}
             >
-              Company
+              Contact
             </h3>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    to={link.href}
-                    className="text-sm transition-colors duration-200 hover:scale-105"
-                    style={{ color: "var(--gray-600)" }}
-                  >
+                <li key={link.name} className="text-sm transition-colors duration-200 hover:scale-105 text-[var(--gray-600)]">
+                 
                     {link.name}
-                  </Link>
                 </li>
               ))}
             </ul>

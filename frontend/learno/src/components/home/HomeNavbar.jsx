@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import logoImage from "../../assets/images/learno_logo_only.png";
+import logoImage from "../../assets/images/learno_logo_long.png";
 
 const HomeNavbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -62,7 +62,7 @@ const HomeNavbar = () => {
             <img
               src={logoImage}
               alt="Learnovate Logo"
-              className="h-8 w-auto lg:h-20 transition-transform duration-300 group-hover:scale-105"
+              className="h-30  transition-transform duration-300 group-hover:scale-105"
             />
           </Link>
 

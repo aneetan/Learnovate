@@ -7,7 +7,6 @@ const HeroSection = () => {
     // This semantically indicates that this is the main content of the page.
     <main id="home">
       <section className="relative min-h-[100vh] flex items-center bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden">
-        {/* Shapes - Added aria-hidden="true" */}
         {/* These decorative elements don't need semantic roles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute w-[400px] h-[400px] bg-gradient-to-br from-teal-500 to-teal-300 rounded-full opacity-10 -top-24 -left-24 sm:w-[500px] sm:h-[500px]" aria-hidden="true" />
@@ -64,7 +63,7 @@ const HeroSection = () => {
               <Link
                 // 3. More Specific Link Routes: Changed to specific registration paths.
                 // This offers more distinct user flows for mentors vs. mentees.
-                to="/register/mentee"
+                to="/login"
                 className="btn-primary px-6 py-3 rounded-lg font-small shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300 text-center"
                 aria-label="Find a mentor"
               >
@@ -73,7 +72,7 @@ const HeroSection = () => {
 
               <Link
                 // 3. More Specific Link Routes: Changed to specific registration paths.
-                to="/register/mentor"
+                to="/register"
                 className="bg-transparent border-2 border-white/30 !text-white px-6 py-3 rounded-lg font-small hover:bg-white/10 hover:border-white/50 transition-all duration-300 text-center"
                 aria-label="Become a Mentor"
               >

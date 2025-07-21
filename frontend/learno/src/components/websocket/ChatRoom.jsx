@@ -93,8 +93,7 @@ const ChatRoom = ({ currentUser, roleDetails, receiverId = null }) => {
     if (loadingChats) return;
 
     const selectOrCreate = async () => {
-      if (receiverId && chatHistory.length > 0) {
-        // Try to find the chat for this receiverId
+      if (receiverId) {
         let selectedChat = chatHistory.find(
           (chat) => String(chat.partner.userId) === String(receiverId)
         );

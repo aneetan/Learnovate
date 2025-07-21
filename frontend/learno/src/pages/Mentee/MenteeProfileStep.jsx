@@ -106,12 +106,12 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
   };
 
   return (
+    <> 
+    <Spin spinning={loading} tip="Uploading files..."></Spin>
     <div
       className="min-h-screen bg-cover bg-center relative flex items-center justify-center px-6"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
-      <Spin spinning={loading} tip="Uploading files..."></Spin>
-
       <div className="absolute inset-0 bg-[#148FA8]/90 z-0"></div>
 
       <div className="relative z-10 w-full max-w-5xl bg-white rounded-xl shadow-lg p-10">
@@ -213,6 +213,7 @@ const MenteeProfileStep = ({ onFinish, initialValues }) => {
         </Form>
       </div>
     </div>
+    </>
   );
 };
 
