@@ -179,11 +179,13 @@ const FeedbackForm = () => {
                         role="radio"
                         aria-checked={formData.rating === star}
                         className="cursor-pointer"
+                        style={{ margin: 5, padding: 0 }}
                       >
                         <span
                           style={{
-                            fontSize: "1.5rem",
+                            fontSize: "2.4rem",
                             color: star <= formData.rating ? "var(--primary-lighter)" : "var(--gray-300)",
+                            display: "inline-block",
                           }}
                         >
                           ★
