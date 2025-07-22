@@ -213,6 +213,12 @@ const MentorDirectory = ({ currentUser }) => {
                       </div>
                     </div>
 
+                  <div className="mb-4">
+                    <span className="text-sm font-normal text-white bg-[var(--primary-light)] opacity-90 rounded-xl py-1 px-2">
+                      Rs. {mentor.price}/hr
+                    </span>
+                  </div>
+
                     <div className="mb-4">
                       <p className="text-gray-600 line-clamp-3">
                         {mentor.bio || "No bio provided yet."}
