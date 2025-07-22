@@ -10,8 +10,8 @@ const HomeNavbar = () => {
 
   const navItems = [
     { name: "Home", href: "#home" },
-    { name: "Features", href: "#features" },
     { name: "Categories", href: "#categories" },
+    { name: "Features", href: "#features" },
     { name: "How It Works", href: "#how-it-works" },
     { name: "Testimonials", href: "#testimonials" },
     { name: "FAQ", href: "#faq" },

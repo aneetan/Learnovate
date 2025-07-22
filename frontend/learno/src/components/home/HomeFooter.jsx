@@ -138,14 +138,18 @@ const HomeFooter = () => {
               style={{ color: "var(--gray-900)" }}
             >
               Contact
-            </h3>
+            </h3> 
             <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
-                <li key={link.name} className="text-sm transition-colors duration-200 hover:scale-105 text-[var(--gray-600)]">
-                 
-                    {link.name}
-                </li>
-              ))}
+              <li className="text-sm transition-colors text-gray-500">
+              <a href="mailto:support.learnovate@gmail.com text-gray-500" className="contact-info">
+                support.learnovate@gmail.com
+              </a>
+            </li>
+            <li className="text-sm transition-colors text-gray-600">
+              <a href="tel:9812345678" className="contact-info hover:text-[var(--primary-color)]">
+               9812345678
+              </a>
+            </li>
             </ul>
           </div>
         </div>
